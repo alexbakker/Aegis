@@ -11,6 +11,7 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -712,6 +713,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
 
         @Override
         public void onException(Exception e) {
+            Log.e("Aegis", Log.getStackTraceString(e));
             Toast.makeText(getActivity(), getString(R.string.encryption_enable_fingerprint_error) + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
