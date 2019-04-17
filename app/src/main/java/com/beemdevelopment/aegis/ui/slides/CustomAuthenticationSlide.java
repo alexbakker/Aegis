@@ -79,7 +79,7 @@ public class CustomAuthenticationSlide extends Fragment implements ISlidePolicy,
                 id = CRYPT_TYPE_FINGER;
                 break;
             default:
-                throw new RuntimeException();
+                throw new RuntimeException(String.format("Unsupported security setting: %d", i));
         }
 
         Intent intent = getActivity().getIntent();

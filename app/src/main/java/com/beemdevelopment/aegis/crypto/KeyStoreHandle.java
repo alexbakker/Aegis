@@ -12,6 +12,7 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.ProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.Collections;
@@ -61,6 +62,14 @@ public class KeyStoreHandle {
                     .build());
 
             return generator.generateKey();
+        } catch (ProviderException e) {
+            // a ProviderException can occur at runtime with buggy keymaster HAL implementations
+            // so if this was caused by a KeyStoreException, throw a KeyStoreHandleException instead
+            Throwable cause = e.getCause();
+            if (cause instanceof KeyStoreException) {
+                throw new KeyStoreHandleException(cause);
+            }
+            throw e;
         } catch (NoSuchAlgorithmException | NoSuchProviderException | InvalidAlgorithmParameterException e) {
             throw new KeyStoreHandleException(e);
         }

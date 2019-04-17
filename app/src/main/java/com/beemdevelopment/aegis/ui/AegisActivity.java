@@ -2,9 +2,10 @@ package com.beemdevelopment.aegis.ui;
 
 import android.animation.ValueAnimator;
 import android.content.Intent;
-import android.os.Build;
+
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -121,5 +122,9 @@ public abstract class AegisActivity extends AppCompatActivity implements AegisAp
                 Toast.makeText(this, R.string.progressbar_error, Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    protected void logError(Exception e) {
+        Log.e(getClass().getSimpleName(), Log.getStackTraceString(e));
     }
 }

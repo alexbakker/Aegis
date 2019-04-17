@@ -8,6 +8,7 @@ import android.hardware.fingerprint.FingerprintManager;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -194,6 +195,7 @@ public class Dialogs {
             Cipher cipher = Slot.createEncryptCipher(key);
             obj = new FingerprintManager.CryptoObject(cipher);
         } catch (KeyStoreHandleException | SlotException e) {
+            Log.e(Dialogs.class.getSimpleName(), Log.getStackTraceString(e));
             throw new RuntimeException(e);
         }
 

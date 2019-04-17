@@ -119,7 +119,7 @@ public class CustomAuthenticatedSlide extends Fragment implements FingerprintUiH
                 _fingerHelper.startListening(_fingerCryptoObj);
                 break;
             default:
-                throw new RuntimeException();
+                throw new RuntimeException(String.format("Unsupported security setting: %d", _cryptType));
         }
     }
 
@@ -145,7 +145,7 @@ public class CustomAuthenticatedSlide extends Fragment implements FingerprintUiH
             case CustomAuthenticationSlide.CRYPT_TYPE_PASS:
                 return EditTextHelper.areEditTextsEqual(_textPassword, _textPasswordConfirm);
             default:
-                throw new RuntimeException();
+                throw new RuntimeException(String.format("Unsupported security setting: %d", _cryptType));
         }
     }
 

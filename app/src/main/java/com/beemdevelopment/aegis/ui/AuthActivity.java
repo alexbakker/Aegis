@@ -3,7 +3,6 @@ package com.beemdevelopment.aegis.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.fingerprint.FingerprintManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -60,21 +59,19 @@ public class AuthActivity extends AegisActivity implements FingerprintUiHelper.C
             return false;
         });
 
-        SwirlView imgFingerprint = null;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            ViewGroup insertPoint = findViewById(R.id.img_fingerprint_insert);
-            imgFingerprint = new SwirlView(this);
-            insertPoint.addView(imgFingerprint, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        }
-
         Intent intent = getIntent();
         _slots = (SlotList) intent.getSerializableExtra("slots");
 
         // only show the fingerprint controls if the api version is new enough, permission is granted, a scanner is found and a fingerprint slot is found
         FingerprintManager manager = FingerprintHelper.getManager(this);
         if (manager != null && _slots.has(FingerprintSlot.class)) {
-            boolean invalidated = false;
+            ViewGroup insertPoint = findViewById(R.id.img_fingerprint_insert);
+            SwirlView imgFingerprint = new SwirlView(this);
+            insertPoint.addView(imgFingerprint, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
             try {
+                boolean invalidated = false;
+
                 // find a fingerprint slot with an id that matches an alias in the keystore
                 for (FingerprintSlot slot : _slots.findAll(FingerprintSlot.class)) {
                     String id = slot.getUUID().toString();
@@ -94,13 +91,14 @@ public class AuthActivity extends AegisActivity implements FingerprintUiHelper.C
                         break;
                     }
                 }
-            } catch (KeyStoreHandleException | SlotException e) {
-                throw new RuntimeException(e);
-            }
 
-            // display a help message if a matching invalidated keystore entry was found
-            if (invalidated) {
-                boxFingerprintInfo.setVisibility(View.VISIBLE);
+                // display a help message if a matching invalidated keystore entry was found
+                if (invalidated) {
+                    boxFingerprintInfo.setVisibility(View.VISIBLE);
+                }
+            } catch (KeyStoreHandleException | SlotException e) {
+                logError(e);
+                insertPoint.removeView(imgFingerprint);
             }
         }
 

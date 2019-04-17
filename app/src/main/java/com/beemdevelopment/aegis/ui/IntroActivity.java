@@ -139,9 +139,6 @@ public class IntroActivity extends AppIntro2 implements DerivationTask.Callback 
         if (cryptType != CustomAuthenticationSlide.CRYPT_TYPE_NONE) {
             // encrypt the master key with a key derived from the user's password
             // and add it to the list of slots
-            if (_passwordSlot == null || _passwordCipher == null) {
-                throw new RuntimeException();
-            }
             try {
                 _passwordSlot.setKey(creds.getKey(), _passwordCipher);
                 creds.getSlots().add(_passwordSlot);

@@ -155,7 +155,7 @@ public class EditEntryActivity extends AegisActivity {
                 _textCounter.setText(Long.toString(((HotpInfo) info).getCounter()));
                 _rowCounter.setVisibility(View.VISIBLE);
             } else {
-                throw new RuntimeException();
+                throw new RuntimeException(String.format("Unsupported OtpInfo type: %s", info.getClass()));
             }
             _textDigits.setText(Integer.toString(info.getDigits()));
 
@@ -186,9 +186,8 @@ public class EditEntryActivity extends AegisActivity {
         _spinnerType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String type = _spinnerType.getSelectedItem().toString();
-
-                switch (type.toLowerCase()) {
+                String type = _spinnerType.getSelectedItem().toString().toLowerCase();
+                switch (type) {
                     case TotpInfo.ID:
                     case SteamInfo.ID:
                         _rowCounter.setVisibility(View.GONE);
@@ -199,7 +198,7 @@ public class EditEntryActivity extends AegisActivity {
                         _rowCounter.setVisibility(View.VISIBLE);
                         break;
                     default:
-                        throw new RuntimeException();
+                        throw new RuntimeException(String.format("Unsupported OTP type: %s", type));
                 }
             }
 
@@ -404,7 +403,6 @@ public class EditEntryActivity extends AegisActivity {
                 e.printStackTrace();
             }
 
-
             _saveImageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -469,7 +467,7 @@ public class EditEntryActivity extends AegisActivity {
                     info = new HotpInfo(secret, algo, digits, counter);
                     break;
                 default:
-                    throw new RuntimeException();
+                    throw new RuntimeException(String.format("Unsupported OTP type: %s", type));
             }
 
             info.setDigits(digits);
