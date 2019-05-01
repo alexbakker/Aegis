@@ -40,7 +40,6 @@ public class ScannerActivity extends AegisActivity implements ZXingScannerView.R
                 return new SquareFinderView(context);
             }
         };
-        _scannerView.setResultHandler(this);
         _scannerView.setFormats(Collections.singletonList(BarcodeFormat.QR_CODE));
 
         int camera = getRearCameraId();
@@ -52,7 +51,6 @@ public class ScannerActivity extends AegisActivity implements ZXingScannerView.R
             }
             _facing = CAMERA_FACING_FRONT;
         }
-        _scannerView.startCamera(camera);
 
         setContentView(_scannerView);
     }
@@ -95,6 +93,7 @@ public class ScannerActivity extends AegisActivity implements ZXingScannerView.R
     @Override
     public void onResume() {
         super.onResume();
+        _scannerView.setResultHandler(this);
         _scannerView.startCamera(getCameraId(_facing));
     }
 
