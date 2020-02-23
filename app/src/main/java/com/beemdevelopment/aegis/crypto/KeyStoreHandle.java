@@ -1,9 +1,12 @@
 package com.beemdevelopment.aegis.crypto;
 
+import android.content.Context;
 import android.os.Build;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
+
+import androidx.annotation.RequiresApi;
 
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
@@ -14,14 +17,21 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
-import androidx.annotation.RequiresApi;
+import static android.content.pm.PackageManager.FEATURE_STRONGBOX_KEYSTORE;
 
 public class KeyStoreHandle {
     private final KeyStore _keyStore;
@@ -44,22 +54,28 @@ public class KeyStoreHandle {
         }
     }
 
-    public SecretKey generateKey(String id) throws KeyStoreHandleException {
+    public SecretKey generateKey(Context context, String id) throws KeyStoreHandleException {
         if (!isSupported()) {
             throw new KeyStoreHandleException("Symmetric KeyStore keys are not supported in this version of Android");
         }
 
         try {
             KeyGenerator generator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, STORE_NAME);
-            generator.init(new KeyGenParameterSpec.Builder(id,
+            KeyGenParameterSpec.Builder specBuilder = new KeyGenParameterSpec.Builder(id,
                     KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
                     .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
                     .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
                     .setUserAuthenticationRequired(true)
                     .setRandomizedEncryptionRequired(true)
-                    .setKeySize(CryptoUtils.CRYPTO_AEAD_KEY_SIZE * 8)
-                    .build());
+                    .setKeySize(CryptoUtils.CRYPTO_AEAD_KEY_SIZE * 8);
 
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
+                    && context.getPackageManager().hasSystemFeature(FEATURE_STRONGBOX_KEYSTORE)
+                    && !isStrongBoxBugPresent()) {
+                specBuilder.setIsStrongBoxBacked(true);
+            }
+
+            generator.init(specBuilder.build());
             return generator.generateKey();
         } catch (NoSuchAlgorithmException | NoSuchProviderException | InvalidAlgorithmParameterException e) {
             throw new KeyStoreHandleException(e);
@@ -126,5 +142,35 @@ public class KeyStoreHandle {
 
     public static boolean isSupported() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+    }
+
+    /**
+     * Reports whether CVE-2019-9465 is present on this device.
+     * If system property "ro.build.version.security_patch" is not set, this will also returns true.
+     */
+    @RequiresApi(api = Build.VERSION_CODES.P)
+    private static boolean isStrongBoxBugPresent() {
+        final TimeZone timeZone = TimeZone.getTimeZone("UTC");
+        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        format.setTimeZone(timeZone);
+
+        final Calendar safePatchDate = new GregorianCalendar(timeZone);
+        safePatchDate.clear();
+        safePatchDate.set(2019, 11, 5);
+
+        Date date = null;
+        try {
+            date = format.parse(Build.VERSION.SECURITY_PATCH);
+        } catch (ParseException ignored) {
+
+        }
+
+        if (date == null) {
+            return true;
+        }
+
+        Calendar patchDate = new GregorianCalendar(timeZone);
+        patchDate.setTime(date);
+        return patchDate.getTimeInMillis() < safePatchDate.getTimeInMillis();
     }
 }

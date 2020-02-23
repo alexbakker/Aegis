@@ -1,5 +1,7 @@
 package com.beemdevelopment.aegis.helpers;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.biometric.BiometricPrompt;
 import androidx.fragment.app.Fragment;
@@ -25,14 +27,17 @@ public class BiometricSlotInitializer extends BiometricPrompt.AuthenticationCall
     private BiometricSlot _slot;
     private Listener _listener;
     private BiometricPrompt _prompt;
+    private Context _context;
 
     public BiometricSlotInitializer(Fragment fragment, Listener listener) {
         _listener = listener;
+        _context = fragment.getContext();
         _prompt = new BiometricPrompt(fragment, new UiThreadExecutor(), this);
     }
 
     public BiometricSlotInitializer(FragmentActivity activity, Listener listener) {
         _listener = listener;
+        _context = activity;
         _prompt = new BiometricPrompt(activity, new UiThreadExecutor(), this);
     }
 
@@ -60,7 +65,7 @@ public class BiometricSlotInitializer extends BiometricPrompt.AuthenticationCall
         Cipher cipher;
         BiometricSlot slot = new BiometricSlot();
         try {
-            SecretKey key = keyStore.generateKey(slot.getUUID().toString());
+            SecretKey key = keyStore.generateKey(_context, slot.getUUID().toString());
             cipher = Slot.createEncryptCipher(key);
         } catch (KeyStoreHandleException | SlotException e) {
             fail(e);
