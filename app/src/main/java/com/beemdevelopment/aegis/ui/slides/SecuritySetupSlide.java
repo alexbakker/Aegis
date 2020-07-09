@@ -1,6 +1,5 @@
 package com.beemdevelopment.aegis.ui.slides;
 
-import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -17,7 +16,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.biometric.BiometricPrompt;
-import androidx.fragment.app.Fragment;
 
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.helpers.BiometricSlotInitializer;
@@ -25,7 +23,6 @@ import com.beemdevelopment.aegis.helpers.BiometricsHelper;
 import com.beemdevelopment.aegis.helpers.EditTextHelper;
 import com.beemdevelopment.aegis.helpers.PasswordStrengthHelper;
 import com.beemdevelopment.aegis.ui.Dialogs;
-import com.beemdevelopment.aegis.ui.IntroActivity;
 import com.beemdevelopment.aegis.ui.tasks.KeyDerivationTask;
 import com.beemdevelopment.aegis.vault.VaultFileCredentials;
 import com.beemdevelopment.aegis.vault.slots.BiometricSlot;
@@ -33,7 +30,6 @@ import com.beemdevelopment.aegis.vault.slots.PasswordSlot;
 import com.beemdevelopment.aegis.vault.slots.Slot;
 import com.beemdevelopment.aegis.vault.slots.SlotException;
 import com.github.appintro.SlidePolicy;
-import com.github.appintro.SlideSelectionListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 import com.nulabinc.zxcvbn.Strength;
@@ -42,7 +38,10 @@ import com.nulabinc.zxcvbn.Zxcvbn;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 
-public class SecuritySetupSlide extends Fragment implements SlidePolicy, SlideSelectionListener {
+import static com.beemdevelopment.aegis.ui.slides.SecurityPickerSlide.CRYPT_TYPE_INVALID;
+import static com.beemdevelopment.aegis.ui.slides.SecurityPickerSlide.CRYPT_TYPE_NONE;
+
+public class SecuritySetupSlide extends SlideFragment implements SlidePolicy {
     private int _bgColor;
     private EditText _textPassword;
     private EditText _textPasswordConfirm;
@@ -101,14 +100,6 @@ public class SecuritySetupSlide extends Fragment implements SlidePolicy, SlideSe
         return view;
     }
 
-    public int getCryptType() {
-        return _cryptType;
-    }
-
-    public VaultFileCredentials getCredentials() {
-        return _creds;
-    }
-
     public void setBgColor(int color) {
         _bgColor = color;
     }
@@ -129,23 +120,27 @@ public class SecuritySetupSlide extends Fragment implements SlidePolicy, SlideSe
     }
 
     @Override
-    public void onSlideSelected() {
-        Intent intent = getActivity().getIntent();
-        _cryptType = intent.getIntExtra("cryptType", SecurityPickerSlide.CRYPT_TYPE_INVALID);
-        if (_cryptType != SecurityPickerSlide.CRYPT_TYPE_NONE) {
+    public void onResume() {
+        super.onResume();
+
+        _cryptType = getState().getInt("cryptType", CRYPT_TYPE_INVALID);
+        if (_cryptType == CRYPT_TYPE_INVALID) {
+            throw new RuntimeException(String.format("State of SecuritySetupSlide not properly propagated, cryptType: %d", _cryptType));
+        }
+        if (_cryptType != CRYPT_TYPE_NONE) {
             _creds = new VaultFileCredentials();
         }
     }
 
     @Override
-    public void onSlideDeselected() {
-
+    public void onSaveIntroState(@NonNull Bundle introState) {
+        introState.putSerializable("creds", _creds);
     }
 
     @Override
     public boolean isPolicyRespected() {
         switch (_cryptType) {
-            case SecurityPickerSlide.CRYPT_TYPE_NONE:
+            case CRYPT_TYPE_NONE:
                 return true;
             case SecurityPickerSlide.CRYPT_TYPE_BIOMETRIC:
                 if (!_creds.getSlots().has(BiometricSlot.class)) {
@@ -194,7 +189,7 @@ public class SecuritySetupSlide extends Fragment implements SlidePolicy, SlideSe
                 return;
             }
 
-            ((IntroActivity) getActivity()).goToNextSlide();
+            goToNextSlide();
         }
     }
 

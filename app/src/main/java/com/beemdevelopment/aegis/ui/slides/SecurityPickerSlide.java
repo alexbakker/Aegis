@@ -1,6 +1,5 @@
 package com.beemdevelopment.aegis.ui.slides;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,14 +8,14 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import androidx.fragment.app.Fragment;
+import androidx.annotation.NonNull;
 
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.helpers.BiometricsHelper;
 import com.github.appintro.SlidePolicy;
 import com.google.android.material.snackbar.Snackbar;
 
-public class SecurityPickerSlide extends Fragment implements SlidePolicy, RadioGroup.OnCheckedChangeListener {
+public class SecurityPickerSlide extends SlideFragment implements SlidePolicy {
     public static final int CRYPT_TYPE_INVALID = 0;
     public static final int CRYPT_TYPE_NONE = 1;
     public static final int CRYPT_TYPE_PASS = 2;
@@ -29,8 +28,6 @@ public class SecurityPickerSlide extends Fragment implements SlidePolicy, RadioG
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_security_picker_slide, container, false);
         _buttonGroup = view.findViewById(R.id.rg_authenticationMethod);
-        _buttonGroup.setOnCheckedChangeListener(this);
-        onCheckedChanged(_buttonGroup, _buttonGroup.getCheckedRadioButtonId());
 
         // only enable the fingerprint option if the api version is new enough, permission is granted and a scanner is found
         if (BiometricsHelper.isAvailable(getContext())) {
@@ -61,27 +58,22 @@ public class SecurityPickerSlide extends Fragment implements SlidePolicy, RadioG
     }
 
     @Override
-    public void onCheckedChanged(RadioGroup radioGroup, int i) {
-        if (i == -1) {
-            return;
-        }
-
-        int id;
-        switch (i) {
+    public void onSaveIntroState(@NonNull Bundle introState) {
+        int type;
+        switch (_buttonGroup.getCheckedRadioButtonId()) {
             case R.id.rb_none:
-                id = CRYPT_TYPE_NONE;
+                type = CRYPT_TYPE_NONE;
                 break;
             case R.id.rb_password:
-                id = CRYPT_TYPE_PASS;
+                type = CRYPT_TYPE_PASS;
                 break;
             case R.id.rb_biometrics:
-                id = CRYPT_TYPE_BIOMETRIC;
+                type = CRYPT_TYPE_BIOMETRIC;
                 break;
             default:
-                throw new RuntimeException(String.format("Unsupported security setting: %d", i));
+                throw new RuntimeException(String.format("Unsupported security type: %d", _buttonGroup.getCheckedRadioButtonId()));
         }
 
-        Intent intent = getActivity().getIntent();
-        intent.putExtra("cryptType", id);
+        introState.putInt("cryptType", type);
     }
 }
