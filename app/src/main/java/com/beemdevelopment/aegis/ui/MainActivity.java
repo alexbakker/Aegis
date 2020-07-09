@@ -464,51 +464,53 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
     protected void onResume() {
         super.onResume();
 
-        if (_vault == null) {
-            // start the intro if the vault file doesn't exist
-            if (!_isDoingIntro && !VaultManager.fileExists(this)) {
-                if (getPreferences().isIntroDone()) {
-                    Toast.makeText(this, getString(R.string.vault_not_found), Toast.LENGTH_SHORT).show();
+        if (!_isDoingIntro && !_isAuthenticating) {
+            if (_vault == null) {
+                // start the intro if the vault file doesn't exist
+                if (!VaultManager.fileExists(this)) {
+                    if (getPreferences().isIntroDone()) {
+                        Toast.makeText(this, getString(R.string.vault_not_found), Toast.LENGTH_SHORT).show();
+                    }
+                    Intent intro = new Intent(this, IntroActivity.class);
+                    startActivityForResult(intro, CODE_DO_INTRO);
+                    _isDoingIntro = true;
+                    return;
                 }
-                Intent intro = new Intent(this, IntroActivity.class);
-                startActivityForResult(intro, CODE_DO_INTRO);
-                _isDoingIntro = true;
-                return;
-            }
 
-            // read the vault from disk
-            // if this fails, show the error to the user and close the app
-            try {
-                VaultFile vaultFile = _app.loadVaultFile();
-                if (!vaultFile.isEncrypted()) {
-                    _vault = _app.initVaultManager(vaultFile, null);
+                // read the vault from disk
+                // if this fails, show the error to the user and close the app
+                try {
+                    VaultFile vaultFile = _app.loadVaultFile();
+                    if (!vaultFile.isEncrypted()) {
+                        _vault = _app.initVaultManager(vaultFile, null);
+                    }
+                } catch (VaultManagerException e) {
+                    e.printStackTrace();
+                    Dialogs.showErrorDialog(this, R.string.vault_load_error, e, (dialog1, which) -> finish());
+                    return;
                 }
-            } catch (VaultManagerException e) {
-                e.printStackTrace();
-                Dialogs.showErrorDialog(this, R.string.vault_load_error, e, (dialog1, which) -> finish());
-                return;
-            }
-        }
-
-        if (_app.isVaultLocked()) {
-            startAuthActivity(true);
-        } else if (_loaded) {
-            // update the list of groups in the filter menu
-            if (_menu != null) {
-                updateGroupFilterMenu();
             }
 
-            // refresh all codes to prevent showing old ones
-            _entryListView.refresh(false);
-        } else {
-            loadEntries();
-            checkTimeSyncSetting();
-        }
+            if (_app.isVaultLocked()) {
+                startAuthActivity(true);
+            } else if (_loaded) {
+                // update the list of groups in the filter menu
+                if (_menu != null) {
+                    updateGroupFilterMenu();
+                }
 
-        handleDeeplink();
-        updateLockIcon();
-        doShortcutActions();
-        updateBackupErrorBar();
+                // refresh all codes to prevent showing old ones
+                _entryListView.refresh(false);
+            } else {
+                loadEntries();
+                checkTimeSyncSetting();
+            }
+
+            handleDeeplink();
+            updateLockIcon();
+            doShortcutActions();
+            updateBackupErrorBar();
+        }
     }
 
     @Override

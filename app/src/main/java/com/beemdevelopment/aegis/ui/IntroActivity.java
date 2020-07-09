@@ -101,22 +101,12 @@ public class IntroActivity extends AppIntro2 {
     }
 
     @Override
-    public boolean onCanRequestNextPage() {
-        Fragment currentSlide = _currentSlide.get();
-        if (currentSlide instanceof SlideFragment) {
-            ((SlideFragment) currentSlide).onSaveIntroState(_state);
-        }
-
-        return super.onCanRequestNextPage();
-    }
-
-    @Override
     public void onSlideChanged(Fragment oldFragment, Fragment newFragment) {
         if (oldFragment == _securityPickerSlide && newFragment != _endSlide) {
             // skip to the last slide if no encryption will be used
             int cryptType = _state.getInt("cryptType", SecurityPickerSlide.CRYPT_TYPE_INVALID);
             if (cryptType == SecurityPickerSlide.CRYPT_TYPE_NONE) {
-                goToNextSlide(false);
+                goToNextSlide();
             }
         }
 
@@ -127,6 +117,18 @@ public class IntroActivity extends AppIntro2 {
         }
 
         setSwipeLock(true);
+    }
+
+    @Override
+    public boolean onCanRequestNextPage() {
+        boolean allowed = super.onCanRequestNextPage();
+
+        Fragment currentSlide = _currentSlide.get();
+        if (allowed && currentSlide instanceof SlideFragment) {
+            ((SlideFragment) currentSlide).onSaveIntroState(_state);
+        }
+
+        return allowed;
     }
 
     @Override

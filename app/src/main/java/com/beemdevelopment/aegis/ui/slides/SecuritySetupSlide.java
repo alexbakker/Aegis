@@ -129,6 +129,8 @@ public class SecuritySetupSlide extends SlideFragment implements SlidePolicy {
         }
         if (_cryptType != CRYPT_TYPE_NONE) {
             _creds = new VaultFileCredentials();
+        } else {
+            _creds = null;
         }
     }
 
