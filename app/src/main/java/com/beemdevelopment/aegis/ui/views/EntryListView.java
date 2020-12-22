@@ -129,7 +129,7 @@ public class EntryListView extends Fragment implements EntryAdapter.Listener {
         super.onDestroyView();
     }
 
-    public void setGroupFilter(String group, boolean apply) {
+    public void setGroupFilter(List<String> group, boolean apply) {
         _adapter.setGroupFilter(group, apply);
         _touchCallback.setIsLongPressDragEnabled(_adapter.isDragAndDropAllowed());
 

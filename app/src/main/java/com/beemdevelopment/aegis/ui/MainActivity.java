@@ -13,7 +13,6 @@ import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -41,6 +40,8 @@ import com.beemdevelopment.aegis.vault.VaultManager;
 import com.beemdevelopment.aegis.vault.VaultManagerException;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.ChecksumException;
 import com.google.zxing.FormatException;
@@ -58,6 +59,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class MainActivity extends AegisActivity implements EntryListView.Listener {
     // activity request codes
@@ -76,7 +78,7 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
     private AegisApplication _app;
     private VaultManager _vault;
     private boolean _loaded;
-    private String _selectedGroup;
+    private List<String> _selectedGroups;
     private boolean _searchSubmitted;
 
     private boolean _isAuthenticating;
@@ -247,7 +249,7 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
         } else {
             intent.putExtra("entryUUID", entry.getUUID());
         }
-        intent.putExtra("selectedGroup", _selectedGroup);
+        intent.putExtra("selectedGroup", (ArrayList<String>) _selectedGroups);
         startActivityForResult(intent, requestCode);
     }
 
@@ -320,18 +322,18 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
     }
 
     private void updateGroupFilterMenu() {
-        SubMenu menu = _menu.findItem(R.id.action_filter).getSubMenu();
+        /*SubMenu menu = _menu.findItem(R.id.action_filter).getSubMenu();
         for (int i = menu.size() - 1; i >= 0; i--) {
             MenuItem item = menu.getItem(i);
             if (item.getItemId() == R.id.menu_filter_all) {
                 continue;
             }
             menu.removeItem(item.getItemId());
-        }
+        }*/
 
         // if the group no longer exists, switch back to 'All'
         TreeSet<String> groups = _vault.getGroups();
-        if (_selectedGroup != null && !groups.contains(_selectedGroup)) {
+        /*if (_selectedGroups != null && !groups.contains(_selectedGroup)) {
             menu.findItem(R.id.menu_filter_all).setChecked(true);
             setGroupFilter(null);
         }
@@ -347,7 +349,26 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
             menu.add(R.id.action_filter_group, Menu.NONE, 10, R.string.filter_ungrouped);
         }
 
-        menu.setGroupCheckable(R.id.action_filter_group, true, true);
+        menu.setGroupCheckable(R.id.action_filter_group, true, true);*/
+
+        ////// new
+
+        ChipGroup chipGroup = findViewById(R.id.groupChipGroup);
+        chipGroup.removeAllViews();
+        for (String group : groups) {
+            Chip chip = new Chip(this);
+            chip.setText(group);
+            chip.setCheckable(true);
+            chip.setCheckedIconVisible(true);
+            chip.setOnCheckedChangeListener((group1, checkedId) -> {
+                List<String> groupFilter = chipGroup.getCheckedChipIds().stream()
+                        .map(i -> ((Chip )findViewById(i)).getText().toString())
+                        .collect(Collectors.toList());
+                setGroupFilter(groupFilter);
+            });
+
+            chipGroup.addView(chip);
+        }
     }
 
     private void updateSortCategoryMenu() {
@@ -355,9 +376,9 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
         _menu.findItem(category.getMenuItem()).setChecked(true);
     }
 
-    private void setGroupFilter(String group) {
-        getSupportActionBar().setSubtitle(group);
-        _selectedGroup = group;
+    private void setGroupFilter(List<String> group) {
+        //getSupportActionBar().setSubtitle(group);
+        _selectedGroups = group;
         _entryListView.setGroupFilter(group, true);
     }
 
@@ -516,7 +537,7 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
 
             collapseSearchView();
             setTitle("Aegis");
-            setGroupFilter(_selectedGroup);
+            setGroupFilter(_selectedGroups);
             return;
         }
 
@@ -596,7 +617,7 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
                 _app.lock(true);
                 return true;
             default:
-                if (item.getGroupId() == R.id.action_filter_group) {
+                /*if (item.getGroupId() == R.id.action_filter_group) {
                     item.setChecked(true);
 
                     String group = null;
@@ -604,7 +625,7 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
                         group = item.getTitle().toString();
                     }
                     setGroupFilter(group);
-                }
+                }*/
 
                 if (item.getGroupId() == R.id.action_sort_category) {
                     item.setChecked(true);
