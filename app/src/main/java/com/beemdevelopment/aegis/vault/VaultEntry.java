@@ -8,17 +8,20 @@ import com.beemdevelopment.aegis.otp.OtpInfoException;
 import com.beemdevelopment.aegis.otp.TotpInfo;
 import com.beemdevelopment.aegis.util.UUIDMap;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Objects;
+import java.util.List;
 import java.util.UUID;
 
 public class VaultEntry extends UUIDMap.Value {
     private String _name = "";
     private String _issuer = "";
-    private String _group;
+    private String _oldGroup;
+    private final List<UUID> _groups = new ArrayList<>();
     private OtpInfo _info;
     private byte[] _icon;
 
@@ -38,13 +41,6 @@ public class VaultEntry extends UUIDMap.Value {
         setIssuer(issuer);
     }
 
-    public VaultEntry(OtpInfo info, String name, String issuer, String group) {
-        this(info);
-        setName(name);
-        setIssuer(issuer);
-        setGroup(group);
-    }
-
     public VaultEntry(GoogleAuthInfo info) {
         this(info.getOtpInfo(), info.getAccountName(), info.getIssuer());
     }
@@ -57,7 +53,7 @@ public class VaultEntry extends UUIDMap.Value {
             obj.put("uuid", getUUID().toString());
             obj.put("name", _name);
             obj.put("issuer", _issuer);
-            obj.put("group", _group);
+            obj.put("group", _groups);
             obj.put("icon", _icon == null ? JSONObject.NULL : Base64.encode(_icon));
             obj.put("info", _info.toJson());
         } catch (JSONException e) {
@@ -80,7 +76,16 @@ public class VaultEntry extends UUIDMap.Value {
         VaultEntry entry = new VaultEntry(uuid, info);
         entry.setName(obj.getString("name"));
         entry.setIssuer(obj.getString("issuer"));
-        entry.setGroup(obj.optString("group", null));
+
+        if (obj.has("group")) {
+            entry.setOldGroup(obj.getString("group"));
+        } else {
+            JSONArray rawGroups = obj.getJSONArray("groups");
+            for (int i = 0; i < rawGroups.length(); i++) {
+                UUID groupUUID = UUID.fromString(rawGroups.getString(i));
+                entry.getGroups().add(groupUUID);
+            }
+        }
 
         Object icon = obj.get("icon");
         if (icon != JSONObject.NULL) {
@@ -98,8 +103,12 @@ public class VaultEntry extends UUIDMap.Value {
         return _issuer;
     }
 
-    public String getGroup() {
-        return _group;
+    protected String getOldGroup() {
+        return _oldGroup;
+    }
+
+    public List<UUID> getGroups() {
+        return _groups;
     }
 
     public byte[] getIcon() {
@@ -118,8 +127,8 @@ public class VaultEntry extends UUIDMap.Value {
         _issuer = issuer;
     }
 
-    public void setGroup(String group) {
-        _group = group;
+    protected void setOldGroup(String oldGroup) {
+        _oldGroup = oldGroup;
     }
 
     public void setInfo(OtpInfo info) {
@@ -152,7 +161,8 @@ public class VaultEntry extends UUIDMap.Value {
     public boolean equivalates(VaultEntry entry) {
         return getName().equals(entry.getName())
                 && getIssuer().equals(entry.getIssuer())
-                && Objects.equals(getGroup(), entry.getGroup())
+                && getOldGroup().equals(entry.getOldGroup())
+                && getGroups().equals(entry.getGroups())
                 && getInfo().equals(entry.getInfo())
                 && Arrays.equals(getIcon(), entry.getIcon());
     }
