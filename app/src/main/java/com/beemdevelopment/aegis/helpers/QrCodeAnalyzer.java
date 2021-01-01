@@ -32,6 +32,8 @@ public class QrCodeAnalyzer implements ImageAnalysis.Analyzer {
 
     @Override
     public void analyze(@NonNull ImageProxy image) {
+        Log.i(TAG, String.format("Analyzing image for QR codes width=%d, height=%d, rot=%d", image.getWidth(), image.getHeight(), image.getImageInfo().getRotationDegrees()));
+
         int format = image.getFormat();
         if (format != YUV_420_888 && format != YUV_422_888 && format != YUV_444_888) {
             Log.e(TAG, String.format("Expected YUV format, got %d instead", format));
@@ -55,8 +57,9 @@ public class QrCodeAnalyzer implements ImageAnalysis.Analyzer {
             if (_listener != null) {
                 _listener.onQrCodeDetected(result);
             }
-        } catch (ChecksumException | FormatException | NotFoundException ignored) {
-
+        } catch (ChecksumException | FormatException | NotFoundException e) {
+            e.printStackTrace();
+            Log.e(TAG, String.format("ZXing error: %s", e.toString()));
         } finally {
             image.close();
         }
