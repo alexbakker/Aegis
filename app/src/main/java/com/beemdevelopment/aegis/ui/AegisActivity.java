@@ -66,6 +66,21 @@ public abstract class AegisActivity extends AppCompatActivity implements AegisAp
     }
 
     @Override
+    public void startActivity(Intent intent) {
+        startActivity(intent, null);
+    }
+
+    @Override
+    public void startActivity(Intent intent, Bundle bundle) {
+        startActivityForResult(intent, -1, bundle);
+    }
+
+    @Override
+    public void startActivityForResult(Intent intent, int requestCode) {
+        startActivityForResult(intent, requestCode, null);
+    }
+
+    @Override
     public void startActivityForResult(Intent intent, int requestCode, Bundle bundle) {
         if (isAutoLockBypassedForAction(intent.getAction())) {
             _app.setBlockAutoLock(true);
