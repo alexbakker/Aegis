@@ -1,13 +1,20 @@
 package com.beemdevelopment.aegis.ui;
 
+import android.Manifest;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import androidx.camera.core.CameraInfoUnavailableException;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageAnalysis;
@@ -16,8 +23,10 @@ import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 
+import com.beemdevelopment.aegis.BuildConfig;
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.ThemeMap;
+import com.beemdevelopment.aegis.helpers.PermissionHelper;
 import com.beemdevelopment.aegis.helpers.QrCodeAnalyzer;
 import com.beemdevelopment.aegis.otp.GoogleAuthInfo;
 import com.beemdevelopment.aegis.otp.GoogleAuthInfoException;
@@ -26,6 +35,8 @@ import com.beemdevelopment.aegis.vault.VaultEntry;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.zxing.Result;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -33,6 +44,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ScannerActivity extends AegisActivity implements QrCodeAnalyzer.Listener {
+    private static final int CODE_PERM_WRITE_STORAGE = 0;
+
     private ProcessCameraProvider _cameraProvider;
     private ListenableFuture<ProcessCameraProvider> _cameraProviderFuture;
 
@@ -41,6 +54,7 @@ public class ScannerActivity extends AegisActivity implements QrCodeAnalyzer.Lis
 
     private Menu _menu;
     private ImageAnalysis _analysis;
+    private QrCodeAnalyzer _analyzer;
     private PreviewView _previewView;
     private ExecutorService _executor;
 
@@ -84,6 +98,15 @@ public class ScannerActivity extends AegisActivity implements QrCodeAnalyzer.Lis
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (BuildConfig.DEBUG && !PermissionHelper.granted(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            PermissionHelper.request(this, CODE_PERM_WRITE_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         _executor.shutdownNow();
         super.onDestroy();
@@ -98,6 +121,9 @@ public class ScannerActivity extends AegisActivity implements QrCodeAnalyzer.Lis
     public boolean onCreateOptionsMenu(Menu menu) {
         _menu = menu;
         getMenuInflater().inflate(R.menu.menu_scanner, menu);
+        if (!BuildConfig.DEBUG) {
+            _menu.findItem(R.id.action_capture).setVisible(false);
+        }
         return true;
     }
 
@@ -109,6 +135,8 @@ public class ScannerActivity extends AegisActivity implements QrCodeAnalyzer.Lis
             bindPreview(_cameraProvider);
             updateCameraIcon();
             return true;
+        } else if (item.getItemId() == R.id.action_capture) {
+            _analyzer.setCaptureNext(true);
         }
 
         return super.onOptionsItemSelected(item);
@@ -155,7 +183,8 @@ public class ScannerActivity extends AegisActivity implements QrCodeAnalyzer.Lis
                 .setTargetResolution(QrCodeAnalyzer.RESOLUTION)
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build();
-        _analysis.setAnalyzer(_executor, new QrCodeAnalyzer(this));
+        _analyzer = new QrCodeAnalyzer(this, this);
+        _analysis.setAnalyzer(_executor, _analyzer);
 
         cameraProvider.bindToLifecycle(this, selector, preview, _analysis);
     }
@@ -183,6 +212,25 @@ public class ScannerActivity extends AegisActivity implements QrCodeAnalyzer.Lis
                         e.isPhoneFactor() ? R.string.read_qr_error_phonefactor : R.string.read_qr_error,
                         e, ((dialog, which) -> bindPreview(_cameraProvider)));
             }
+        }
+    }
+
+    @Override
+    public void onImageCaptured(Bitmap bitmap) {
+        try {
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg");
+
+            Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+            try (OutputStream outStream = getContentResolver().openOutputStream(uri)) {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 99, outStream);
+            }
+
+            new Handler(Looper.getMainLooper()).post(() -> {
+                Toast.makeText(this, "Image captured and written to media folder", Toast.LENGTH_SHORT).show();
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
