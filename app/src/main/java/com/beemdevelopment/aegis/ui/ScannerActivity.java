@@ -1,10 +1,18 @@
 package com.beemdevelopment.aegis.ui;
 
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PixelFormat;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -13,6 +21,8 @@ import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
+import androidx.camera.view.CameraController;
+import androidx.camera.view.LifecycleCameraController;
 import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 
@@ -42,6 +52,8 @@ public class ScannerActivity extends AegisActivity implements QrCodeAnalyzer.Lis
     private Menu _menu;
     private ImageAnalysis _analysis;
     private PreviewView _previewView;
+    private SurfaceView _finder;
+    private Paint _finderPaint;
     private ExecutorService _executor;
 
     private int _batchId = 0;
@@ -57,6 +69,44 @@ public class ScannerActivity extends AegisActivity implements QrCodeAnalyzer.Lis
         _entries = new ArrayList<>();
         _lenses = new ArrayList<>();
         _previewView = findViewById(R.id.preview_view);
+        _finder = findViewById(R.id.finder);
+        _finder.setZOrderOnTop(true);
+        _finder.getHolder().setFormat(PixelFormat.TRANSPARENT);
+        _finder.getHolder().addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(@NonNull SurfaceHolder holder) {
+
+            }
+
+            @Override
+            public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
+                Canvas canvas = holder.lockCanvas();
+                canvas.drawColor(0, PorterDuff.Mode.CLEAR);
+
+                if (_finderPaint == null) {
+                    _finderPaint = new Paint();
+                    _finderPaint.setStyle(Paint.Style.STROKE);
+                    _finderPaint.setColor(Color.WHITE);
+                    _finderPaint.setStrokeWidth(3);
+                }
+
+                _previewView.getViewPort()
+                Log.e("ScannerActivity", String.format("Canvas width=%d, height=%d", canvas.getWidth(), canvas.getHeight()));
+
+                int parts = 6;
+                int xOff = canvas.getWidth() / parts;
+                int yCenter = canvas.getHeight() / 2;
+                int yOff = (xOff * (parts - 2)) / 2;
+
+                canvas.drawRect(xOff, yCenter - yOff, xOff * (parts - 1), yCenter + yOff, _finderPaint);
+                holder.unlockCanvasAndPost(canvas);
+            }
+
+            @Override
+            public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
+
+            }
+        });
         _executor = Executors.newSingleThreadExecutor();
 
         _cameraProviderFuture = ProcessCameraProvider.getInstance(this);
@@ -156,6 +206,9 @@ public class ScannerActivity extends AegisActivity implements QrCodeAnalyzer.Lis
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build();
         _analysis.setAnalyzer(_executor, new QrCodeAnalyzer(this));
+
+        CameraController controller = new LifecycleCameraController(this);
+        _previewView.setController(controller);
 
         cameraProvider.bindToLifecycle(this, selector, preview, _analysis);
     }

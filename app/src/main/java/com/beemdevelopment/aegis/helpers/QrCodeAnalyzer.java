@@ -1,5 +1,6 @@
 package com.beemdevelopment.aegis.helpers;
 
+import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -26,7 +27,7 @@ import static android.graphics.ImageFormat.YUV_444_888;
 
 public class QrCodeAnalyzer implements ImageAnalysis.Analyzer {
     private static final String TAG = QrCodeAnalyzer.class.getSimpleName();
-    public static final Size RESOLUTION = new Size(1200, 1600);
+    public static final Size RESOLUTION = new Size(1920, 1080);
 
     private final QrCodeAnalyzer.Listener _listener;
 
@@ -48,8 +49,9 @@ public class QrCodeAnalyzer implements ImageAnalysis.Analyzer {
         buf.get(data);
         buf.rewind();
 
+        Rect cropRect = getCropRect(image.getWidth(), image.getHeight());
         PlanarYUVLuminanceSource source = new PlanarYUVLuminanceSource(
-                data, image.getWidth(), image.getHeight(), 0, 0, image.getWidth(), image.getHeight(), false
+                data, image.getWidth(), image.getHeight(), cropRect.left, cropRect.top, cropRect.width(), cropRect.height(), false
         );
 
         QRCodeReader reader = new QRCodeReader();
@@ -64,6 +66,14 @@ public class QrCodeAnalyzer implements ImageAnalysis.Analyzer {
         } finally {
             image.close();
         }
+    }
+
+    public static Rect getCropRect(int width, int height) {
+        int parts = 6;
+        int xOff = width / parts;
+        int yCenter = height / 2;
+        int yOff = (xOff * (parts - 2)) / 2;
+        return new Rect(xOff, yCenter - yOff, xOff * (parts - 1), yCenter + yOff);
     }
 
     public interface Listener {
