@@ -20,6 +20,7 @@ import androidx.preference.Preference;
 
 import com.beemdevelopment.aegis.BuildConfig;
 import com.beemdevelopment.aegis.R;
+import com.beemdevelopment.aegis.helpers.AegisActivityHelper;
 import com.beemdevelopment.aegis.helpers.DropdownHelper;
 import com.beemdevelopment.aegis.importers.DatabaseImporter;
 import com.beemdevelopment.aegis.ui.ImportEntriesActivity;
@@ -60,7 +61,7 @@ public class ImportExportPreferencesFragment extends PreferencesFragment {
 
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.setType("*/*");
-                startActivityForResult(intent, CODE_IMPORT_SELECT);
+                AegisActivityHelper.startActivityForResult(this, intent, CODE_IMPORT_SELECT);
             });
             return true;
         });
@@ -127,7 +128,7 @@ public class ImportExportPreferencesFragment extends PreferencesFragment {
         Intent intent = new Intent(getActivity(), ImportEntriesActivity.class);
         intent.putExtra("importerType", importerType);
         intent.putExtra("file", file);
-        startActivityForResult(intent, CODE_IMPORT);
+        AegisActivityHelper.startActivityForResult(this, intent, CODE_IMPORT);
     }
 
     private void startExport() {
@@ -183,7 +184,7 @@ public class ImportExportPreferencesFragment extends PreferencesFragment {
                         .addCategory(Intent.CATEGORY_OPENABLE)
                         .setType(getExportMimeType(requestCode))
                         .putExtra(Intent.EXTRA_TITLE, fileInfo.toString());
-                startActivityForResult(intent, requestCode);
+                AegisActivityHelper.startActivityForResult(this, intent, requestCode);
             });
 
             btnNeutral.setOnClickListener(v -> {
@@ -220,7 +221,7 @@ public class ImportExportPreferencesFragment extends PreferencesFragment {
                             .setType(getExportMimeType(requestCode))
                             .putExtra(Intent.EXTRA_STREAM, uri);
                     Intent chooser = Intent.createChooser(intent, getString(R.string.pref_export_summary));
-                    startActivity(chooser);
+                    AegisActivityHelper.startActivity(this, chooser);
                 });
             });
         });

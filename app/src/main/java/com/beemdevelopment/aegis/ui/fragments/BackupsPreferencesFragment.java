@@ -11,6 +11,7 @@ import androidx.preference.SwitchPreferenceCompat;
 
 import com.beemdevelopment.aegis.Preferences;
 import com.beemdevelopment.aegis.R;
+import com.beemdevelopment.aegis.helpers.AegisActivityHelper;
 import com.beemdevelopment.aegis.ui.dialogs.Dialogs;
 import com.beemdevelopment.aegis.vault.VaultManagerException;
 
@@ -134,6 +135,6 @@ public class BackupsPreferencesFragment extends PreferencesFragment {
                 | Intent.FLAG_GRANT_PREFIX_URI_PERMISSION);
 
         getApp().setBlockAutoLock(true);
-        startActivityForResult(intent, CODE_BACKUPS);
+        AegisActivityHelper.startActivityForResult(this, intent, CODE_BACKUPS);
     }
 }

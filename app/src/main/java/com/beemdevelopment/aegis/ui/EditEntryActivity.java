@@ -33,6 +33,7 @@ import com.avito.android.krop.KropView;
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.encoding.Base32;
 import com.beemdevelopment.aegis.encoding.EncodingException;
+import com.beemdevelopment.aegis.helpers.AegisActivityHelper;
 import com.beemdevelopment.aegis.helpers.DropdownHelper;
 import com.beemdevelopment.aegis.helpers.EditTextHelper;
 import com.beemdevelopment.aegis.helpers.IconViewHelper;
@@ -427,7 +428,7 @@ public class EditEntryActivity extends AegisActivity {
 
         Intent chooserIntent = Intent.createChooser(galleryIntent, getString(R.string.select_icon));
         chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] { fileIntent });
-        startActivityForResult(chooserIntent, PICK_IMAGE_REQUEST);
+        AegisActivityHelper.startActivityForResult(this, chooserIntent, PICK_IMAGE_REQUEST);
     }
 
     private void startIconSelection() {

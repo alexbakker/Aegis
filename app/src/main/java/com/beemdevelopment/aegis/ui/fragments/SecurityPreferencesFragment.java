@@ -18,11 +18,12 @@ import com.beemdevelopment.aegis.Preferences;
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.crypto.KeyStoreHandle;
 import com.beemdevelopment.aegis.crypto.KeyStoreHandleException;
+import com.beemdevelopment.aegis.helpers.AegisActivityHelper;
 import com.beemdevelopment.aegis.helpers.BiometricSlotInitializer;
 import com.beemdevelopment.aegis.helpers.BiometricsHelper;
 import com.beemdevelopment.aegis.services.NotificationService;
-import com.beemdevelopment.aegis.ui.dialogs.Dialogs;
 import com.beemdevelopment.aegis.ui.SlotManagerActivity;
+import com.beemdevelopment.aegis.ui.dialogs.Dialogs;
 import com.beemdevelopment.aegis.ui.preferences.SwitchPreference;
 import com.beemdevelopment.aegis.ui.tasks.PasswordSlotDecryptTask;
 import com.beemdevelopment.aegis.vault.VaultFileCredentials;
@@ -167,7 +168,7 @@ public class SecurityPreferencesFragment extends PreferencesFragment {
         _slotsPreference.setOnPreferenceClickListener(preference -> {
             Intent intent = new Intent(getActivity(), SlotManagerActivity.class);
             intent.putExtra("creds", getVault().getCredentials());
-            startActivityForResult(intent, CODE_SLOTS);
+            AegisActivityHelper.startActivityForResult(this, intent, CODE_SLOTS);
             return true;
         });
 

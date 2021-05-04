@@ -26,6 +26,7 @@ import com.beemdevelopment.aegis.Preferences;
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.SortCategory;
 import com.beemdevelopment.aegis.ViewMode;
+import com.beemdevelopment.aegis.helpers.AegisActivityHelper;
 import com.beemdevelopment.aegis.helpers.BitmapHelper;
 import com.beemdevelopment.aegis.helpers.FabScrollHelper;
 import com.beemdevelopment.aegis.helpers.PermissionHelper;
@@ -246,20 +247,20 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
         Intent intent = new Intent(this, EditEntryActivity.class);
         intent.putExtra("newEntry", entry);
         intent.putExtra("isManual", false);
-        startActivityForResult(intent, requestCode);
+        AegisActivityHelper.startActivityForResult(this, intent, requestCode);
     }
 
     private void startEditEntryActivityForManual(int requestCode) {
         Intent intent = new Intent(this, EditEntryActivity.class);
         intent.putExtra("newEntry", VaultEntry.getDefault());
         intent.putExtra("isManual", true);
-        startActivityForResult(intent, requestCode);
+        AegisActivityHelper.startActivityForResult(this, intent, requestCode);
     }
 
     private void startEditEntryActivity(int requestCode, VaultEntry entry) {
         Intent intent = new Intent(this, EditEntryActivity.class);
         intent.putExtra("entryUUID", entry.getUUID());
-        startActivityForResult(intent, requestCode);
+        AegisActivityHelper.startActivityForResult(this, intent, requestCode);
     }
 
     private void onScanResult(Intent data) {
@@ -349,7 +350,7 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
         if (!autoTime && getPreferences().isTimeSyncWarningEnabled()) {
             Dialogs.showTimeSyncWarningDialog(this, (dialog, which) -> {
                 Intent intent = new Intent(Settings.ACTION_DATE_SETTINGS);
-                startActivity(intent);
+                AegisActivityHelper.startActivity(this, intent);
             });
         }
     }
@@ -366,7 +367,7 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
         }
 
         Intent scannerActivity = new Intent(getApplicationContext(), ScannerActivity.class);
-        startActivityForResult(scannerActivity, CODE_SCAN);
+        AegisActivityHelper.startActivityForResult(this, scannerActivity, CODE_SCAN);
     }
 
     private void startScanImageActivity() {
@@ -378,7 +379,7 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
 
         Intent chooserIntent = Intent.createChooser(galleryIntent, getString(R.string.select_picture));
         chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] { fileIntent });
-        startActivityForResult(chooserIntent, CODE_SCAN_IMAGE);
+        AegisActivityHelper.startActivityForResult(this, chooserIntent, CODE_SCAN_IMAGE);
     }
 
     private void startPreferencesActivity() {
@@ -389,7 +390,7 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
         Intent intent = new Intent(this, PreferencesActivity.class);
         intent.putExtra("fragment", fragmentType);
         intent.putExtra("pref", preference);
-        startActivityForResult(intent, CODE_PREFERENCES);
+        AegisActivityHelper.startActivityForResult(this, intent, CODE_PREFERENCES);
     }
 
     private void doShortcutActions() {
@@ -462,7 +463,7 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
                     Toast.makeText(this, getString(R.string.vault_not_found), Toast.LENGTH_SHORT).show();
                 }
                 Intent intro = new Intent(this, IntroActivity.class);
-                startActivityForResult(intro, CODE_DO_INTRO);
+                AegisActivityHelper.startActivityForResult(this, intro, CODE_DO_INTRO);
                 _isDoingIntro = true;
                 return;
             }
@@ -581,7 +582,7 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
             }
             case R.id.action_about: {
                 Intent intent = new Intent(this, AboutActivity.class);
-                startActivity(intent);
+                AegisActivityHelper.startActivity(this, intent);
                 return true;
             }
             case R.id.action_lock:
@@ -635,7 +636,7 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
         if (!_isAuthenticating) {
             Intent intent = new Intent(this, AuthActivity.class);
             intent.putExtra("inhibitBioPrompt", inhibitBioPrompt);
-            startActivityForResult(intent, CODE_DECRYPT);
+            AegisActivityHelper.startActivityForResult(this, intent, CODE_DECRYPT);
             _isAuthenticating = true;
         }
     }
@@ -781,7 +782,7 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
                         }
 
                         intent.putExtra("authInfos", authInfos);
-                        startActivity(intent);
+                        AegisActivityHelper.startActivity(MainActivity.this, intent);
 
                         mode.finish();
                         return true;

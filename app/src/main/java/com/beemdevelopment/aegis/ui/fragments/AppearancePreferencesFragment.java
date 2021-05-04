@@ -12,8 +12,9 @@ import com.beemdevelopment.aegis.Preferences;
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.Theme;
 import com.beemdevelopment.aegis.ViewMode;
-import com.beemdevelopment.aegis.ui.dialogs.Dialogs;
+import com.beemdevelopment.aegis.helpers.AegisActivityHelper;
 import com.beemdevelopment.aegis.ui.GroupManagerActivity;
+import com.beemdevelopment.aegis.ui.dialogs.Dialogs;
 import com.beemdevelopment.aegis.vault.VaultEntry;
 
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ public class AppearancePreferencesFragment extends PreferencesFragment {
         _groupsPreference.setOnPreferenceClickListener(preference -> {
             Intent intent = new Intent(getActivity(), GroupManagerActivity.class);
             intent.putExtra("groups", new ArrayList<>(getVault().getGroups()));
-            startActivityForResult(intent, CODE_GROUPS);
+            AegisActivityHelper.startActivityForResult(this, intent, CODE_GROUPS);
             return true;
         });
 

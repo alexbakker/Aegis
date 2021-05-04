@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.beemdevelopment.aegis.AegisApplication;
 import com.beemdevelopment.aegis.R;
+import com.beemdevelopment.aegis.helpers.AegisActivityHelper;
 import com.beemdevelopment.aegis.helpers.FabScrollHelper;
 import com.beemdevelopment.aegis.icons.IconPack;
 import com.beemdevelopment.aegis.icons.IconPackException;
@@ -144,7 +145,7 @@ public class IconPacksManagerFragment extends Fragment implements IconPackAdapte
     private void startImportIconPack() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("application/zip");
-        startActivityForResult(intent, CODE_IMPORT);
+        AegisActivityHelper.startActivityForResult(this, intent, CODE_IMPORT);
     }
 
     private void updateEmptyState() {

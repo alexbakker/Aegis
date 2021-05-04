@@ -18,6 +18,7 @@ import androidx.core.view.LayoutInflaterCompat;
 import com.beemdevelopment.aegis.BuildConfig;
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.Theme;
+import com.beemdevelopment.aegis.helpers.AegisActivityHelper;
 import com.beemdevelopment.aegis.helpers.ThemeHelper;
 import com.beemdevelopment.aegis.licenses.GlideLicense;
 import com.beemdevelopment.aegis.licenses.ProtobufLicense;
@@ -108,7 +109,7 @@ public class AboutActivity extends AegisActivity {
         browserIntent.setData(Uri.parse(url));
         browserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        startActivity(browserIntent);
+        AegisActivityHelper.startActivity(this, browserIntent);
     }
 
     private void copyToClipboard(String text, @StringRes int messageId) {
@@ -124,7 +125,7 @@ public class AboutActivity extends AegisActivity {
         mailIntent.putExtra(Intent.EXTRA_EMAIL, mailaddress);
         mailIntent.putExtra(Intent.EXTRA_SUBJECT, R.string.app_name_full);
 
-        startActivity(Intent.createChooser(mailIntent, this.getString(R.string.email)));
+        AegisActivityHelper.startActivity(this, Intent.createChooser(mailIntent, this.getString(R.string.email)));
     }
 
     private void showThirdPartyLicenseDialog() {
