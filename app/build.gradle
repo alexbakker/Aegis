@@ -34,11 +34,6 @@ android {
         testInstrumentationRunnerArguments clearPackageData: 'true'
     }
 
-    lintOptions {
-        abortOnError true
-        disable "MissingTranslation"
-        checkDependencies true
-    }
 
     testOptions {
         execution 'ANDROIDX_TEST_ORCHESTRATOR'
@@ -102,6 +97,11 @@ android {
         targetCompatibility 1.8
         sourceCompatibility 1.8
         coreLibraryDesugaringEnabled true
+    }
+    lint {
+        abortOnError true
+        checkDependencies true
+        disable 'MissingTranslation'
     }
 }
 
