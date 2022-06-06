@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.core.util.AtomicFile;
 
 import com.beemdevelopment.aegis.otp.GoogleAuthInfo;
+import com.beemdevelopment.aegis.util.Cloner;
 import com.beemdevelopment.aegis.util.IOUtils;
 
 import org.json.JSONObject;
@@ -134,7 +135,7 @@ public class VaultRepository {
      * is enabled, the vault will be encrypted automatically.
      */
     public void export(OutputStream stream) throws VaultRepositoryException {
-        export(stream, getCredentials());
+        export(stream, _creds);
     }
 
     /**
@@ -219,8 +220,11 @@ public class VaultRepository {
         return groups;
     }
 
+    /**
+     * Retrieves a copy of this VaultRepository's credentials.
+     */
     public VaultFileCredentials getCredentials() {
-        return _creds;
+        return _creds == null ? null : Cloner.clone(_creds);
     }
 
     public void setCredentials(VaultFileCredentials creds) {
