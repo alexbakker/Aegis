@@ -9,5 +9,9 @@
         android:icon="@drawable/ic_camera_front_24dp"
         android:title="@string/switch_camera"
         app:showAsAction="always"/>
-
+    <item
+        android:id="@+id/action_capture"
+        android:title="Capture debug info"
+        app:showAsAction="never"
+        android:visible="false"/>
 </menu>

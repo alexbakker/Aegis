@@ -304,6 +304,14 @@ public class VaultManager {
      * Starts an external activity, temporarily blocks automatic lock of Aegis and
      * shows an error dialog if the target activity is not found.
      */
+    public void startActivity(Activity activity, Intent intent) {
+        startActivityForResult(activity, intent, -1);
+    }
+
+    /**
+     * Starts an external activity, temporarily blocks automatic lock of Aegis and
+     * shows an error dialog if the target activity is not found.
+     */
     public void startActivityForResult(Activity activity, Intent intent, int requestCode) {
         setBlockAutoLock(true);
 

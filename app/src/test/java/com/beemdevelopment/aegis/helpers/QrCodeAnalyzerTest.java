@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import android.graphics.Rect;
 import android.media.Image;
+import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,6 +15,7 @@ import androidx.camera.core.ImageInfo;
 import androidx.camera.core.ImageProxy;
 
 import com.beemdevelopment.aegis.util.IOUtils;
+import com.google.zxing.Result;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,9 +48,17 @@ public class QrCodeAnalyzerTest {
 
     private boolean scan(String fileName, int width, int height, int rowStride) {
         AtomicBoolean found = new AtomicBoolean();
-        QrCodeAnalyzer analyzer = new QrCodeAnalyzer(result -> {
-            assertEquals(_expectedUri, result.getText());
-            found.set(true);
+        QrCodeAnalyzer analyzer = new QrCodeAnalyzer(new QrCodeAnalyzer.Listener() {
+            @Override
+            public void onQrCodeDetected(Result result) {
+                assertEquals(_expectedUri, result.getText());
+                found.set(true);
+            }
+
+            @Override
+            public void onYCaptured(Uri uri, String info, byte[] y) {
+
+            }
         });
 
         FakeImageProxy imgProxy;
