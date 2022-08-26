@@ -145,7 +145,7 @@
     <string name="app_description">Aegis özgür, güvenli ve açık kaynak 2FA uygulamasıdır</string>
     <string name="setup_completed">Kurulum Tamamlandı</string>
     <string name="setup_completed_description">Aegis kuruldu ve kullanılmaya hazır.</string>
-    <string name="vault_not_found">Kasa bulunmadı, kurulum başlatılıyor...</string>
+    <string name="vault_not_found">Kasa bulunmadı, kurulum başlatılıyor…</string>
     <string name="copied">Kopyalandı</string>
     <string name="errors_copied">Hatalar panoya kopyalandı</string>
     <string name="version_copied">Sürüm panoya kopyalandı</string>

@@ -161,7 +161,7 @@
     <string name="sort_alphabetically_name">खाता (A से Z)</string>
     <string name="sort_alphabetically_name_reverse">खाता (Z से A)</string>
     <string name="sort_custom">कस्टम</string>
-    <string name="new_group">नया समूह...</string>
+    <string name="new_group">नया समूह…</string>
     <string name="group_name_hint">समूह का नाम</string>
     <string name="preference_manage_groups">समूहों को संपादित करें</string>
     <string name="preference_manage_groups_summary">यहां अपने समूहों को प्रबंधित करें और हटाएँ</string>
