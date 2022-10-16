@@ -2,7 +2,7 @@ package com.beemdevelopment.aegis.crypto;
 
 import android.os.Build;
 
-import org.bouncycastle.crypto.generators.SCrypt;
+import org.conscrypt.Conscrypt;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -13,7 +13,9 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.Security;
 import java.security.spec.AlgorithmParameterSpec;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
 
 import javax.crypto.BadPaddingException;
@@ -22,6 +24,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -36,14 +39,26 @@ public class CryptoUtils {
     public static final int CRYPTO_SCRYPT_r = 8;
     public static final int CRYPTO_SCRYPT_p = 1;
 
+    static {
+        Security.insertProviderAt(Conscrypt.newProvider(), 1);
+    }
+
     public static SecretKey deriveKey(byte[] input, SCryptParameters params) {
-        byte[] keyBytes = SCrypt.generate(input, params.getSalt(), params.getN(), params.getR(), params.getP(), CRYPTO_AEAD_KEY_SIZE);
-        return new SecretKeySpec(keyBytes, 0, keyBytes.length, "AES");
+        return deriveKey(new String(input, StandardCharsets.UTF_8).toCharArray(), params);
     }
 
     public static SecretKey deriveKey(char[] password, SCryptParameters params) {
-        byte[] bytes = toBytes(password);
-        return deriveKey(bytes, params);
+        SecretKey key;
+        try {
+            SecretKeyFactory factory = SecretKeyFactory.getInstance("SCRYPT");
+            ScryptKeySpec spec = new ScryptKeySpec(password, params.getSalt(), params.getN(), params.getR(), params.getP(), CRYPTO_AEAD_KEY_SIZE);
+            key = factory.generateSecret(spec);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new RuntimeException(e);
+        }
+
+        byte[] keyBytes = key.getEncoded();
+        return new SecretKeySpec(keyBytes, 0, keyBytes.length, "AES");
     }
 
     public static Cipher createEncryptCipher(SecretKey key)

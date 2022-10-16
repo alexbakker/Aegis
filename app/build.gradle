@@ -171,7 +171,7 @@ dependencies {
     implementation 'de.psdev.licensesdialog:licensesdialog:2.2.0'
     implementation 'net.lingala.zip4j:zip4j:2.11.2'
     implementation 'info.guardianproject.trustedintents:trustedintents:0.2'
-    implementation 'org.bouncycastle:bcprov-jdk18on:1.72'
+    implementation 'org.conscrypt:conscrypt-android:2.5.2'
     implementation "org.simpleflatmapper:sfm-csv:8.2.3"
 
     androidTestAnnotationProcessor "com.google.dagger:hilt-android-compiler:$hiltVersion"
