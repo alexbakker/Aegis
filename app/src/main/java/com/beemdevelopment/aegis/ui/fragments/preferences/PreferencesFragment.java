@@ -8,10 +8,13 @@ import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceGroupAdapter;
+import androidx.preference.PreferenceScreen;
 
 import com.beemdevelopment.aegis.Preferences;
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.ui.dialogs.Dialogs;
+import com.beemdevelopment.aegis.ui.preferences.HighlightablePreferenceGroupAdapter;
 import com.beemdevelopment.aegis.vault.VaultManager;
 import com.beemdevelopment.aegis.vault.VaultRepositoryException;
 
@@ -23,7 +26,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 public abstract class PreferencesFragment extends PreferenceFragmentCompat {
     // activity request codes
     public static final int CODE_IMPORT_SELECT = 0;
-    public static final int CODE_GROUPS = 3;
     public static final int CODE_IMPORT = 4;
     public static final int CODE_EXPORT = 5;
     public static final int CODE_EXPORT_PLAIN = 6;
@@ -31,6 +33,7 @@ public abstract class PreferencesFragment extends PreferenceFragmentCompat {
     public static final int CODE_BACKUPS = 8;
 
     private Intent _result;
+    private HighlightablePreferenceGroupAdapter _adapter;
 
     @Inject
     Preferences _prefs;
@@ -44,6 +47,15 @@ public abstract class PreferencesFragment extends PreferenceFragmentCompat {
         setResult(new Intent());
     }
 
+    @NonNull
+    @Override
+    protected PreferenceGroupAdapter onCreateAdapter(@NonNull PreferenceScreen preferenceScreen) {
+        Intent intent = requireActivity().getIntent();
+        String preference = intent.getStringExtra("pref");
+        _adapter = new HighlightablePreferenceGroupAdapter(preferenceScreen, preference, false);
+        return _adapter;
+    }
+
     @Override
     @CallSuper
     public void onResume() {
@@ -52,7 +64,7 @@ public abstract class PreferencesFragment extends PreferenceFragmentCompat {
         Intent intent = requireActivity().getIntent();
         String preference = intent.getStringExtra("pref");
         if (preference != null) {
-            scrollToPreference(preference);
+            _adapter.requestHighlight(getView(), getListView());
             intent.removeExtra("pref");
         }
     }

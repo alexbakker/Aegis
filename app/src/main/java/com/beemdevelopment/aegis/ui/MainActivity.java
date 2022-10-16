@@ -810,7 +810,7 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
         } else if (_prefs.isBackupsReminderNeeded()) {
             _textErrorBar.setText(R.string.backup_reminder_bar_message);
             _btnErrorBar.setOnClickListener(view -> {
-                startPreferencesActivity();
+                startPreferencesActivity(BackupsPreferencesFragment.class, "pref_backups");
             });
             _btnErrorBar.setVisibility(View.VISIBLE);
         } else if (_prefs.isPlaintextBackupWarningNeeded()) {
