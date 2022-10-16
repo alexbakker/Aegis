@@ -258,6 +258,10 @@ public class Preferences {
         return new Locale(parts[0], parts[1]);
     }
 
+    public void setLocale(Locale locale) {
+        _prefs.edit().putString("pref_lang", locale.toString()).apply();
+    }
+
     public boolean isAndroidBackupsEnabled() {
         return _prefs.getBoolean("pref_android_backups", false);
     }

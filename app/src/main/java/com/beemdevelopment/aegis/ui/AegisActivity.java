@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 import androidx.annotation.CallSuper;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.os.LocaleListCompat;
 
 import com.beemdevelopment.aegis.Preferences;
 import com.beemdevelopment.aegis.R;
@@ -47,6 +49,7 @@ public abstract class AegisActivity extends AppCompatActivity implements VaultMa
         // set the theme and locale before creating the activity
         _prefs = EarlyEntryPoints.get(getApplicationContext(), PrefEntryPoint.class).getPreferences();
         onSetTheme();
+        updateLocalePreference();
         setLocale(_prefs.getLocale());
         super.onCreate(savedInstanceState);
 
@@ -119,12 +122,23 @@ public abstract class AegisActivity extends AppCompatActivity implements VaultMa
     }
 
     protected void setLocale(Locale locale) {
-        Locale.setDefault(locale);
+        AppCompatDelegate.setApplicationLocales(LocaleListCompat.create(_prefs.getLocale()));
+        /*Locale.setDefault(locale);
 
         Configuration config = new Configuration();
         config.locale = locale;
 
-        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
+        getResources().updateConfiguration(config, getResources().getDisplayMetrics());*/
+    }
+
+    private void updateLocalePreference() {
+        LocaleListCompat localeList = AppCompatDelegate.getApplicationLocales();
+        if (!localeList.isEmpty()) {
+            Locale newLocale = localeList.get(0);
+            if (newLocale != null && !newLocale.equals(_prefs.getLocale())) {
+                _prefs.setLocale(newLocale);
+            }
+        }
     }
 
     protected boolean saveVault() {

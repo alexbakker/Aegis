@@ -21,6 +21,7 @@
         android:dataExtractionRules="@xml/backup_rules"
         android:backupAgent=".AegisBackupAgent"
         android:enableOnBackInvokedCallback="true"
+        android:localeConfig="@xml/locales_config"
         android:icon="@mipmap/${iconName}"
         android:label="Aegis"
         android:supportsRtl="true"

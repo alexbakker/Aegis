@@ -1,7 +1,6 @@
 package com.beemdevelopment.aegis.ui.fragments.preferences;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
@@ -12,8 +11,6 @@ import com.beemdevelopment.aegis.Theme;
 import com.beemdevelopment.aegis.ViewMode;
 import com.beemdevelopment.aegis.ui.GroupManagerActivity;
 import com.beemdevelopment.aegis.ui.dialogs.Dialogs;
-
-import java.util.ArrayList;
 
 public class AppearancePreferencesFragment extends PreferencesFragment {
     private Preference _groupsPreference;
@@ -66,16 +63,11 @@ public class AppearancePreferencesFragment extends PreferencesFragment {
         });
 
         Preference langPreference = requirePreference("pref_lang");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            langPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                getResult().putExtra("needsRecreate", true);
-                requireActivity().recreate();
-                return true;
-            });
-        } else {
-            // Setting locale doesn't work on Marshmallow or below
-            langPreference.setVisible(false);
-        }
+        langPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+            getResult().putExtra("needsRecreate", true);
+            requireActivity().recreate();
+            return true;
+        });
 
         int currentViewMode = _prefs.getCurrentViewMode().ordinal();
         Preference viewModePreference = requirePreference("pref_view_mode");
