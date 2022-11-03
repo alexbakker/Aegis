@@ -23,7 +23,7 @@ public class QrDecodeTask extends ProgressDialogTask<List<Uri>, List<QrDecodeTas
     @Override
     protected List<Result> doInBackground(List<Uri>... params) {
         List<Result> res = new ArrayList<>();
-        Context context = getDialog().getContext();
+        Context context = getContext();
 
         List<Uri> uris = params[0];
         for (Uri uri : uris) {

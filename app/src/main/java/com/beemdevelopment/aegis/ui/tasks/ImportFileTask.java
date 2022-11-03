@@ -25,7 +25,7 @@ public class ImportFileTask extends ProgressDialogTask<ImportFileTask.Params, Im
 
     @Override
     protected Result doInBackground(Params... params) {
-        Context context = getDialog().getContext();
+        Context context = getContext();
 
         Params p = params[0];
         try (InputStream inStream = context.getContentResolver().openInputStream(p.getUri())) {

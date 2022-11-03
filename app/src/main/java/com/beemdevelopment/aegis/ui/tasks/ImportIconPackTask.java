@@ -24,7 +24,7 @@ public class ImportIconPackTask extends ProgressDialogTask<ImportIconPackTask.Pa
 
     @Override
     protected ImportIconPackTask.Result doInBackground(ImportIconPackTask.Params... params) {
-        Context context = getDialog().getContext();
+        Context context = getContext();
         ImportIconPackTask.Params param = params[0];
 
         File tempFile = null;

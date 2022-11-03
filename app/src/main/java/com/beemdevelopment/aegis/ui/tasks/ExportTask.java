@@ -26,7 +26,7 @@ public class ExportTask extends ProgressDialogTask<ExportTask.Params, Exception>
 
         ExportTask.Params params = args[0];
         try (InputStream inStream = new FileInputStream(params.getFile());
-             OutputStream outStream = getDialog().getContext().getContentResolver().openOutputStream(params.getDestUri(), "w")) {
+             OutputStream outStream = getContext().getContentResolver().openOutputStream(params.getDestUri(), "w")) {
             IOUtils.copy(inStream, outStream);
             return null;
         } catch (IOException e) {

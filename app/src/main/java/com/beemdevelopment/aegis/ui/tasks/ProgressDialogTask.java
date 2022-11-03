@@ -7,41 +7,65 @@ import android.os.AsyncTask;
 import android.os.Process;
 
 import androidx.annotation.CallSuper;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.LifecycleOwner;
 
 import com.beemdevelopment.aegis.ui.dialogs.Dialogs;
 
-public abstract class ProgressDialogTask<Params, Result> extends AsyncTask<Params, String, Result> {
-    private ProgressDialog _dialog;
+import java.lang.ref.WeakReference;
 
+public abstract class ProgressDialogTask<Params, Result> extends AsyncTask<Params, String, Result> {
+    @Nullable
+    private WeakReference<Lifecycle> _lifecycle;
+
+    private final WeakReference<ProgressDialog> _dialog;
+
+    @SuppressWarnings("deprecation")
     public ProgressDialogTask(Context context, String message) {
-        _dialog = new ProgressDialog(context);
-        _dialog.setCancelable(false);
-        _dialog.setMessage(message);
-        Dialogs.secureDialog(_dialog);
+        ProgressDialog dialog = new ProgressDialog(context);
+        dialog.setCancelable(false);
+        dialog.setMessage(message);
+        Dialogs.secureDialog(dialog);
+
+        _dialog = new WeakReference<>(dialog);
     }
 
     @CallSuper
     @Override
     protected void onPreExecute() {
-        _dialog.show();
+        ProgressDialog dialog = _dialog.get();
+        if (dialog != null) {
+            dialog.show();
+        }
     }
 
     @CallSuper
     @Override
     protected void onPostExecute(Result result) {
-        if (_dialog.isShowing()) {
-            _dialog.dismiss();
+        if (_lifecycle != null) {
+            Lifecycle lifecycle = _lifecycle.get();
+            if (lifecycle != null && lifecycle.getCurrentState().equals(Lifecycle.State.DESTROYED)) {
+                return;
+            }
+        }
+
+        ProgressDialog dialog = _dialog.get();
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
         }
     }
 
     @Override
     protected void onProgressUpdate(String... values) {
         if (values.length == 1) {
-            _dialog.setMessage(values[0]);
+            ProgressDialog dialog = _dialog.get();
+            if (dialog != null) {
+                dialog.setMessage(values[0]);
+            }
         }
     }
 
@@ -49,28 +73,36 @@ public abstract class ProgressDialogTask<Params, Result> extends AsyncTask<Param
         Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND + Process.THREAD_PRIORITY_MORE_FAVORABLE);
     }
 
-    protected final ProgressDialog getDialog() {
-        return _dialog;
+    protected final Context getContext() {
+        ProgressDialog dialog = _dialog.get();
+        if (dialog == null) {
+            throw new IllegalStateException("Context has been garbage collected");
+        }
+
+        return dialog.getContext();
     }
 
     @SafeVarargs
     public final void execute(@Nullable Lifecycle lifecycle, Params... params) {
-        if (lifecycle != null) {
-            LifecycleObserver observer = new Observer(getDialog());
+        ProgressDialog dialog = _dialog.get();
+        if (lifecycle != null && dialog != null) {
+            _lifecycle = new WeakReference<>(lifecycle);
+            LifecycleObserver observer = new Observer(dialog);
             lifecycle.addObserver(observer);
         }
+
         execute(params);
     }
 
-    private static class Observer implements LifecycleObserver {
+    private static class Observer implements DefaultLifecycleObserver {
         private Dialog _dialog;
 
         public Observer(Dialog dialog) {
             _dialog = dialog;
         }
 
-        @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-        void onPause() {
+        @Override
+        public void onPause(@NonNull LifecycleOwner owner) {
             if (_dialog != null && _dialog.isShowing()) {
                 _dialog.dismiss();
                 _dialog = null;
