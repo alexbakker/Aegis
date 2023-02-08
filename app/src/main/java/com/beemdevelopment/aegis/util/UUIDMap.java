@@ -64,32 +64,19 @@ public class UUIDMap <T extends UUIDMap.Value> implements Iterable<T>, Serializa
     }
 
     /**
-     * Swaps the position of value1 and value2 in the internal map. This operation is
-     * quite expensive because it has to reallocate the entire underlying LinkedHashMap.
-     * @throws AssertionError if no map value exists with the UUID of the given entries.
-     */
-    public void swap(T value1, T value2) {
-        boolean found1 = false;
-        boolean found2 = false;
+      * Moves value1 to the position of value2.
+      */
+    public void move(T value1, T value2) {
         List<T> values = new ArrayList<>();
 
         for (T value : _map.values()) {
-            if (value.getUUID().equals(value1.getUUID())) {
-                values.add(value2);
-                found1 = true;
-            } else if (value.getUUID().equals(value2.getUUID())) {
-                values.add(value1);
-                found2 = true;
-            } else {
+            if (!value.getUUID().equals(value1.getUUID())) {
                 values.add(value);
-            }
-        }
 
-        if (!found1) {
-            throw new AssertionError(String.format("No value found for value1 with UUID: %s", value1.getUUID()));
-        }
-        if (!found2) {
-            throw new AssertionError(String.format("No value found for value2 with UUID: %s", value2.getUUID()));
+                if (value.getUUID().equals(value2.getUUID())) {
+                    values.add(value1);
+                }
+            }
         }
 
         _map.clear();

@@ -88,8 +88,10 @@ public class UUIDMapTest {
         assertNotEquals(values, ref);
 
         // swap the values and see if the lists are equal now
-        _map.swap(value1, value4);
-        _map.swap(value2, value3);
+        _map.move(value1, value4);
+        _map.move(value2, value3);
+        _map.move(value1, value4);
+        _map.move(value2, value3);
         assertArrayEquals(values.toArray(), ref.toArray());
     }
 
