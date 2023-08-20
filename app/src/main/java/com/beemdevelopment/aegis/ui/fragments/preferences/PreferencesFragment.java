@@ -3,14 +3,19 @@ package com.beemdevelopment.aegis.ui.fragments.preferences;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.beemdevelopment.aegis.Preferences;
 import com.beemdevelopment.aegis.R;
+import com.beemdevelopment.aegis.helpers.AnimationsHelper;
 import com.beemdevelopment.aegis.ui.dialogs.Dialogs;
 import com.beemdevelopment.aegis.vault.VaultManager;
 import com.beemdevelopment.aegis.vault.VaultRepositoryException;
@@ -62,8 +67,23 @@ public abstract class PreferencesFragment extends PreferenceFragmentCompat {
         return _result;
     }
 
+    @Override
+    @Nullable
+    public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
+        if (nextAnim != 0) {
+            Animation anim = AnimationUtils.loadAnimation(getActivity(), nextAnim);
+            float animDurationScale = Settings.Global.getFloat(requireContext().getContentResolver(), Settings.Global.TRANSITION_ANIMATION_SCALE, 1.0f);
+            float duration = anim.getDuration() * animDurationScale;
+            anim.setDuration((long) duration);
+            return anim;
+        }
+
+        return super.onCreateAnimation(transit, enter, nextAnim);
+    }
+
     public void setResult(Intent result) {
         _result = result;
+
         requireActivity().setResult(Activity.RESULT_OK, _result);
     }
 

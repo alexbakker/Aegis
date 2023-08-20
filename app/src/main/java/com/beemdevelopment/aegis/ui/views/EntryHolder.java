@@ -16,7 +16,9 @@ import com.amulyakhare.textdrawable.TextDrawable;
 import com.beemdevelopment.aegis.AccountNamePosition;
 import com.beemdevelopment.aegis.Preferences;
 import com.beemdevelopment.aegis.R;
+import com.beemdevelopment.aegis.helpers.AnimationsHelper;
 import com.beemdevelopment.aegis.helpers.IconViewHelper;
+import com.beemdevelopment.aegis.helpers.SettingsHelper;
 import com.beemdevelopment.aegis.helpers.TextDrawableHelper;
 import com.beemdevelopment.aegis.helpers.ThemeHelper;
 import com.beemdevelopment.aegis.helpers.UiRefresher;
@@ -89,8 +91,8 @@ public class EntryHolder extends RecyclerView.ViewHolder {
         _progressBar.getProgressDrawable().setColorFilter(primaryColorId, PorterDuff.Mode.SRC_IN);
         _view.setBackground(_view.getContext().getResources().getDrawable(R.color.card_background));
 
-        _scaleIn = AnimationUtils.loadAnimation(view.getContext(), R.anim.item_scale_in);
-        _scaleOut = AnimationUtils.loadAnimation(view.getContext(), R.anim.item_scale_out);
+        _scaleIn = AnimationsHelper.loadScaledAnimation(view.getContext(), R.anim.item_scale_in);
+        _scaleOut = AnimationsHelper.loadScaledAnimation(view.getContext(), R.anim.item_scale_out);
 
         _refresher = new UiRefresher(new UiRefresher.Listener() {
             @Override
@@ -370,10 +372,10 @@ public class EntryHolder extends RecyclerView.ViewHolder {
     public void animateCopyText() {
         _animationHandler.removeCallbacksAndMessages(null);
 
-        Animation slideDownFadeIn = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.slide_down_fade_in);
-        Animation slideDownFadeOut = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.slide_down_fade_out);
-        Animation fadeOut = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.fade_out);
-        Animation fadeIn = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.fade_in);
+        Animation slideDownFadeIn = AnimationsHelper.loadScaledAnimation(itemView.getContext(), R.anim.slide_down_fade_in);
+        Animation slideDownFadeOut = AnimationsHelper.loadScaledAnimation(itemView.getContext(), R.anim.slide_down_fade_out);
+        Animation fadeOut = AnimationsHelper.loadScaledAnimation(itemView.getContext(), R.anim.fade_out);
+        Animation fadeIn = AnimationsHelper.loadScaledAnimation(itemView.getContext(), R.anim.fade_in);
 
         _profileCopied.startAnimation(slideDownFadeIn);
 

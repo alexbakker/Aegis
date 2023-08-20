@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -29,6 +28,7 @@ import com.beemdevelopment.aegis.Preferences;
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.SortCategory;
 import com.beemdevelopment.aegis.ViewMode;
+import com.beemdevelopment.aegis.helpers.AnimationsHelper;
 import com.beemdevelopment.aegis.helpers.MetricsHelper;
 import com.beemdevelopment.aegis.helpers.SimpleItemTouchHelperCallback;
 import com.beemdevelopment.aegis.helpers.ThemeHelper;
@@ -99,6 +99,7 @@ public class EntryListView extends Fragment implements EntryAdapter.Listener {
 
         // set up the recycler view
         _recyclerView = view.findViewById(R.id.rvKeyProfiles);
+        _recyclerView.setItemAnimator(null);
         _recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -128,10 +129,6 @@ public class EntryListView extends Fragment implements EntryAdapter.Listener {
         _touchHelper = new ItemTouchHelper(_touchCallback);
         _touchHelper.attachToRecyclerView(_recyclerView);
         _recyclerView.setAdapter(_adapter);
-
-        int resId = R.anim.layout_animation_fall_down;
-        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(requireContext(), resId);
-        _recyclerView.setLayoutAnimation(animation);
 
         _refresher = new UiRefresher(new UiRefresher.Listener() {
             @Override
@@ -421,10 +418,9 @@ public class EntryListView extends Fragment implements EntryAdapter.Listener {
     }
 
     public void runEntriesAnimation() {
-        final LayoutAnimationController controller =
-                AnimationUtils.loadLayoutAnimation(requireContext(), R.anim.layout_animation_fall_down);
+        LayoutAnimationController animationController = AnimationsHelper.loadScaledLayoutAnimation(requireContext(), R.anim.layout_animation_fall_down);
 
-        _recyclerView.setLayoutAnimation(controller);
+        _recyclerView.setLayoutAnimation(animationController);
         _recyclerView.scheduleLayoutAnimation();
     }
 
