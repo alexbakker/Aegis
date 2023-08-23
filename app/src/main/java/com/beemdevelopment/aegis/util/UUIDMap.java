@@ -67,17 +67,27 @@ public class UUIDMap <T extends UUIDMap.Value> implements Iterable<T>, Serializa
       * Moves value1 to the position of value2.
       */
     public void move(T value1, T value2) {
-        List<T> values = new ArrayList<>();
+        List<T> values = new ArrayList<>(_map.values());
 
-        for (T value : _map.values()) {
-            if (!value.getUUID().equals(value1.getUUID())) {
-                values.add(value);
-
-                if (value.getUUID().equals(value2.getUUID())) {
-                    values.add(value1);
-                }
+        int vi1 = -1, vi2 = -1;
+        for (int i = 0; i < values.size(); i++) {
+            T value = values.get(i);
+            if (value.getUUID().equals(value1.getUUID())) {
+                vi1 = i;
+            }
+            if (value.getUUID().equals(value2.getUUID())) {
+                vi2 = i;
             }
         }
+
+        if (vi1 < 0) {
+            throw new AssertionError(String.format("No value found for value1 with UUID: %s", value1.getUUID()));
+        }
+        if (vi2 < 0) {
+            throw new AssertionError(String.format("No value found for value2 with UUID: %s", value2.getUUID()));
+        }
+
+        CollectionUtils.move(values, vi1, vi2);
 
         _map.clear();
         for (T value : values) {
