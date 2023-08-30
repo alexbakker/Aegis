@@ -7,27 +7,48 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 
 public class AnimationsHelper {
+    private AnimationsHelper() {
 
-    private static float getAnimationScale(Context context) {
-        try {
-            return Settings.Global.getFloat(context.getContentResolver(), Settings.Global.ANIMATOR_DURATION_SCALE);
-        } catch (Settings.SettingNotFoundException e) {
-            return 1.0f;
-        }
     }
 
     public static Animation loadScaledAnimation(Context context, int animationResId) {
-        Animation animation = AnimationUtils.loadAnimation(context, animationResId);
-        long newDuration = (long) (animation.getDuration() * getAnimationScale(context));
-        animation.setDuration(newDuration);
+        return loadScaledAnimation(context, animationResId, Scale.ANIMATOR);
+    }
 
+    public static Animation loadScaledAnimation(Context context, int animationResId, Scale scale) {
+        Animation animation = AnimationUtils.loadAnimation(context, animationResId);
+        long newDuration = (long) (animation.getDuration() * scale.getValue(context));
+        animation.setDuration(newDuration);
         return animation;
     }
 
     public static LayoutAnimationController loadScaledLayoutAnimation(Context context, int animationResId) {
-        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(context, animationResId);
-        animation.getAnimation().setDuration((long)(animation.getAnimation().getDuration() * getAnimationScale(context)));
+        return loadScaledLayoutAnimation(context, animationResId, Scale.ANIMATOR);
+    }
 
-        return animation;
+    public static LayoutAnimationController loadScaledLayoutAnimation(Context context, int animationResId, Scale scale) {
+        LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(context, animationResId);
+        Animation animation = controller.getAnimation();
+        animation.setDuration((long) (animation.getDuration() * scale.getValue(context)));
+        return controller;
+    }
+
+    public enum Scale {
+        ANIMATOR(Settings.Global.ANIMATOR_DURATION_SCALE),
+        TRANSITION(Settings.Global.TRANSITION_ANIMATION_SCALE);
+
+        private final String _setting;
+
+        Scale(String setting) {
+            _setting = setting;
+        }
+
+        public float getValue(Context context) {
+            return Settings.Global.getFloat(context.getContentResolver(), _setting, 1.0f);
+        }
+
+        public boolean isZero(Context context) {
+            return getValue(context) == 0;
+        }
     }
 }

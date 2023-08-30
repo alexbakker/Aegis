@@ -33,11 +33,11 @@ import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.encoding.Base32;
 import com.beemdevelopment.aegis.encoding.EncodingException;
 import com.beemdevelopment.aegis.encoding.Hex;
+import com.beemdevelopment.aegis.helpers.AnimationsHelper;
 import com.beemdevelopment.aegis.helpers.DropdownHelper;
 import com.beemdevelopment.aegis.helpers.EditTextHelper;
 import com.beemdevelopment.aegis.helpers.IconViewHelper;
 import com.beemdevelopment.aegis.helpers.SafHelper;
-import com.beemdevelopment.aegis.helpers.SettingsHelper;
 import com.beemdevelopment.aegis.helpers.SimpleAnimationEndListener;
 import com.beemdevelopment.aegis.helpers.SimpleTextWatcher;
 import com.beemdevelopment.aegis.helpers.TextDrawableHelper;
@@ -377,12 +377,12 @@ public class EditEntryActivity extends AegisActivity {
     private void openAdvancedSettings() {
         Animation fadeOut = new AlphaAnimation(1, 0);
         fadeOut.setInterpolator(new AccelerateInterpolator());
-        fadeOut.setDuration(220 * (long)SettingsHelper.getAnimatorDurationScale(this));
+        fadeOut.setDuration(220 * (long) AnimationsHelper.Scale.ANIMATOR.getValue(this));
         _advancedSettingsHeader.startAnimation(fadeOut);
 
         Animation fadeIn = new AlphaAnimation(0, 1);
         fadeIn.setInterpolator(new AccelerateInterpolator());
-        fadeIn.setDuration(250 * (long)SettingsHelper.getAnimatorDurationScale(this));
+        fadeIn.setDuration(250 * (long) AnimationsHelper.Scale.ANIMATOR.getValue(this));
 
         fadeOut.setAnimationListener(new SimpleAnimationEndListener((a) -> {
             _advancedSettingsHeader.setVisibility(View.GONE);

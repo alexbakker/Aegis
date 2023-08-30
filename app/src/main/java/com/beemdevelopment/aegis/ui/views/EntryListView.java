@@ -360,13 +360,25 @@ public class EntryListView extends Fragment implements EntryAdapter.Listener {
         if (focusEntry && position >= 0) {
             if ((_recyclerView.canScrollVertically(1) && position > layoutManager.findLastCompletelyVisibleItemPosition())
                     || (_recyclerView.canScrollVertically(-1) && position < layoutManager.findFirstCompletelyVisibleItemPosition())) {
+                boolean smoothScroll = !AnimationsHelper.Scale.TRANSITION.isZero(requireContext());
                 RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
+                    private void handleScroll() {
+                        _recyclerView.removeOnScrollListener(this);
+                        _recyclerView.setOnTouchListener(null);
+                        tempHighlightEntry(entry);
+                    }
+
                     @Override
                     public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                        if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                            _recyclerView.removeOnScrollListener(this);
-                            _recyclerView.setOnTouchListener(null);
-                            tempHighlightEntry(entry);
+                        if (smoothScroll && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                            handleScroll();
+                        }
+                    }
+
+                    @Override
+                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                        if (!smoothScroll) {
+                            handleScroll();
                         }
                     }
                 };
@@ -380,7 +392,13 @@ public class EntryListView extends Fragment implements EntryAdapter.Listener {
 
                     return false;
                 });
-                _recyclerView.smoothScrollToPosition(position);
+                // We can't easily control the speed of the smooth scroll animation, but we
+                // can at least disable it if animations are disabled
+                if (smoothScroll) {
+                    _recyclerView.smoothScrollToPosition(position);
+                } else {
+                    _recyclerView.scrollToPosition(position);
+                }
             } else {
                 tempHighlightEntry(entry);
             }
