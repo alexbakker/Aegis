@@ -3,9 +3,7 @@ package com.beemdevelopment.aegis.helpers;
 import android.graphics.Bitmap;
 
 public class BitmapHelper {
-    private BitmapHelper() {
-
-    }
+    private BitmapHelper() {}
 
     /**
      * Scales the given Bitmap to the given maximum width/height, while keeping the aspect ratio intact.

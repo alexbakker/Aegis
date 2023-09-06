@@ -9,15 +9,13 @@ import com.beemdevelopment.aegis.otp.OtpInfoException;
 import com.beemdevelopment.aegis.otp.TotpInfo;
 import com.beemdevelopment.aegis.util.JsonUtils;
 import com.beemdevelopment.aegis.util.UUIDMap;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class VaultEntry extends UUIDMap.Value {
     private String _name = "";
@@ -154,9 +152,14 @@ public class VaultEntry extends UUIDMap.Value {
         return _usageCount;
     }
 
-    public String getNote() { return _note; }
+    public String getNote() {
+        return _note;
+    }
 
-    public boolean isFavorite() { return _isFavorite; };
+    public boolean isFavorite() {
+        return _isFavorite;
+    }
+    ;
 
     public void setName(String name) {
         _name = name;
@@ -197,11 +200,17 @@ public class VaultEntry extends UUIDMap.Value {
         return _icon != null;
     }
 
-    public void setUsageCount(int usageCount) { _usageCount = usageCount; }
+    public void setUsageCount(int usageCount) {
+        _usageCount = usageCount;
+    }
 
-    public void setNote(String note) { _note = note; }
+    public void setNote(String note) {
+        _note = note;
+    }
 
-    public void setIsFavorite(boolean isFavorite) { _isFavorite = isFavorite; }
+    public void setIsFavorite(boolean isFavorite) {
+        _isFavorite = isFavorite;
+    }
 
     void setOldGroup(String oldGroup) {
         _oldGroup = oldGroup;

@@ -7,21 +7,17 @@ import static junit.framework.TestCase.assertTrue;
 
 import android.content.Intent;
 import android.net.Uri;
-
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
-
 import com.beemdevelopment.aegis.otp.GoogleAuthInfo;
 import com.beemdevelopment.aegis.otp.TotpInfo;
 import com.beemdevelopment.aegis.ui.MainActivity;
 import com.beemdevelopment.aegis.vault.VaultEntry;
-
+import dagger.hilt.android.testing.HiltAndroidTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import dagger.hilt.android.testing.HiltAndroidTest;
 
 @RunWith(AndroidJUnit4.class)
 @HiltAndroidTest
@@ -40,7 +36,8 @@ public class DeepLinkTest extends AegisTest {
 
         onView(withId(R.id.action_save)).perform(click());
 
-        VaultEntry createdEntry = (VaultEntry) _vaultManager.getVault().getEntries().toArray()[0];
+        VaultEntry createdEntry =
+                (VaultEntry) _vaultManager.getVault().getEntries().toArray()[0];
         assertTrue(createdEntry.equivalates(entry));
     }
 
@@ -61,7 +58,8 @@ public class DeepLinkTest extends AegisTest {
         intent.setAction(Intent.ACTION_VIEW);
         intent.setData(uri);
 
-        // we need to use the deprecated ActivityTestRule class because of https://github.com/android/android-test/issues/143
+        // we need to use the deprecated ActivityTestRule class because of
+        // https://github.com/android/android-test/issues/143
         ActivityTestRule<MainActivity> rule = new ActivityTestRule<>(MainActivity.class);
         rule.launchActivity(intent);
     }

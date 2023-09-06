@@ -1,13 +1,10 @@
 package com.beemdevelopment.aegis.ui.tasks;
 
 import android.content.Context;
-
 import com.beemdevelopment.aegis.R;
-
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
-
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -32,7 +29,8 @@ public class PBKDFTask extends ProgressDialogTask<PBKDFTask.Params, SecretKey> {
     public static SecretKey deriveKey(Params params) {
         try {
             SecretKeyFactory factory = SecretKeyFactory.getInstance(params.getAlgorithm());
-            KeySpec spec = new PBEKeySpec(params.getPassword(), params.getSalt(), params.getIterations(), params.getKeySize());
+            KeySpec spec =
+                    new PBEKeySpec(params.getPassword(), params.getSalt(), params.getIterations(), params.getKeySize());
             SecretKey key = factory.generateSecret(spec);
             return new SecretKeySpec(key.getEncoded(), "AES");
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {

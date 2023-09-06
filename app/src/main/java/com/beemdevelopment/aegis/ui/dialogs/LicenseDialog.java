@@ -1,7 +1,6 @@
 package com.beemdevelopment.aegis.ui.dialogs;
 
 import android.content.Context;
-
 import com.beemdevelopment.aegis.R;
 
 public class LicenseDialog extends SimpleWebViewDialog {

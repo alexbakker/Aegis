@@ -1,10 +1,8 @@
 package com.beemdevelopment.aegis.helpers;
 
 import android.view.View;
-
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
-
 import java.text.BreakIterator;
 import java.util.Arrays;
 
@@ -29,12 +27,9 @@ public class TextDrawableHelper {
             0xFFE64A19,
             0xFF5D4037,
             0xFF616161,
-            0xFF455A64
-    ));
+            0xFF455A64));
 
-    private TextDrawableHelper() {
-
-    }
+    private TextDrawableHelper() {}
 
     public static TextDrawable generate(String text, String fallback, View view) {
         if (text == null || text.isEmpty()) {
@@ -45,7 +40,8 @@ public class TextDrawableHelper {
         }
 
         int color = _generator.getColor(text);
-        return TextDrawable.builder().beginConfig()
+        return TextDrawable.builder()
+                .beginConfig()
                 .width(view.getLayoutParams().width)
                 .height(view.getLayoutParams().height)
                 .endConfig()

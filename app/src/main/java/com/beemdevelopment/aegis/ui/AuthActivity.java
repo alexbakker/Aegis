@@ -17,12 +17,10 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.biometric.BiometricPrompt;
-
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.ThemeMap;
 import com.beemdevelopment.aegis.crypto.KeyStoreHandle;
@@ -43,9 +41,7 @@ import com.beemdevelopment.aegis.vault.slots.Slot;
 import com.beemdevelopment.aegis.vault.slots.SlotException;
 import com.beemdevelopment.aegis.vault.slots.SlotIntegrityException;
 import com.beemdevelopment.aegis.vault.slots.SlotList;
-
 import java.util.List;
-
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 
@@ -78,7 +74,8 @@ public class AuthActivity extends AegisActivity {
         getOnBackPressedDispatcher().addCallback(this, new BackPressHandler());
 
         _textPassword.setOnEditorActionListener((v, actionId, event) -> {
-            if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+            if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
+                    || (actionId == EditorInfo.IME_ACTION_DONE)) {
                 decryptButton.performClick();
             }
             return false;
@@ -92,8 +89,10 @@ public class AuthActivity extends AegisActivity {
         if (savedInstanceState == null) {
             _inhibitBioPrompt = intent.getBooleanExtra("inhibitBioPrompt", false);
 
-            // A persistent notification is shown to let the user know that the vault is unlocked. Permission
-            // to do so is required since API 33, so for existing users, we have to request permission here
+            // A persistent notification is shown to let the user know that the vault is unlocked.
+            // Permission
+            // to do so is required since API 33, so for existing users, we have to request
+            // permission here
             // in order to be able to show the notification after unlock.
             //
             // NOTE: Disabled for now. See issue: #1047
@@ -105,16 +104,19 @@ public class AuthActivity extends AegisActivity {
         }
 
         if (_vaultManager.getVaultFileError() != null) {
-            Dialogs.showErrorDialog(this, R.string.vault_load_error, _vaultManager.getVaultFileError(), (dialog, which) -> {
-                getOnBackPressedDispatcher().onBackPressed();
-            });
+            Dialogs.showErrorDialog(
+                    this, R.string.vault_load_error, _vaultManager.getVaultFileError(), (dialog, which) -> {
+                        getOnBackPressedDispatcher().onBackPressed();
+                    });
             return;
         }
 
         VaultFile vaultFile = _vaultManager.getVaultFile();
         _slots = vaultFile.getHeader().getSlots();
 
-        // only show the biometric prompt if the api version is new enough, permission is granted, a scanner is found and a biometric slot is found
+        // only show the biometric prompt if the api version is new enough, permission is granted, a
+        // scanner is found
+        // and a biometric slot is found
         if (_slots.has(BiometricSlot.class) && BiometricsHelper.isAvailable(this)) {
             boolean invalidated = false;
 
@@ -151,13 +153,14 @@ public class AuthActivity extends AegisActivity {
         }
 
         decryptButton.setOnClickListener(v -> {
-            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
             char[] password = EditTextHelper.getEditTextChars(_textPassword);
             List<PasswordSlot> slots = _slots.findAll(PasswordSlot.class);
             PasswordSlotDecryptTask.Params params = new PasswordSlotDecryptTask.Params(slots, password);
-            PasswordSlotDecryptTask task = new PasswordSlotDecryptTask(AuthActivity.this, new PasswordDerivationListener());
+            PasswordSlotDecryptTask task =
+                    new PasswordSlotDecryptTask(AuthActivity.this, new PasswordDerivationListener());
             task.execute(getLifecycle(), params);
         });
 
@@ -237,10 +240,11 @@ public class AuthActivity extends AegisActivity {
         View popupLayout = getLayoutInflater().inflate(R.layout.popup_password, null);
         popupLayout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
 
-        PopupWindow popup = new PopupWindow(popupLayout, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        PopupWindow popup =
+                new PopupWindow(popupLayout, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         popup.setFocusable(false);
         popup.setOutsideTouchable(true);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             popup.setElevation(5.0f);
         }
         _textPassword.post(() -> {
@@ -259,7 +263,7 @@ public class AuthActivity extends AegisActivity {
     }
 
     public BiometricPrompt showBiometricPrompt() {
-        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(_textPassword.getWindowToken(), 0);
 
         Cipher cipher;
@@ -309,7 +313,7 @@ public class AuthActivity extends AegisActivity {
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> selectPassword())
                 .create());
 
-        _failedUnlockAttempts ++;
+        _failedUnlockAttempts++;
 
         if (_failedUnlockAttempts >= 3) {
             _textPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);

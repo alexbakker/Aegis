@@ -5,7 +5,6 @@ import static androidx.recyclerview.widget.RecyclerView.NO_POSITION;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.beemdevelopment.aegis.ui.views.EntryAdapter;
 import com.beemdevelopment.aegis.vault.VaultEntry;
 
@@ -74,9 +73,9 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
     }
 
     @Override
-    public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
-                          RecyclerView.ViewHolder target) {
-        if (target.getAdapterPosition() < _adapter.getShownFavoritesCount()){
+    public boolean onMove(
+            RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+        if (target.getAdapterPosition() < _adapter.getShownFavoritesCount()) {
             return false;
         }
 

@@ -5,18 +5,15 @@ import android.app.backup.BackupManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
 import com.beemdevelopment.aegis.Preferences;
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.crypto.KeyStoreHandle;
 import com.beemdevelopment.aegis.crypto.KeyStoreHandleException;
 import com.beemdevelopment.aegis.services.NotificationService;
 import com.beemdevelopment.aegis.ui.dialogs.Dialogs;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -100,7 +97,8 @@ public class VaultManager {
      * Calling this method removes the manager's internal reference to the raw vault file (if it had one).
      */
     @NonNull
-    public VaultRepository loadFrom(@NonNull VaultFile vaultFile, @Nullable VaultFileCredentials creds) throws VaultRepositoryException {
+    public VaultRepository loadFrom(@NonNull VaultFile vaultFile, @Nullable VaultFileCredentials creds)
+            throws VaultRepositoryException {
         if (isVaultLoaded()) {
             throw new IllegalStateException("Vault manager is already initialized");
         }
@@ -357,7 +355,7 @@ public class VaultManager {
 
     private void stopNotificationService() {
         // NOTE: Disabled for now. See issue: #1047
-        //_context.stopService(getNotificationServiceIntent());
+        // _context.stopService(getNotificationServiceIntent());
     }
 
     private Intent getNotificationServiceIntent() {
@@ -365,10 +363,11 @@ public class VaultManager {
     }
 
     private static boolean isDocsAction(@Nullable String action) {
-        return action != null && (action.equals(Intent.ACTION_GET_CONTENT)
-                || action.equals(Intent.ACTION_CREATE_DOCUMENT)
-                || action.equals(Intent.ACTION_OPEN_DOCUMENT)
-                || action.equals(Intent.ACTION_OPEN_DOCUMENT_TREE));
+        return action != null
+                && (action.equals(Intent.ACTION_GET_CONTENT)
+                        || action.equals(Intent.ACTION_CREATE_DOCUMENT)
+                        || action.equals(Intent.ACTION_OPEN_DOCUMENT)
+                        || action.equals(Intent.ACTION_OPEN_DOCUMENT_TREE));
     }
 
     public interface LockListener {

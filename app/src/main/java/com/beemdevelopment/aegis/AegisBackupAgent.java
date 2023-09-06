@@ -7,12 +7,10 @@ import android.app.backup.FullBackupDataOutput;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
-
 import com.beemdevelopment.aegis.util.IOUtils;
 import com.beemdevelopment.aegis.vault.VaultFile;
 import com.beemdevelopment.aegis.vault.VaultRepository;
 import com.beemdevelopment.aegis.vault.VaultRepositoryException;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -29,15 +27,19 @@ public class AegisBackupAgent extends BackupAgent {
     public void onCreate() {
         super.onCreate();
 
-        // Cannot use injection with Dagger Hilt here, because the app is launched in a restricted mode on restore
+        // Cannot use injection with Dagger Hilt here, because the app is launched in a restricted
+        // mode on restore
         _prefs = new Preferences(this);
     }
 
     @Override
     public synchronized void onFullBackup(FullBackupDataOutput data) throws IOException {
-        Log.i(TAG, String.format("onFullBackup() called: flags=%d, quota=%d",
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.P ? data.getTransportFlags() : -1,
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ? data.getQuota() : -1));
+        Log.i(
+                TAG,
+                String.format(
+                        "onFullBackup() called: flags=%d, quota=%d",
+                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.P ? data.getTransportFlags() : -1,
+                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ? data.getQuota() : -1));
 
         boolean isD2D = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
                 && (data.getTransportFlags() & FLAG_DEVICE_TO_DEVICE_TRANSFER) == FLAG_DEVICE_TO_DEVICE_TRANSFER;
@@ -76,7 +78,8 @@ public class AegisBackupAgent extends BackupAgent {
             throw new IOException(e);
         }
 
-        // Then call the original implementation so that fullBackupContent specified in AndroidManifest is read
+        // Then call the original implementation so that fullBackupContent specified in
+        // AndroidManifest is read
         try {
             super.onFullBackup(data);
         } finally {
@@ -85,7 +88,9 @@ public class AegisBackupAgent extends BackupAgent {
     }
 
     @Override
-    public synchronized void onRestoreFile(ParcelFileDescriptor data, long size, File destination, int type, long mode, long mtime) throws IOException {
+    public synchronized void onRestoreFile(
+            ParcelFileDescriptor data, long size, File destination, int type, long mode, long mtime)
+            throws IOException {
         Log.i(TAG, String.format("onRestoreFile() called: dest=%s", destination));
         super.onRestoreFile(data, size, destination, type, mode, mtime);
 
@@ -107,18 +112,18 @@ public class AegisBackupAgent extends BackupAgent {
     @Override
     public synchronized void onQuotaExceeded(long backupDataBytes, long quotaBytes) {
         super.onQuotaExceeded(backupDataBytes, quotaBytes);
-        Log.e(TAG, String.format("onQuotaExceeded() called: backupDataBytes=%d, quotaBytes=%d", backupDataBytes, quotaBytes));
+        Log.e(
+                TAG,
+                String.format(
+                        "onQuotaExceeded() called: backupDataBytes=%d, quotaBytes=%d", backupDataBytes, quotaBytes));
     }
 
     @Override
-    public void onBackup(ParcelFileDescriptor oldState, BackupDataOutput data, ParcelFileDescriptor newState) throws IOException {
-
-    }
+    public void onBackup(ParcelFileDescriptor oldState, BackupDataOutput data, ParcelFileDescriptor newState)
+            throws IOException {}
 
     @Override
-    public void onRestore(BackupDataInput data, int appVersionCode, ParcelFileDescriptor newState) throws IOException {
-
-    }
+    public void onRestore(BackupDataInput data, int appVersionCode, ParcelFileDescriptor newState) throws IOException {}
 
     private void createBackupDir() throws IOException {
         File dir = getVaultBackupFile().getParentFile();

@@ -1,7 +1,6 @@
 package com.beemdevelopment.aegis.util;
 
 import androidx.annotation.NonNull;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,7 +18,7 @@ import java.util.UUID;
  * the order).
  * @param <T> The type of values in this map
  */
-public class UUIDMap <T extends UUIDMap.Value> implements Iterable<T>, Serializable {
+public class UUIDMap<T extends UUIDMap.Value> implements Iterable<T>, Serializable {
     private LinkedHashMap<UUID, T> _map = new LinkedHashMap<>();
 
     /**
@@ -65,8 +64,8 @@ public class UUIDMap <T extends UUIDMap.Value> implements Iterable<T>, Serializa
     }
 
     /**
-      * Moves value1 to the position of value2.
-      */
+     * Moves value1 to the position of value2.
+     */
     public void move(T value1, T value2) {
         List<T> values = new ArrayList<>(_map.values());
 
@@ -135,7 +134,7 @@ public class UUIDMap <T extends UUIDMap.Value> implements Iterable<T>, Serializa
         return _map.values().iterator();
     }
 
-    public static abstract class Value implements Serializable {
+    public abstract static class Value implements Serializable {
         private UUID _uuid;
 
         protected Value(UUID uuid) {

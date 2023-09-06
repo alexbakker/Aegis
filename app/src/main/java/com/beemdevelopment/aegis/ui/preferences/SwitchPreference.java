@@ -3,7 +3,6 @@ package com.beemdevelopment.aegis.ui.preferences;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
-
 import androidx.annotation.RequiresApi;
 import androidx.preference.Preference;
 import androidx.preference.SwitchPreferenceCompat;

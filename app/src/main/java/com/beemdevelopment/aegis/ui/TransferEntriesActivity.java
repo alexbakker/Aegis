@@ -17,9 +17,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.ColorInt;
-
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.Theme;
 import com.beemdevelopment.aegis.helpers.QrCodeHelper;
@@ -28,7 +26,6 @@ import com.beemdevelopment.aegis.otp.GoogleAuthInfoException;
 import com.beemdevelopment.aegis.otp.Transferable;
 import com.beemdevelopment.aegis.ui.dialogs.Dialogs;
 import com.google.zxing.WriterException;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +59,7 @@ public class TransferEntriesActivity extends AegisActivity {
         _previousButton = findViewById(R.id.btnPrevious);
         _copyButton = findViewById(R.id.btnCopyClipboard);
 
-        if (getSupportActionBar() != null){
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
@@ -88,7 +85,7 @@ public class TransferEntriesActivity extends AegisActivity {
         });
 
         _previousButton.setOnClickListener(v -> {
-            if (_currentEntryCount > 1 ) {
+            if (_currentEntryCount > 1) {
                 _nextButton.setText(R.string.next);
                 _currentEntryCount--;
                 generateQR();
@@ -107,7 +104,8 @@ public class TransferEntriesActivity extends AegisActivity {
             Transferable selectedEntry = _authInfos.get(_currentEntryCount - 1);
             try {
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("text/plain", selectedEntry.getUri().toString());
+                ClipData clip = ClipData.newPlainText(
+                        "text/plain", selectedEntry.getUri().toString());
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     PersistableBundle extras = new PersistableBundle();
                     extras.putBoolean(ClipDescription.EXTRA_IS_SENSITIVE, true);
@@ -116,7 +114,8 @@ public class TransferEntriesActivity extends AegisActivity {
                 if (clipboard != null) {
                     clipboard.setPrimaryClip(clip);
                 }
-                Toast.makeText(this,R.string.uri_copied_to_clipboard, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.uri_copied_to_clipboard, Toast.LENGTH_SHORT)
+                        .show();
 
             } catch (GoogleAuthInfoException e) {
                 Dialogs.showErrorDialog(this, R.string.unable_to_copy_uri_to_clipboard, e);
@@ -149,7 +148,8 @@ public class TransferEntriesActivity extends AegisActivity {
             _description.setText(R.string.google_auth_compatible_transfer_description);
         }
 
-        _entriesCount.setText(getResources().getQuantityString(R.plurals.qr_count, _authInfos.size(), _currentEntryCount, _authInfos.size()));
+        _entriesCount.setText(getResources()
+                .getQuantityString(R.plurals.qr_count, _authInfos.size(), _currentEntryCount, _authInfos.size()));
 
         @ColorInt int backgroundColor = Color.WHITE;
         if (getConfiguredTheme() == Theme.LIGHT) {

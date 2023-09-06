@@ -6,13 +6,11 @@ import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.biometric.BiometricPrompt;
 import androidx.preference.Preference;
 import androidx.preference.SwitchPreferenceCompat;
-
 import com.beemdevelopment.aegis.PassReminderFreq;
 import com.beemdevelopment.aegis.Preferences;
 import com.beemdevelopment.aegis.R;
@@ -30,10 +28,8 @@ import com.beemdevelopment.aegis.vault.slots.PasswordSlot;
 import com.beemdevelopment.aegis.vault.slots.Slot;
 import com.beemdevelopment.aegis.vault.slots.SlotException;
 import com.beemdevelopment.aegis.vault.slots.SlotList;
-
 import java.util.Arrays;
 import java.util.List;
-
 import javax.crypto.Cipher;
 
 public class SecurityPreferencesFragment extends PreferencesFragment {
@@ -121,7 +117,8 @@ public class SecurityPreferencesFragment extends PreferencesFragment {
 
             if (!slots.has(BiometricSlot.class)) {
                 if (BiometricsHelper.isAvailable(requireContext())) {
-                    BiometricSlotInitializer initializer = new BiometricSlotInitializer(SecurityPreferencesFragment.this, new RegisterBiometricsListener());
+                    BiometricSlotInitializer initializer = new BiometricSlotInitializer(
+                            SecurityPreferencesFragment.this, new RegisterBiometricsListener());
                     BiometricPrompt.PromptInfo info = new BiometricPrompt.PromptInfo.Builder()
                             .setTitle(getString(R.string.set_up_biometric))
                             .setNegativeButtonText(getString(android.R.string.cancel))
@@ -161,24 +158,34 @@ public class SecurityPreferencesFragment extends PreferencesFragment {
                 return true;
             }
 
-            Dialogs.showPasswordInputDialog(requireContext(), R.string.set_password_confirm, R.string.pin_keyboard_description, password -> {
-                if (isDigitsOnly(new String(password))) {
-                    List<PasswordSlot> slots = _vaultManager.getVault().getCredentials().getSlots().findRegularPasswordSlots();
-                    PasswordSlotDecryptTask.Params params = new PasswordSlotDecryptTask.Params(slots, password);
-                    PasswordSlotDecryptTask task = new PasswordSlotDecryptTask(requireContext(), new PasswordConfirmationListener());
-                    task.execute(getLifecycle(), params);
-                } else {
-                    _pinKeyboardPreference.setChecked(false);
-                    Dialogs.showSecureDialog(new AlertDialog.Builder(requireContext())
-                            .setTitle(R.string.pin_keyboard_error)
-                            .setMessage(R.string.pin_keyboard_error_description)
-                            .setCancelable(false)
-                            .setPositiveButton(android.R.string.ok, null)
-                            .create());
-                }
-            }, dialog -> {
-                _pinKeyboardPreference.setChecked(false);
-            });
+            Dialogs.showPasswordInputDialog(
+                    requireContext(),
+                    R.string.set_password_confirm,
+                    R.string.pin_keyboard_description,
+                    password -> {
+                        if (isDigitsOnly(new String(password))) {
+                            List<PasswordSlot> slots = _vaultManager
+                                    .getVault()
+                                    .getCredentials()
+                                    .getSlots()
+                                    .findRegularPasswordSlots();
+                            PasswordSlotDecryptTask.Params params = new PasswordSlotDecryptTask.Params(slots, password);
+                            PasswordSlotDecryptTask task =
+                                    new PasswordSlotDecryptTask(requireContext(), new PasswordConfirmationListener());
+                            task.execute(getLifecycle(), params);
+                        } else {
+                            _pinKeyboardPreference.setChecked(false);
+                            Dialogs.showSecureDialog(new AlertDialog.Builder(requireContext())
+                                    .setTitle(R.string.pin_keyboard_error)
+                                    .setMessage(R.string.pin_keyboard_error_description)
+                                    .setCancelable(false)
+                                    .setPositiveButton(android.R.string.ok, null)
+                                    .create());
+                        }
+                    },
+                    dialog -> {
+                        _pinKeyboardPreference.setChecked(false);
+                    });
             return false;
         });
 
@@ -194,7 +201,8 @@ public class SecurityPreferencesFragment extends PreferencesFragment {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
                     .setTitle(R.string.pref_auto_lock_prompt)
-                    .setMultiChoiceItems(textItems, checkedItems, (dialog, index, isChecked) -> checkedItems[index] = isChecked)
+                    .setMultiChoiceItems(
+                            textItems, checkedItems, (dialog, index, isChecked) -> checkedItems[index] = isChecked)
                     .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                         int autoLock = Preferences.AUTO_LOCK_OFF;
                         for (int i = 0; i < checkedItems.length; i++) {
@@ -217,9 +225,8 @@ public class SecurityPreferencesFragment extends PreferencesFragment {
         _passwordReminderPreference.setOnPreferenceClickListener((preference) -> {
             final PassReminderFreq currFreq = _prefs.getPasswordReminderFrequency();
             final PassReminderFreq[] items = PassReminderFreq.values();
-            final String[] textItems = Arrays.stream(items)
-                    .map(f -> getString(f.getStringRes()))
-                    .toArray(String[]::new);
+            final String[] textItems =
+                    Arrays.stream(items).map(f -> getString(f.getStringRes())).toArray(String[]::new);
 
             AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
                     .setTitle(R.string.pref_password_reminder_title)
@@ -353,7 +360,8 @@ public class SecurityPreferencesFragment extends PreferencesFragment {
 
             if (_prefs.isPinKeyboardEnabled()) {
                 _pinKeyboardPreference.setChecked(false);
-                Toast.makeText(requireContext(), R.string.pin_keyboard_disabled, Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), R.string.pin_keyboard_disabled, Toast.LENGTH_SHORT)
+                        .show();
             }
         }
 

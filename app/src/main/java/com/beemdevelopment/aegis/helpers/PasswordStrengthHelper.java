@@ -1,7 +1,6 @@
 package com.beemdevelopment.aegis.helpers;
 
 import android.content.Context;
-
 import com.beemdevelopment.aegis.R;
 
 public class PasswordStrengthHelper {

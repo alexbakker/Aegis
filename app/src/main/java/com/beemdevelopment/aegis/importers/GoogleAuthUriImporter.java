@@ -1,12 +1,10 @@
 package com.beemdevelopment.aegis.importers;
 
 import android.content.Context;
-
 import com.beemdevelopment.aegis.otp.GoogleAuthInfo;
 import com.beemdevelopment.aegis.otp.GoogleAuthInfoException;
 import com.beemdevelopment.aegis.vault.VaultEntry;
 import com.topjohnwu.superuser.io.SuFile;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +26,7 @@ public class GoogleAuthUriImporter extends DatabaseImporter {
         ArrayList<String> lines = new ArrayList<>();
 
         try (InputStreamReader streamReader = new InputStreamReader(stream);
-             BufferedReader bufferedReader = new BufferedReader(streamReader)) {
+                BufferedReader bufferedReader = new BufferedReader(streamReader)) {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 if (!line.isEmpty()) {

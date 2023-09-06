@@ -1,17 +1,14 @@
 package com.beemdevelopment.aegis;
 
 import android.content.Context;
-
 import com.beemdevelopment.aegis.icons.IconPackManager;
 import com.beemdevelopment.aegis.vault.VaultManager;
-
-import javax.inject.Singleton;
-
 import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
+import javax.inject.Singleton;
 
 @Module
 @InstallIn(SingletonComponent.class)

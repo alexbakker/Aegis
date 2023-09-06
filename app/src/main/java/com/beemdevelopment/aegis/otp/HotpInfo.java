@@ -2,12 +2,10 @@ package com.beemdevelopment.aegis.otp;
 
 import com.beemdevelopment.aegis.crypto.otp.HOTP;
 import com.beemdevelopment.aegis.crypto.otp.OTP;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class HotpInfo extends OtpInfo {
     public static final String ID = "hotp";

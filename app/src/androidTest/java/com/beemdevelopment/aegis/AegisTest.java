@@ -1,13 +1,11 @@
 package com.beemdevelopment.aegis;
 
 import android.view.View;
-
 import androidx.annotation.Nullable;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.GrantPermissionRule;
-
 import com.beemdevelopment.aegis.crypto.CryptoUtils;
 import com.beemdevelopment.aegis.crypto.SCryptParameters;
 import com.beemdevelopment.aegis.otp.OtpInfo;
@@ -19,23 +17,19 @@ import com.beemdevelopment.aegis.vault.VaultRepositoryException;
 import com.beemdevelopment.aegis.vault.slots.PasswordSlot;
 import com.beemdevelopment.aegis.vault.slots.SlotException;
 import com.beemdevelopment.aegis.vectors.VaultEntries;
-
-import org.hamcrest.Matcher;
-import org.junit.Before;
-import org.junit.Rule;
-
+import dagger.hilt.android.testing.HiltAndroidRule;
 import java.lang.reflect.InvocationTargetException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.inject.Inject;
-
-import dagger.hilt.android.testing.HiltAndroidRule;
+import org.hamcrest.Matcher;
+import org.junit.Before;
+import org.junit.Rule;
 
 public abstract class AegisTest {
     public static final String VAULT_PASSWORD = "test";
@@ -70,7 +64,8 @@ public abstract class AegisTest {
     }
 
     protected AegisApplicationBase getApp() {
-        return (AegisApplicationBase) InstrumentationRegistry.getInstrumentation().getTargetContext().getApplicationContext();
+        return (AegisApplicationBase)
+                InstrumentationRegistry.getInstrumentation().getTargetContext().getApplicationContext();
     }
 
     protected VaultRepository initEncryptedVault() {
@@ -119,11 +114,7 @@ public abstract class AegisTest {
         PasswordSlot slot = new PasswordSlot();
         byte[] salt = CryptoUtils.generateSalt();
         SCryptParameters scryptParams = new SCryptParameters(
-                CryptoUtils.CRYPTO_SCRYPT_N,
-                CryptoUtils.CRYPTO_SCRYPT_r,
-                CryptoUtils.CRYPTO_SCRYPT_p,
-                salt
-        );
+                CryptoUtils.CRYPTO_SCRYPT_N, CryptoUtils.CRYPTO_SCRYPT_r, CryptoUtils.CRYPTO_SCRYPT_p, salt);
 
         VaultFileCredentials creds = new VaultFileCredentials();
         try {
@@ -145,13 +136,17 @@ public abstract class AegisTest {
         return generateEntry(type, name, issuer, 20);
     }
 
-    protected static <T extends OtpInfo> VaultEntry generateEntry(Class<T> type, String name, String issuer, int secretLength) {
+    protected static <T extends OtpInfo> VaultEntry generateEntry(
+            Class<T> type, String name, String issuer, int secretLength) {
         byte[] secret = CryptoUtils.generateRandomBytes(secretLength);
 
         OtpInfo info;
         try {
             info = type.getConstructor(byte[].class).newInstance(secret);
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (IllegalAccessException
+                | InstantiationException
+                | InvocationTargetException
+                | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
 

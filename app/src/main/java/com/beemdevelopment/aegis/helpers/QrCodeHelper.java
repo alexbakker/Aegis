@@ -3,9 +3,7 @@ package com.beemdevelopment.aegis.helpers;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-
 import androidx.annotation.ColorInt;
-
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.DecodeHintType;
@@ -18,16 +16,13 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeWriter;
-
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 public class QrCodeHelper {
-    private QrCodeHelper() {
-
-    }
+    private QrCodeHelper() {}
 
     public static Result decodeFromSource(LuminanceSource source) throws NotFoundException {
         Map<DecodeHintType, Object> hints = new HashMap<>();
@@ -67,7 +62,8 @@ public class QrCodeHelper {
         throw new DecodeError(NotFoundException.getNotFoundInstance());
     }
 
-    public static Bitmap encodeToBitmap(String data, int width, int height, @ColorInt int backgroundColor) throws WriterException {
+    public static Bitmap encodeToBitmap(String data, int width, int height, @ColorInt int backgroundColor)
+            throws WriterException {
         QRCodeWriter writer = new QRCodeWriter();
         BitMatrix bitMatrix = writer.encode(data, BarcodeFormat.QR_CODE, width, height);
 

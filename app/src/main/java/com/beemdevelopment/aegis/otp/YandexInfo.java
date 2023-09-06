@@ -2,18 +2,15 @@ package com.beemdevelopment.aegis.otp;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.beemdevelopment.aegis.crypto.otp.YAOTP;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class YandexInfo extends TotpInfo {
     public static final String DEFAULT_ALGORITHM = "SHA256";

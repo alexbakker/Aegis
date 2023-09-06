@@ -4,15 +4,14 @@ import static org.junit.Assert.assertThrows;
 
 import com.beemdevelopment.aegis.encoding.Base32;
 import com.beemdevelopment.aegis.encoding.EncodingException;
-
 import org.junit.Test;
 
 public class YandexInfoTest {
-    private static final String[] vectors = new String[]{
-            "LA2V6KMCGYMWWVEW64RNP3JA3IAAAAAAHTSG4HRZPI", // correct
-            "LA2V6KMCGYMWWVEW64RNP3JA3I",                 // secret from QR - no validation
-            "AA2V6KMCGYMWWVEW64RNP3JA3IAAAAAAHTSG4HRZPI", // first letter is different
-            "AA2V6KMCGJA3IAAAAAAHTSG4HRZPI"               // size is wrong
+    private static final String[] vectors = new String[] {
+        "LA2V6KMCGYMWWVEW64RNP3JA3IAAAAAAHTSG4HRZPI", // correct
+        "LA2V6KMCGYMWWVEW64RNP3JA3I", // secret from QR - no validation
+        "AA2V6KMCGYMWWVEW64RNP3JA3IAAAAAAHTSG4HRZPI", // first letter is different
+        "AA2V6KMCGJA3IAAAAAAHTSG4HRZPI" // size is wrong
     };
 
     @Test(expected = Test.None.class)

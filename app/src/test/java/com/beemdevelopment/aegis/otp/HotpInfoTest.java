@@ -3,7 +3,6 @@ package com.beemdevelopment.aegis.otp;
 import static org.junit.Assert.assertEquals;
 
 import com.beemdevelopment.aegis.crypto.otp.HOTPTest;
-
 import org.junit.Test;
 
 public class HotpInfoTest {
@@ -17,7 +16,7 @@ public class HotpInfoTest {
 
     @Test
     public void testHotpMd5Override() throws OtpInfoException {
-        final byte[] secret = new byte[]{1, 2, 3, 4};
+        final byte[] secret = new byte[] {1, 2, 3, 4};
         MotpInfo motpInfo = new MotpInfo(secret, "1234");
         motpInfo = (MotpInfo) OtpInfo.fromJson("motp", motpInfo.toJson());
         assertEquals("MD5", motpInfo.getAlgorithm(false));

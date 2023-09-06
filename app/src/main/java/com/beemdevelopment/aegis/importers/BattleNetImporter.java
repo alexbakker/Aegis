@@ -3,7 +3,6 @@ package com.beemdevelopment.aegis.importers;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.util.Xml;
-
 import com.beemdevelopment.aegis.encoding.EncodingException;
 import com.beemdevelopment.aegis.encoding.Hex;
 import com.beemdevelopment.aegis.otp.OtpInfo;
@@ -12,14 +11,12 @@ import com.beemdevelopment.aegis.otp.TotpInfo;
 import com.beemdevelopment.aegis.util.PreferenceParser;
 import com.beemdevelopment.aegis.vault.VaultEntry;
 import com.topjohnwu.superuser.io.SuFile;
-
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 public class BattleNetImporter extends DatabaseImporter {
     private static final String _pkgName = "com.blizzard.bma";
@@ -33,7 +30,8 @@ public class BattleNetImporter extends DatabaseImporter {
 
     static {
         try {
-            _key = Hex.decode("398e27fc50276a656065b0e525f4c06c04c61075286b8e7aeda59da9813b5dd6c80d2fb38068773fa59ba47c17ca6c6479015c1d5b8b8f6b9a");
+            _key = Hex.decode(
+                    "398e27fc50276a656065b0e525f4c06c04c61075286b8e7aeda59da9813b5dd6c80d2fb38068773fa59ba47c17ca6c6479015c1d5b8b8f6b9a");
         } catch (EncodingException e) {
             throw new RuntimeException(e);
         }
@@ -93,7 +91,8 @@ public class BattleNetImporter extends DatabaseImporter {
             try {
                 byte[] hash = Hex.decode(hashString);
                 if (hash.length != _key.length) {
-                    throw new DatabaseImporterEntryException(String.format("Unexpected hash length: %d", hash.length), hashString);
+                    throw new DatabaseImporterEntryException(
+                            String.format("Unexpected hash length: %d", hash.length), hashString);
                 }
 
                 StringBuilder sb = new StringBuilder();

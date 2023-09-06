@@ -9,17 +9,14 @@ import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.WebView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
-
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.Theme;
 import com.beemdevelopment.aegis.helpers.ThemeHelper;
 import com.google.common.io.CharStreams;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -70,11 +67,13 @@ public abstract class SimpleWebViewDialog extends DialogFragment {
 
     protected String getBackgroundColor() {
         int backgroundColorResource = _theme == Theme.AMOLED ? R.attr.cardBackgroundFocused : R.attr.cardBackground;
-        return colorToCSS(ThemeHelper.getThemeColor(backgroundColorResource, requireContext().getTheme()));
+        return colorToCSS(ThemeHelper.getThemeColor(
+                backgroundColorResource, requireContext().getTheme()));
     }
 
     protected String getTextColor() {
-        return colorToCSS(0xFFFFFF & ThemeHelper.getThemeColor(R.attr.primaryText, requireContext().getTheme()));
+        return colorToCSS(0xFFFFFF
+                & ThemeHelper.getThemeColor(R.attr.primaryText, requireContext().getTheme()));
     }
 
     @SuppressLint("DefaultLocale")
@@ -84,7 +83,7 @@ public abstract class SimpleWebViewDialog extends DialogFragment {
 
     protected static String readAssetAsString(Context context, String name) {
         try (InputStream inStream = context.getAssets().open(name);
-             InputStreamReader reader = new InputStreamReader(inStream, StandardCharsets.UTF_8)) {
+                InputStreamReader reader = new InputStreamReader(inStream, StandardCharsets.UTF_8)) {
             return CharStreams.toString(reader);
         } catch (IOException e) {
             throw new RuntimeException(e);

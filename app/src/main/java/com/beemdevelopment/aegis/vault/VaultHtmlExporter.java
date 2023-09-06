@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.Base64;
-
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.encoding.Base32;
 import com.beemdevelopment.aegis.encoding.Hex;
@@ -16,18 +15,16 @@ import com.beemdevelopment.aegis.otp.OtpInfo;
 import com.beemdevelopment.aegis.otp.YandexInfo;
 import com.google.common.html.HtmlEscapers;
 import com.google.zxing.WriterException;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Collection;
 
 public class VaultHtmlExporter {
-    private VaultHtmlExporter() {
+    private VaultHtmlExporter() {}
 
-    }
-
-    public static void export(Context context, PrintStream ps, Collection<VaultEntry> entries) throws WriterException, IOException {
+    public static void export(Context context, PrintStream ps, Collection<VaultEntry> entries)
+            throws WriterException, IOException {
         ps.print("<html><head><title>");
         ps.print(context.getString(R.string.export_html_title));
         ps.print("</title></head><body>");
@@ -82,7 +79,8 @@ public class VaultHtmlExporter {
             ps.print("</tr>");
         }
         ps.print("</table></body>");
-        ps.print("<style>table,td,th{border:1px solid #000;border-collapse:collapse;text-align:center}td:not(.qr),th{padding:1em}</style>");
+        ps.print(
+                "<style>table,td,th{border:1px solid #000;border-collapse:collapse;text-align:center}td:not(.qr),th{padding:1em}</style>");
         ps.print("</html>");
     }
 

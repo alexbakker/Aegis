@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.encoding.EncodingException;
 import com.beemdevelopment.aegis.otp.GoogleAuthInfo;
@@ -15,7 +14,6 @@ import com.beemdevelopment.aegis.otp.TotpInfo;
 import com.beemdevelopment.aegis.vault.VaultEntry;
 import com.topjohnwu.superuser.Shell;
 import com.topjohnwu.superuser.io.SuFile;
-
 import java.io.InputStream;
 import java.util.List;
 
@@ -57,7 +55,8 @@ public class GoogleAuthImporter extends DatabaseImporter {
     }
 
     @Override
-    public DatabaseImporter.State readFromApp(Shell shell) throws PackageManager.NameNotFoundException, DatabaseImporterException {
+    public DatabaseImporter.State readFromApp(Shell shell)
+            throws PackageManager.NameNotFoundException, DatabaseImporterException {
         SuFile path = getAppPath();
         path.setShell(shell);
 
@@ -96,7 +95,8 @@ public class GoogleAuthImporter extends DatabaseImporter {
         private static VaultEntry convertEntry(Entry entry, Context context) throws DatabaseImporterEntryException {
             try {
                 if (entry.isEncrypted()) {
-                    throw new DatabaseImporterException(context.getString(R.string.importer_encrypted_exception_google_authenticator, entry.getEmail()));
+                    throw new DatabaseImporterException(context.getString(
+                            R.string.importer_encrypted_exception_google_authenticator, entry.getEmail()));
                 }
                 byte[] secret = GoogleAuthInfo.parseSecret(entry.getSecret());
 
@@ -140,9 +140,9 @@ public class GoogleAuthImporter extends DatabaseImporter {
             _email = SqlImporterHelper.getString(cursor, "email", "");
             _issuer = SqlImporterHelper.getString(cursor, "issuer", "");
             _counter = SqlImporterHelper.getLong(cursor, "counter");
-            _isEncrypted = (cursor.getColumnIndex("isencrypted") != -1 && SqlImporterHelper.getInt(cursor, "isencrypted") > 0);
+            _isEncrypted =
+                    (cursor.getColumnIndex("isencrypted") != -1 && SqlImporterHelper.getInt(cursor, "isencrypted") > 0);
         }
-
 
         public int getType() {
             return _type;

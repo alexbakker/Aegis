@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.view.animation.LayoutAnimationController;
 import android.widget.Button;
 import android.widget.LinearLayout;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -22,9 +21,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.beemdevelopment.aegis.CopyBehavior;
 import com.beemdevelopment.aegis.AccountNamePosition;
+import com.beemdevelopment.aegis.CopyBehavior;
 import com.beemdevelopment.aegis.Preferences;
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.SortCategory;
@@ -52,7 +50,6 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.divider.MaterialDividerItemDecoration;
 import com.google.common.base.Strings;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -125,7 +122,8 @@ public class EntryListView extends Fragment implements EntryAdapter.Listener {
         // set up icon preloading
         _preloadSizeProvider = new ViewPreloadSizeProvider<>();
         IconPreloadProvider modelProvider = new IconPreloadProvider();
-        RecyclerViewPreloader<VaultEntry> preloader = new RecyclerViewPreloader<>(Glide.with(this), modelProvider, _preloadSizeProvider, 10);
+        RecyclerViewPreloader<VaultEntry> preloader =
+                new RecyclerViewPreloader<>(Glide.with(this), modelProvider, _preloadSizeProvider, 10);
         _recyclerView.addOnScrollListener(preloader);
 
         GridLayoutManager layoutManager = new GridLayoutManager(requireContext(), 1);
@@ -235,12 +233,13 @@ public class EntryListView extends Fragment implements EntryAdapter.Listener {
         updateDividerDecoration();
         _adapter.setViewMode(_viewMode);
         if (_viewMode == ViewMode.TILES) {
-            _touchCallback.setDragFlags(ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
+            _touchCallback.setDragFlags(
+                    ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
         } else {
             _touchCallback.setDragFlags(ItemTouchHelper.UP | ItemTouchHelper.DOWN);
         }
 
-        ((GridLayoutManager)_recyclerView.getLayoutManager()).setSpanCount(mode.getColumnSpan());
+        ((GridLayoutManager) _recyclerView.getLayoutManager()).setSpanCount(mode.getColumnSpan());
     }
 
     public void startDrag(RecyclerView.ViewHolder viewHolder) {
@@ -384,8 +383,10 @@ public class EntryListView extends Fragment implements EntryAdapter.Listener {
 
         LinearLayoutManager layoutManager = (LinearLayoutManager) _recyclerView.getLayoutManager();
         if (focusEntry && position >= 0) {
-            if ((_recyclerView.canScrollVertically(1) && position > layoutManager.findLastCompletelyVisibleItemPosition())
-                    || (_recyclerView.canScrollVertically(-1) && position < layoutManager.findFirstCompletelyVisibleItemPosition())) {
+            if ((_recyclerView.canScrollVertically(1)
+                            && position > layoutManager.findLastCompletelyVisibleItemPosition())
+                    || (_recyclerView.canScrollVertically(-1)
+                            && position < layoutManager.findFirstCompletelyVisibleItemPosition())) {
                 boolean smoothScroll = !AnimationsHelper.Scale.TRANSITION.isZero(requireContext());
                 RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
                     private void handleScroll() {
@@ -462,7 +463,8 @@ public class EntryListView extends Fragment implements EntryAdapter.Listener {
     }
 
     public void runEntriesAnimation() {
-        LayoutAnimationController animationController = AnimationsHelper.loadScaledLayoutAnimation(requireContext(), R.anim.layout_animation_fall_down);
+        LayoutAnimationController animationController =
+                AnimationsHelper.loadScaledLayoutAnimation(requireContext(), R.anim.layout_animation_fall_down);
 
         _recyclerView.setLayoutAnimation(animationController);
         _recyclerView.scheduleLayoutAnimation();
@@ -576,7 +578,7 @@ public class EntryListView extends Fragment implements EntryAdapter.Listener {
             _recyclerView.removeItemDecoration(_verticalDividerDecoration);
         }
 
-        if(_horizontalDividerDecoration != null) {
+        if (_horizontalDividerDecoration != null) {
             _recyclerView.removeItemDecoration(_horizontalDividerDecoration);
         }
 
@@ -610,29 +612,45 @@ public class EntryListView extends Fragment implements EntryAdapter.Listener {
 
     public interface Listener {
         void onEntryClick(VaultEntry entry);
+
         void onEntryMove(VaultEntry entry1, VaultEntry entry2);
+
         void onEntryDrop(VaultEntry entry);
+
         void onEntryChange(VaultEntry entry);
+
         void onEntryCopy(VaultEntry entry);
+
         void onLongEntryClick(VaultEntry entry);
+
         void onScroll(int dx, int dy);
+
         void onSelect(VaultEntry entry);
+
         void onDeselect(VaultEntry entry);
+
         void onListChange();
+
         void onSaveGroupFilter(Set<UUID> groupFilter);
+
         void onEntryListTouch();
     }
 
     private class CompactDividerDecoration extends MaterialDividerItemDecoration {
         public CompactDividerDecoration() {
             super(requireContext(), DividerItemDecoration.VERTICAL);
-            setDividerColor(ThemeHelper.getThemeColor(R.attr.divider, requireContext().getTheme()));
+            setDividerColor(
+                    ThemeHelper.getThemeColor(R.attr.divider, requireContext().getTheme()));
             setLastItemDecorated(false);
             setDividerThickness(MetricsHelper.convertDpToPixels(requireContext(), 0.5f));
         }
 
         @Override
-        public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+        public void getItemOffsets(
+                @NonNull Rect outRect,
+                @NonNull View view,
+                @NonNull RecyclerView parent,
+                @NonNull RecyclerView.State state) {
             if (_adapter.isPositionFooter(parent.getChildAdapterPosition(view))) {
                 int pixels = MetricsHelper.convertDpToPixels(requireContext(), 20);
                 outRect.top = pixels;
@@ -653,7 +671,11 @@ public class EntryListView extends Fragment implements EntryAdapter.Listener {
         }
 
         @Override
-        public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+        public void getItemOffsets(
+                @NonNull Rect outRect,
+                @NonNull View view,
+                @NonNull RecyclerView parent,
+                @NonNull RecyclerView.State state) {
             int adapterPosition = parent.getChildAdapterPosition(view);
             if (adapterPosition == NO_POSITION) {
                 return;
@@ -674,7 +696,8 @@ public class EntryListView extends Fragment implements EntryAdapter.Listener {
             // Only non-favorite entries have a bottom margin, except for the final favorite entry
             int totalFavorites = _adapter.getShownFavoritesCount();
             if (totalFavorites == 0
-                    || (adapterPosition < _adapter.getEntriesCount() && !_adapter.getEntryAt(adapterPosition).isFavorite())
+                    || (adapterPosition < _adapter.getEntriesCount()
+                            && !_adapter.getEntryAt(adapterPosition).isFavorite())
                     || totalFavorites == adapterPosition + 1) {
                 outRect.bottom = _height;
             }
@@ -710,7 +733,11 @@ public class EntryListView extends Fragment implements EntryAdapter.Listener {
         }
 
         @Override
-        public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+        public void getItemOffsets(
+                @NonNull Rect outRect,
+                @NonNull View view,
+                @NonNull RecyclerView parent,
+                @NonNull RecyclerView.State state) {
             int adapterPosition = parent.getChildAdapterPosition(view);
             if (adapterPosition == NO_POSITION) {
                 return;
@@ -742,11 +769,11 @@ public class EntryListView extends Fragment implements EntryAdapter.Listener {
         @Override
         public RequestBuilder<Drawable> getPreloadRequestBuilder(@NonNull VaultEntry entry) {
             return Glide.with(EntryListView.this)
-                        .asDrawable()
-                        .load(entry)
-                        .set(IconLoader.ICON_TYPE, entry.getIconType())
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .skipMemoryCache(false);
+                    .asDrawable()
+                    .load(entry)
+                    .set(IconLoader.ICON_TYPE, entry.getIconType())
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(false);
         }
     }
 }

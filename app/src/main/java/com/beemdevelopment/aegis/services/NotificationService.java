@@ -6,11 +6,9 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
-
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-
 import com.beemdevelopment.aegis.BuildConfig;
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.receivers.VaultLockReceiver;
@@ -21,7 +19,7 @@ public class NotificationService extends Service {
     private static final String CHANNEL_ID = "lock_status_channel";
 
     @Override
-    public int onStartCommand(Intent intent,int flags, int startId){
+    public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         serviceMethod();
         return Service.START_STICKY;

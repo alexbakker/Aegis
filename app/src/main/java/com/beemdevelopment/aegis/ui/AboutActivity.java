@@ -10,11 +10,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.AttrRes;
 import androidx.annotation.StringRes;
 import androidx.core.view.LayoutInflaterCompat;
-
 import com.beemdevelopment.aegis.BuildConfig;
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.Theme;
@@ -24,7 +22,6 @@ import com.beemdevelopment.aegis.licenses.ProtobufLicense;
 import com.beemdevelopment.aegis.ui.dialogs.ChangelogDialog;
 import com.beemdevelopment.aegis.ui.dialogs.LicenseDialog;
 import com.mikepenz.iconics.context.IconicsLayoutInflater2;
-
 import de.psdev.licensesdialog.LicenseResolver;
 import de.psdev.licensesdialog.LicensesDialog;
 
@@ -36,7 +33,8 @@ public class AboutActivity extends AegisActivity {
 
     private static String MAIL_BEEMDEVELOPMENT = "beemdevelopment@gmail.com";
     private static String WEBSITE_BEEMDEVELOPMENT = "https://beem.dev/";
-    private static String PLAYSTORE_BEEMDEVELOPMENT = "https://play.google.com/store/apps/details?id=com.beemdevelopment.aegis";
+    private static String PLAYSTORE_BEEMDEVELOPMENT =
+            "https://play.google.com/store/apps/details?id=com.beemdevelopment.aegis";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,9 +54,7 @@ public class AboutActivity extends AegisActivity {
 
         View btnLicense = findViewById(R.id.btn_license);
         btnLicense.setOnClickListener(v -> {
-            LicenseDialog.create()
-                    .setTheme(getConfiguredTheme())
-                    .show(getSupportFragmentManager(), null);
+            LicenseDialog.create().setTheme(getConfiguredTheme()).show(getSupportFragmentManager(), null);
         });
 
         View btnThirdPartyLicenses = findViewById(R.id.btn_third_party_licenses);
@@ -88,13 +84,11 @@ public class AboutActivity extends AegisActivity {
         btnWebsite.setOnClickListener(v -> openUrl(WEBSITE_BEEMDEVELOPMENT));
 
         View btnRate = findViewById(R.id.btn_rate);
-        btnRate.setOnClickListener(v -> openUrl(PLAYSTORE_BEEMDEVELOPMENT ));
+        btnRate.setOnClickListener(v -> openUrl(PLAYSTORE_BEEMDEVELOPMENT));
 
         View btnChangelog = findViewById(R.id.btn_changelog);
         btnChangelog.setOnClickListener(v -> {
-            ChangelogDialog.create()
-                    .setTheme(getConfiguredTheme())
-                    .show(getSupportFragmentManager(), null);
+            ChangelogDialog.create().setTheme(getConfiguredTheme()).show(getSupportFragmentManager(), null);
         });
     }
 
@@ -132,7 +126,8 @@ public class AboutActivity extends AegisActivity {
 
     private void showThirdPartyLicenseDialog() {
         String stylesheet = getString(R.string.custom_notices_format_style);
-        int backgroundColorResource = getConfiguredTheme() == Theme.AMOLED ? R.attr.cardBackgroundFocused : R.attr.cardBackground;
+        int backgroundColorResource =
+                getConfiguredTheme() == Theme.AMOLED ? R.attr.cardBackgroundFocused : R.attr.cardBackground;
         String backgroundColor = getThemeColorAsHex(backgroundColorResource);
         String textColor = getThemeColorAsHex(R.attr.primaryText);
         String licenseColor = getThemeColorAsHex(R.attr.cardBackgroundFocused);

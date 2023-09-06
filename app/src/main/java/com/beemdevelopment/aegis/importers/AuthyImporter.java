@@ -3,7 +3,6 @@ package com.beemdevelopment.aegis.importers;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.util.Xml;
-
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.encoding.Base32;
 import com.beemdevelopment.aegis.encoding.Base64;
@@ -19,13 +18,6 @@ import com.beemdevelopment.aegis.vault.VaultEntry;
 import com.topjohnwu.superuser.Shell;
 import com.topjohnwu.superuser.io.SuFile;
 import com.topjohnwu.superuser.io.SuFileInputStream;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -34,7 +26,6 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -44,6 +35,11 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 public class AuthyImporter extends DatabaseImporter {
     private static final String _subPath = "shared_prefs";
@@ -53,9 +49,9 @@ public class AuthyImporter extends DatabaseImporter {
 
     private static final int ITERATIONS = 1000;
     private static final int KEY_SIZE = 256;
-    private static final byte[] IV = new byte[]{
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    private static final byte[] IV = new byte[] {
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
 
     public AuthyImporter(Context context) {
@@ -75,8 +71,10 @@ public class AuthyImporter extends DatabaseImporter {
         JSONArray array;
         JSONArray authyArray;
         try {
-            array = readFile(new SuFile(path, String.format("%s.xml", _authFilename)), String.format("%s.key", _authFilename));
-            authyArray = readFile(new SuFile(path, String.format("%s.xml", _authyFilename)), String.format("%s.key", _authyFilename));
+            array = readFile(
+                    new SuFile(path, String.format("%s.xml", _authFilename)), String.format("%s.key", _authFilename));
+            authyArray = readFile(
+                    new SuFile(path, String.format("%s.xml", _authyFilename)), String.format("%s.key", _authyFilename));
         } catch (IOException | XmlPullParserException e) {
             throw new DatabaseImporterException(e);
         }
@@ -199,14 +197,18 @@ public class AuthyImporter extends DatabaseImporter {
 
         @Override
         public void decrypt(Context context, DecryptListener listener) {
-            Dialogs.showPasswordInputDialog(context, R.string.enter_password_authy_message, password -> {
-                try {
-                    DecryptedState state = decrypt(password);
-                    listener.onStateDecrypted(state);
-                } catch (DatabaseImporterException e) {
-                    listener.onError(e);
-                }
-            }, dialog1 -> listener.onCanceled());
+            Dialogs.showPasswordInputDialog(
+                    context,
+                    R.string.enter_password_authy_message,
+                    password -> {
+                        try {
+                            DecryptedState state = decrypt(password);
+                            listener.onStateDecrypted(state);
+                        } catch (DatabaseImporterException e) {
+                            listener.onError(e);
+                        }
+                    },
+                    dialog1 -> listener.onCanceled());
         }
     }
 
@@ -258,7 +260,8 @@ public class AuthyImporter extends DatabaseImporter {
                 }
 
                 int digits = entry.getInt("digits");
-                OtpInfo info = new TotpInfo(secret, OtpInfo.DEFAULT_ALGORITHM, digits, isAuthy ? 10 : TotpInfo.DEFAULT_PERIOD);
+                OtpInfo info =
+                        new TotpInfo(secret, OtpInfo.DEFAULT_ALGORITHM, digits, isAuthy ? 10 : TotpInfo.DEFAULT_PERIOD);
                 return new VaultEntry(info, authyEntryInfo.Name, authyEntryInfo.Issuer);
             } catch (OtpInfoException | JSONException | EncodingException e) {
                 throw new DatabaseImporterEntryException(e, entry.toString());

@@ -63,7 +63,7 @@ public class AssignIconsActivity extends AegisActivity implements AssignIconAdap
         }
 
         ArrayList<UUID> assignIconEntriesIds = (ArrayList<UUID>) getIntent().getSerializableExtra("entries");
-        for (UUID entryId: assignIconEntriesIds) {
+        for (UUID entryId : assignIconEntriesIds) {
             VaultEntry vaultEntry = _vaultManager.getVault().getEntryByUUID(entryId);
             _entries.add(new AssignIconEntry(vaultEntry));
         }
@@ -74,8 +74,10 @@ public class AssignIconsActivity extends AegisActivity implements AssignIconAdap
         IconPreloadProvider modelProvider1 = new IconPreloadProvider();
         EntryIconPreloadProvider modelProvider2 = new EntryIconPreloadProvider();
         _preloadSizeProvider = new ViewPreloadSizeProvider<>();
-        RecyclerViewPreloader<IconPack.Icon> preloader1 = new RecyclerViewPreloader(this, modelProvider1, _preloadSizeProvider, 10);
-        RecyclerViewPreloader<VaultEntry> preloader2 = new RecyclerViewPreloader(this, modelProvider2, _preloadSizeProvider, 10);
+        RecyclerViewPreloader<IconPack.Icon> preloader1 =
+                new RecyclerViewPreloader(this, modelProvider1, _preloadSizeProvider, 10);
+        RecyclerViewPreloader<VaultEntry> preloader2 =
+                new RecyclerViewPreloader(this, modelProvider2, _preloadSizeProvider, 10);
 
         _adapter = new AssignIconAdapter(this);
         _entriesView = findViewById(R.id.list_assign_icons);
@@ -92,7 +94,8 @@ public class AssignIconsActivity extends AegisActivity implements AssignIconAdap
                 .findFirst();
 
         if (!favoriteIconPack.isPresent()) {
-            throw new RuntimeException(String.format("Started %s without any icon packs present", AssignIconsActivity.class.getName()));
+            throw new RuntimeException(
+                    String.format("Started %s without any icon packs present", AssignIconsActivity.class.getName()));
         }
 
         _favoriteIconPack = favoriteIconPack.get();
@@ -108,7 +111,8 @@ public class AssignIconsActivity extends AegisActivity implements AssignIconAdap
     }
 
     private IconPack.Icon findSuggestedIcon(AssignIconEntry entry) {
-        List<IconPack.Icon> suggestedIcons = _favoriteIconPack.getSuggestedIcons(entry.getEntry().getIssuer());
+        List<IconPack.Icon> suggestedIcons =
+                _favoriteIconPack.getSuggestedIcons(entry.getEntry().getIssuer());
         if (suggestedIcons.size() > 0) {
             return suggestedIcons.get(0);
         }
@@ -120,9 +124,10 @@ public class AssignIconsActivity extends AegisActivity implements AssignIconAdap
         ArrayList<UUID> uuids = new ArrayList<>();
         for (AssignIconEntry selectedEntry : _entries) {
             VaultEntry entry = selectedEntry.getEntry();
-            if(selectedEntry.getNewIcon() != null) {
+            if (selectedEntry.getNewIcon() != null) {
                 byte[] iconBytes;
-                try (FileInputStream inStream = new FileInputStream(selectedEntry.getNewIcon().getFile())){
+                try (FileInputStream inStream =
+                        new FileInputStream(selectedEntry.getNewIcon().getFile())) {
                     iconBytes = IOUtils.readFile(inStream);
                 }
 
@@ -143,12 +148,14 @@ public class AssignIconsActivity extends AegisActivity implements AssignIconAdap
     }
 
     private void discardAndFinish() {
-        Dialogs.showDiscardDialog(this,
+        Dialogs.showDiscardDialog(
+                this,
                 (dialog, which) -> {
                     try {
                         saveAndFinish();
                     } catch (IOException e) {
-                        Toast.makeText(this, R.string.saving_assign_icons_error, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.saving_assign_icons_error, Toast.LENGTH_SHORT)
+                                .show();
                     }
                 },
                 (dialog, which) -> finish());
@@ -170,7 +177,8 @@ public class AssignIconsActivity extends AegisActivity implements AssignIconAdap
                 try {
                     saveAndFinish();
                 } catch (IOException e) {
-                    Toast.makeText(this, R.string.saving_assign_icons_error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.saving_assign_icons_error, Toast.LENGTH_SHORT)
+                            .show();
                 }
                 break;
             default:
@@ -182,15 +190,20 @@ public class AssignIconsActivity extends AegisActivity implements AssignIconAdap
 
     @Override
     public void onAssignIconEntryClick(AssignIconEntry entry) {
-        BottomSheetDialog dialog = IconPickerDialog.create(this, Collections.singletonList(_favoriteIconPack), entry.getEntry().getIssuer(), false, new IconAdapter.Listener() {
-            @Override
-            public void onIconSelected(IconPack.Icon icon) {
-                entry.setNewIcon(icon);
-            }
+        BottomSheetDialog dialog = IconPickerDialog.create(
+                this,
+                Collections.singletonList(_favoriteIconPack),
+                entry.getEntry().getIssuer(),
+                false,
+                new IconAdapter.Listener() {
+                    @Override
+                    public void onIconSelected(IconPack.Icon icon) {
+                        entry.setNewIcon(icon);
+                    }
 
-            @Override
-            public void onCustomSelected() { }
-        });
+                    @Override
+                    public void onCustomSelected() {}
+                });
         Dialogs.showSecureDialog(dialog);
     }
 
@@ -260,8 +273,7 @@ public class AssignIconsActivity extends AegisActivity implements AssignIconAdap
         private final int _space;
 
         public SpacesItemDecoration(int dpSpace) {
-
-            this._space = MetricsHelper.convertDpToPixels(AssignIconsActivity.this, dpSpace);
+            _space = MetricsHelper.convertDpToPixels(AssignIconsActivity.this, dpSpace);
         }
 
         @Override

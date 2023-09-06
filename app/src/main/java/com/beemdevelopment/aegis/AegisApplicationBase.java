@@ -9,7 +9,6 @@ import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.graphics.drawable.Icon;
 import android.os.Build;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
@@ -17,7 +16,6 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ProcessLifecycleOwner;
-
 import com.beemdevelopment.aegis.receivers.VaultLockReceiver;
 import com.beemdevelopment.aegis.ui.MainActivity;
 import com.beemdevelopment.aegis.util.IOUtils;
@@ -25,13 +23,11 @@ import com.beemdevelopment.aegis.vault.VaultManager;
 import com.mikepenz.iconics.Iconics;
 import com.mikepenz.material_design_iconic_typeface_library.MaterialDesignIconic;
 import com.topjohnwu.superuser.Shell;
-
-import java.util.Collections;
-
 import dagger.hilt.InstallIn;
 import dagger.hilt.android.EarlyEntryPoint;
 import dagger.hilt.android.EarlyEntryPoints;
 import dagger.hilt.components.SingletonComponent;
+import java.util.Collections;
 
 public abstract class AegisApplicationBase extends Application {
     private static final String CODE_LOCK_STATUS_ID = "lock_status_channel";

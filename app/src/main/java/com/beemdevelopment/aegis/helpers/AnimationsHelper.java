@@ -7,9 +7,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 
 public class AnimationsHelper {
-    private AnimationsHelper() {
-
-    }
+    private AnimationsHelper() {}
 
     public static Animation loadScaledAnimation(Context context, int animationResId) {
         return loadScaledAnimation(context, animationResId, Scale.ANIMATOR);
@@ -26,7 +24,8 @@ public class AnimationsHelper {
         return loadScaledLayoutAnimation(context, animationResId, Scale.ANIMATOR);
     }
 
-    public static LayoutAnimationController loadScaledLayoutAnimation(Context context, int animationResId, Scale scale) {
+    public static LayoutAnimationController loadScaledLayoutAnimation(
+            Context context, int animationResId, Scale scale) {
         LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(context, animationResId);
         Animation animation = controller.getAnimation();
         animation.setDuration((long) (animation.getDuration() * scale.getValue(context)));

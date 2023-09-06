@@ -3,15 +3,11 @@ package com.beemdevelopment.aegis.util;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
-
 import androidx.annotation.PluralsRes;
-
 import java.util.Date;
 
 public class TimeUtils {
-    private TimeUtils() {
-
-    }
+    private TimeUtils() {}
 
     public static String getElapsedSince(Context context, Date date) {
         long since = (new Date().getTime() - date.getTime()) / 1000;
@@ -37,7 +33,8 @@ public class TimeUtils {
     @SuppressLint("DiscouragedApi")
     private static String formatElapsedSince(Context context, long since, String unit) {
         Resources res = context.getResources();
-        @PluralsRes int id = res.getIdentifier(String.format("time_elapsed_%s", unit), "plurals", context.getPackageName());
+        @PluralsRes
+        int id = res.getIdentifier(String.format("time_elapsed_%s", unit), "plurals", context.getPackageName());
         return res.getQuantityString(id, (int) since, (int) since);
     }
 }

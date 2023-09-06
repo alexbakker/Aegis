@@ -1,9 +1,7 @@
 package com.beemdevelopment.aegis.licenses;
 
 import android.content.Context;
-
 import com.beemdevelopment.aegis.R;
-
 import de.psdev.licensesdialog.licenses.License;
 
 public class GlideLicense extends License {

@@ -11,12 +11,9 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.Filter;
 import android.widget.Filterable;
-
 import androidx.annotation.PluralsRes;
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
-
 import com.beemdevelopment.aegis.R;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -54,10 +51,7 @@ public class DropdownCheckBoxes<T> extends AppCompatAutoCompleteTextView {
         setAdapter(_adapter);
 
         if (attrs != null) {
-            TypedArray a = context.obtainStyledAttributes(
-                    attrs,
-                    R.styleable.DropdownCheckBoxes,
-                    0, 0);
+            TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.DropdownCheckBoxes, 0, 0);
 
             _allowFiltering = a.getBoolean(R.styleable.DropdownCheckBoxes_allow_filtering, false);
             a.recycle();
@@ -159,14 +153,15 @@ public class DropdownCheckBoxes<T> extends AppCompatAutoCompleteTextView {
                 protected FilterResults performFiltering(CharSequence query) {
                     FilterResults results = new FilterResults();
                     results.values = (query == null || query.toString().isEmpty())
-                                   ? _items
-                                   : _items.stream().filter(item -> {
-                                                        String q = query.toString().toLowerCase();
-                                                        String strLower = item.toString().toLowerCase();
+                            ? _items
+                            : _items.stream()
+                                    .filter(item -> {
+                                        String q = query.toString().toLowerCase();
+                                        String strLower = item.toString().toLowerCase();
 
-                                                        return strLower.contains(q);
-                                                    })
-                                                    .collect(Collectors.toList());
+                                        return strLower.contains(q);
+                                    })
+                                    .collect(Collectors.toList());
 
                     return results;
                 }

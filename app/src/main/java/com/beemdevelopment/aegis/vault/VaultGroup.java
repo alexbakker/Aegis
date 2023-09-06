@@ -1,11 +1,9 @@
 package com.beemdevelopment.aegis.vault;
 
 import com.beemdevelopment.aegis.util.UUIDMap;
-
+import java.util.UUID;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.UUID;
 
 public class VaultGroup extends UUIDMap.Value {
     private String _name;

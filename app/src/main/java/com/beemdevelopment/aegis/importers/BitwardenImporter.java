@@ -2,7 +2,6 @@ package com.beemdevelopment.aegis.importers;
 
 import android.content.Context;
 import android.net.Uri;
-
 import com.beemdevelopment.aegis.encoding.Base32;
 import com.beemdevelopment.aegis.encoding.EncodingException;
 import com.beemdevelopment.aegis.otp.GoogleAuthInfo;
@@ -12,13 +11,6 @@ import com.beemdevelopment.aegis.otp.SteamInfo;
 import com.beemdevelopment.aegis.util.IOUtils;
 import com.beemdevelopment.aegis.vault.VaultEntry;
 import com.topjohnwu.superuser.io.SuFile;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.simpleflatmapper.csv.CsvParser;
-import org.simpleflatmapper.lightningcsv.Row;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -27,6 +19,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.simpleflatmapper.csv.CsvParser;
+import org.simpleflatmapper.lightningcsv.Row;
 
 public class BitwardenImporter extends DatabaseImporter {
     public BitwardenImporter(Context context) {
@@ -111,7 +108,8 @@ public class BitwardenImporter extends DatabaseImporter {
         }
     }
 
-    private static GoogleAuthInfo parseUri(String s) throws EncodingException, OtpInfoException, URISyntaxException, GoogleAuthInfoException {
+    private static GoogleAuthInfo parseUri(String s)
+            throws EncodingException, OtpInfoException, URISyntaxException, GoogleAuthInfoException {
         Uri uri = Uri.parse(s);
         if (Objects.equals(uri.getScheme(), "steam")) {
             String secretString = uri.getAuthority();

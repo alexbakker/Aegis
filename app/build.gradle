@@ -1,6 +1,10 @@
+import com.diffplug.spotless.LineEnding
+
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.protobuf'
 apply plugin: 'dagger.hilt.android.plugin'
+apply plugin: 'com.diffplug.spotless'
+apply plugin: 'checkstyle'
 
 def getCmdOutput = { cmd ->
     def stdout = new ByteArrayOutputStream()
@@ -105,6 +109,25 @@ android {
     }
 }
 
+tasks.register('checkstyle', Checkstyle) {
+    source 'src'
+    include '**/*.java'
+    exclude '**/gen/**'
+    classpath = files()
+    ignoreFailures = false
+    //maxWarnings = 0
+    maxErrors = 0
+}
+
+checkstyle {
+    toolVersion '10.12.3'
+    configFile file('./checkstyle.xml')
+}
+
+project.afterEvaluate {
+    preBuild.dependsOn 'checkstyle'
+}
+
 protobuf {
     protoc {
         artifact = 'com.google.protobuf:protoc:3.8.0'
@@ -117,6 +140,18 @@ protobuf {
                 }
             }
         }
+    }
+}
+
+spotless {
+    encoding = 'UTF-8'
+    lineEndings = LineEnding.UNIX
+    java {
+        target 'src/*/java/**/*.java'
+        //importOrder()
+        //removeUnusedImports()
+        palantirJavaFormat('2.36.0')
+        //formatAnnotations()
     }
 }
 

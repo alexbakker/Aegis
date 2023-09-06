@@ -6,16 +6,9 @@ import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
-
 import androidx.annotation.Nullable;
-
 import com.beemdevelopment.aegis.util.JsonUtils;
 import com.beemdevelopment.aegis.util.TimeUtils;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -26,6 +19,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Preferences {
     public static final int AUTO_LOCK_OFF = 1 << 0;
@@ -34,9 +30,7 @@ public class Preferences {
     public static final int AUTO_LOCK_ON_DEVICE_LOCK = 1 << 3;
 
     public static final int[] AUTO_LOCK_SETTINGS = {
-            AUTO_LOCK_ON_BACK_BUTTON,
-            AUTO_LOCK_ON_MINIMIZE,
-            AUTO_LOCK_ON_DEVICE_LOCK
+        AUTO_LOCK_ON_BACK_BUTTON, AUTO_LOCK_ON_MINIMIZE, AUTO_LOCK_ON_DEVICE_LOCK
     };
 
     private SharedPreferences _prefs;
@@ -132,7 +126,9 @@ public class Preferences {
         setPasswordReminderTimestamp(new Date().getTime());
     }
 
-    public boolean onlyShowNecessaryAccountNames() { return _prefs.getBoolean("pref_shared_issuer_account_name", false); }
+    public boolean onlyShowNecessaryAccountNames() {
+        return _prefs.getBoolean("pref_shared_issuer_account_name", false);
+    }
 
     public boolean isIconVisible() {
         return _prefs.getBoolean("pref_show_icons", true);
@@ -206,11 +202,14 @@ public class Preferences {
     }
 
     public AccountNamePosition getAccountNamePosition() {
-        return AccountNamePosition.fromInteger(_prefs.getInt("pref_account_name_position", AccountNamePosition.END.ordinal()));
+        return AccountNamePosition.fromInteger(
+                _prefs.getInt("pref_account_name_position", AccountNamePosition.END.ordinal()));
     }
 
     public void setAccountNamePosition(AccountNamePosition accountNamePosition) {
-        _prefs.edit().putInt("pref_account_name_position", accountNamePosition.ordinal()).apply();
+        _prefs.edit()
+                .putInt("pref_account_name_position", accountNamePosition.ordinal())
+                .apply();
     }
 
     public Integer getUsageCount(UUID uuid) {
@@ -358,7 +357,9 @@ public class Preferences {
     }
 
     public void setBackupsLocation(Uri location) {
-        _prefs.edit().putString("pref_backups_location", location == null ? null : location.toString()).apply();
+        _prefs.edit()
+                .putString("pref_backups_location", location == null ? null : location.toString())
+                .apply();
     }
 
     public int getBackupsVersionCount() {
@@ -426,7 +427,7 @@ public class Preferences {
     }
 
     private static String getBackupResultKey(boolean isBuiltInBackup) {
-        return isBuiltInBackup ? "pref_backups_result_builtin": "pref_backups_result_android";
+        return isBuiltInBackup ? "pref_backups_result_builtin" : "pref_backups_result_android";
     }
 
     public void setIsBackupReminderNeeded(boolean needed) {
@@ -444,12 +445,13 @@ public class Preferences {
     }
 
     public boolean isPlaintextBackupWarningNeeded() {
-        return !isPlaintextBackupWarningDisabled()
-                && _prefs.getBoolean("pref_plaintext_backup_warning_needed", false);
+        return !isPlaintextBackupWarningDisabled() && _prefs.getBoolean("pref_plaintext_backup_warning_needed", false);
     }
 
     public void setIsPlaintextBackupWarningDisabled(boolean disabled) {
-        _prefs.edit().putBoolean("pref_plaintext_backup_warning_disabled", disabled).apply();
+        _prefs.edit()
+                .putBoolean("pref_plaintext_backup_warning_disabled", disabled)
+                .apply();
     }
 
     public boolean isPlaintextBackupWarningDisabled() {
@@ -473,7 +475,9 @@ public class Preferences {
     }
 
     public void setCopyBehavior(CopyBehavior copyBehavior) {
-        _prefs.edit().putInt("pref_current_copy_behavior", copyBehavior.ordinal()).apply();
+        _prefs.edit()
+                .putInt("pref_current_copy_behavior", copyBehavior.ordinal())
+                .apply();
     }
 
     public boolean isMinimizeOnCopyEnabled() {
@@ -571,6 +575,7 @@ public class Preferences {
         GROUPING_FOURS(4);
 
         private final int _value;
+
         CodeGrouping(int value) {
             _value = value;
         }

@@ -2,13 +2,10 @@ package com.beemdevelopment.aegis.helpers;
 
 import android.os.Build;
 import android.widget.ImageView;
-
 import com.beemdevelopment.aegis.icons.IconType;
 
 public class IconViewHelper {
-    private IconViewHelper() {
-
-    }
+    private IconViewHelper() {}
 
     /**
      * Sets the layer type of the given ImageView based on the given IconType. If the

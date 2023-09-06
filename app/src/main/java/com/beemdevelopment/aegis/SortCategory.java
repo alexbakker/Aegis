@@ -1,10 +1,9 @@
 package com.beemdevelopment.aegis;
 
-import com.beemdevelopment.aegis.helpers.comparators.UsageCountComparator;
-import com.beemdevelopment.aegis.vault.VaultEntry;
 import com.beemdevelopment.aegis.helpers.comparators.AccountNameComparator;
 import com.beemdevelopment.aegis.helpers.comparators.IssuerNameComparator;
-
+import com.beemdevelopment.aegis.helpers.comparators.UsageCountComparator;
+import com.beemdevelopment.aegis.vault.VaultEntry;
 import java.util.Collections;
 import java.util.Comparator;
 

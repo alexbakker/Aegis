@@ -3,9 +3,7 @@ package com.beemdevelopment.aegis.ui.views;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.vault.VaultGroup;
 

@@ -4,11 +4,9 @@ import android.content.Context;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
-
+import androidx.recyclerview.widget.RecyclerView;
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.ui.models.ImportEntry;
-
-import androidx.recyclerview.widget.RecyclerView;
 
 public class ImportEntryHolder extends RecyclerView.ViewHolder implements ImportEntry.Listener {
     private TextView _issuer;
@@ -30,8 +28,14 @@ public class ImportEntryHolder extends RecyclerView.ViewHolder implements Import
         _data = data;
 
         Context context = itemView.getContext();
-        _issuer.setText(!_data.getEntry().getIssuer().isEmpty() ? _data.getEntry().getIssuer() : context.getString(R.string.unknown_issuer));
-        _accountName.setText(!_data.getEntry().getName().isEmpty() ? _data.getEntry().getName() : context.getString(R.string.unknown_account_name));
+        _issuer.setText(
+                !_data.getEntry().getIssuer().isEmpty()
+                        ? _data.getEntry().getIssuer()
+                        : context.getString(R.string.unknown_issuer));
+        _accountName.setText(
+                !_data.getEntry().getName().isEmpty()
+                        ? _data.getEntry().getName()
+                        : context.getString(R.string.unknown_account_name));
         _checkbox.setChecked(_data.isChecked());
     }
 

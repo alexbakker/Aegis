@@ -19,13 +19,11 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
-
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.avito.android.krop.KropView;
 import com.beemdevelopment.aegis.R;
@@ -68,7 +66,7 @@ import com.bumptech.glide.request.transition.Transition;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-
+import de.hdodenhof.circleimageview.CircleImageView;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -85,8 +83,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class EditEntryActivity extends AegisActivity {
     private static final int PICK_IMAGE_REQUEST = 0;
@@ -186,7 +182,8 @@ public class EditEntryActivity extends AegisActivity {
         updateGroupDropdownList();
         DropdownHelper.fillDropdown(this, _dropdownGroup, _dropdownGroupList);
 
-        // if this is NOT a manually entered entry, move the "Secret" field from basic to advanced settings
+        // if this is NOT a manually entered entry, move the "Secret" field from basic to advanced
+        // settings
         if (!_isNew || !_isManual) {
             int secretIndex = 0;
             LinearLayout layoutSecret = findViewById(R.id.layout_secret);
@@ -219,15 +216,16 @@ public class EditEntryActivity extends AegisActivity {
         if (_origEntry.hasIcon()) {
             IconViewHelper.setLayerType(_iconView, _origEntry.getIconType());
             Glide.with(this)
-                .asDrawable()
-                .load(_origEntry.getIcon())
-                .set(IconLoader.ICON_TYPE, _origEntry.getIconType())
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .skipMemoryCache(false)
-                .into(_iconView);
+                    .asDrawable()
+                    .load(_origEntry.getIcon())
+                    .set(IconLoader.ICON_TYPE, _origEntry.getIconType())
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(false)
+                    .into(_iconView);
             _hasCustomIcon = true;
         } else {
-            TextDrawable drawable = TextDrawableHelper.generate(_origEntry.getIssuer(), _origEntry.getName(), _iconView);
+            TextDrawable drawable =
+                    TextDrawableHelper.generate(_origEntry.getIssuer(), _origEntry.getName(), _iconView);
             _iconView.setImageDrawable(drawable);
         }
 
@@ -270,7 +268,8 @@ public class EditEntryActivity extends AegisActivity {
         if (groups.isEmpty()) {
             setGroup(new VaultGroupModel(getString(R.string.no_group)));
         } else {
-            VaultGroup group = _vaultManager.getVault().getGroupByUUID(groups.iterator().next());
+            VaultGroup group =
+                    _vaultManager.getVault().getGroupByUUID(groups.iterator().next());
             setGroup(new VaultGroupModel(group));
         }
 
@@ -338,7 +337,8 @@ public class EditEntryActivity extends AegisActivity {
 
         _dropdownGroup.setOnItemClickListener((parent, view, position, id) -> {
             VaultGroupModel selectedGroup = _dropdownGroupList.get(position);
-            if (selectedGroup.isPlaceholder() && Objects.equals(selectedGroup.getName(), getString(R.string.new_group))) {
+            if (selectedGroup.isPlaceholder()
+                    && Objects.equals(selectedGroup.getName(), getString(R.string.new_group))) {
                 Dialogs.TextInputListener onAddGroup = text -> {
                     String groupName = new String(text).trim();
                     if (!groupName.isEmpty()) {
@@ -358,7 +358,8 @@ public class EditEntryActivity extends AegisActivity {
                     _dropdownGroup.setText(previous.getName(), false);
                 };
 
-                Dialogs.showTextInputDialog(EditEntryActivity.this, R.string.set_group, R.string.group_name_hint, onAddGroup, onCancel);
+                Dialogs.showTextInputDialog(
+                        EditEntryActivity.this, R.string.set_group, R.string.group_name_hint, onAddGroup, onCancel);
             } else {
                 setGroup(_dropdownGroupList.get(position));
             }
@@ -368,8 +369,10 @@ public class EditEntryActivity extends AegisActivity {
     }
 
     private void updateAdvancedFieldStatus(String otpType) {
-        boolean enabled = !otpType.equals(SteamInfo.ID) && !otpType.equals(YandexInfo.ID)
-                && !otpType.equals(MotpInfo.ID) && (!_isNew || _isManual);
+        boolean enabled = !otpType.equals(SteamInfo.ID)
+                && !otpType.equals(YandexInfo.ID)
+                && !otpType.equals(MotpInfo.ID)
+                && (!_isNew || _isManual);
         _textDigitsLayout.setEnabled(enabled);
         _textPeriodCounterLayout.setEnabled(enabled);
         _dropdownAlgoLayout.setEnabled(enabled);
@@ -432,7 +435,8 @@ public class EditEntryActivity extends AegisActivity {
         }
 
         // ask for confirmation if the entry has been changed
-        Dialogs.showDiscardDialog(EditEntryActivity.this,
+        Dialogs.showDiscardDialog(
+                EditEntryActivity.this,
                 (dialog, which) -> {
                     // if the entry couldn't be parsed, we show an error dialog
                     if (msg.get() != null) {
@@ -442,8 +446,7 @@ public class EditEntryActivity extends AegisActivity {
 
                     addAndFinish(entry.get());
                 },
-                (dialog, which) -> finish()
-        );
+                (dialog, which) -> finish());
     }
 
     @Override
@@ -472,7 +475,8 @@ public class EditEntryActivity extends AegisActivity {
                         .create());
                 break;
             case R.id.action_default_icon:
-                TextDrawable drawable = TextDrawableHelper.generate(_origEntry.getIssuer(), _origEntry.getName(), _iconView);
+                TextDrawable drawable =
+                        TextDrawableHelper.generate(_origEntry.getIssuer(), _origEntry.getName(), _iconView);
                 _iconView.setImageDrawable(drawable);
 
                 _selectedIcon = null;
@@ -493,7 +497,7 @@ public class EditEntryActivity extends AegisActivity {
         fileIntent.setType("image/*");
 
         Intent chooserIntent = Intent.createChooser(galleryIntent, getString(R.string.select_icon));
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] { fileIntent });
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {fileIntent});
         _vaultManager.startActivityForResult(this, chooserIntent, PICK_IMAGE_REQUEST);
     }
 
@@ -511,17 +515,18 @@ public class EditEntryActivity extends AegisActivity {
             return;
         }
 
-        BottomSheetDialog dialog = IconPickerDialog.create(this, iconPacks, _textIssuer.getText().toString(), true, new IconAdapter.Listener() {
-            @Override
-            public void onIconSelected(IconPack.Icon icon) {
-                selectIcon(icon);
-            }
+        BottomSheetDialog dialog = IconPickerDialog.create(
+                this, iconPacks, _textIssuer.getText().toString(), true, new IconAdapter.Listener() {
+                    @Override
+                    public void onIconSelected(IconPack.Icon icon) {
+                        selectIcon(icon);
+                    }
 
-            @Override
-            public void onCustomSelected() {
-                startImageSelectionActivity();
-            }
-        });
+                    @Override
+                    public void onCustomSelected() {
+                        startImageSelectionActivity();
+                    }
+                });
         Dialogs.showSecureDialog(dialog);
     }
 
@@ -548,14 +553,13 @@ public class EditEntryActivity extends AegisActivity {
                 .skipMemoryCache(false)
                 .into(new CustomTarget<Bitmap>() {
                     @Override
-                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                    public void onResourceReady(
+                            @NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                         _kropView.setBitmap(resource);
                     }
 
                     @Override
-                    public void onLoadCleared(@Nullable Drawable placeholder) {
-
-                    }
+                    public void onLoadCleared(@Nullable Drawable placeholder) {}
                 });
         _iconView.setVisibility(View.GONE);
         _kropView.setVisibility(View.VISIBLE);
@@ -684,15 +688,17 @@ public class EditEntryActivity extends AegisActivity {
         try {
             String secretString = new String(EditTextHelper.getEditTextChars(_textSecret));
 
-            secret = (lowerCasedType.equals(MotpInfo.ID)) ?
-                    Hex.decode(secretString) : GoogleAuthInfo.parseSecret(secretString);
+            secret = (lowerCasedType.equals(MotpInfo.ID))
+                    ? Hex.decode(secretString)
+                    : GoogleAuthInfo.parseSecret(secretString);
 
             if (secret.length == 0) {
                 throw new ParseException("Secret cannot be empty");
             }
         } catch (EncodingException e) {
-            String exceptionMessage = (lowerCasedType.equals(MotpInfo.ID)) ?
-                    "Secret is not valid hexadecimal" : "Secret is not valid base32.";
+            String exceptionMessage = (lowerCasedType.equals(MotpInfo.ID))
+                    ? "Secret is not valid hexadecimal"
+                    : "Secret is not valid base32.";
 
             throw new ParseException(exceptionMessage);
         }
@@ -757,7 +763,7 @@ public class EditEntryActivity extends AegisActivity {
                     entry.setIcon(data, IconType.PNG);
                 } else {
                     byte[] iconBytes;
-                    try (FileInputStream inStream = new FileInputStream(_selectedIcon.getFile())){
+                    try (FileInputStream inStream = new FileInputStream(_selectedIcon.getFile())) {
                         iconBytes = IOUtils.readFile(inStream);
                     } catch (IOException e) {
                         throw new ParseException(e.getMessage());
@@ -815,7 +821,8 @@ public class EditEntryActivity extends AegisActivity {
 
     private final TextWatcher _nameChangeListener = new SimpleTextWatcher((s) -> {
         if (!_hasCustomIcon) {
-            TextDrawable drawable = TextDrawableHelper.generate(_textIssuer.getText().toString(), _textName.getText().toString(), _iconView);
+            TextDrawable drawable = TextDrawableHelper.generate(
+                    _textIssuer.getText().toString(), _textName.getText().toString(), _iconView);
             _iconView.setImageDrawable(drawable);
         }
     });

@@ -2,14 +2,11 @@ package com.beemdevelopment.aegis.otp;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.beemdevelopment.aegis.crypto.otp.MOTP;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MotpInfo extends TotpInfo {
     public static final String ID = "motp";

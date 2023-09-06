@@ -1,17 +1,8 @@
 package com.beemdevelopment.aegis.icons;
 
 import android.content.Context;
-
 import androidx.annotation.Nullable;
-
 import com.beemdevelopment.aegis.util.IOUtils;
-
-import net.lingala.zip4j.ZipFile;
-import net.lingala.zip4j.io.inputstream.ZipInputStream;
-import net.lingala.zip4j.model.FileHeader;
-
-import org.json.JSONException;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -20,6 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import net.lingala.zip4j.ZipFile;
+import net.lingala.zip4j.io.inputstream.ZipInputStream;
+import net.lingala.zip4j.model.FileHeader;
+import org.json.JSONException;
 
 public class IconPackManager {
     private static final String _packDefFilename = "pack.json";
@@ -34,7 +29,8 @@ public class IconPackManager {
     }
 
     private IconPack getIconPackByUUID(UUID uuid) {
-        List<IconPack> packs = _iconPacks.stream().filter(i -> i.getUUID().equals(uuid)).collect(Collectors.toList());
+        List<IconPack> packs =
+                _iconPacks.stream().filter(i -> i.getUUID().equals(uuid)).collect(Collectors.toList());
         if (packs.size() == 0) {
             return null;
         }
@@ -97,7 +93,8 @@ public class IconPackManager {
                 File destFile = new File(packDir, icon.getRelativeFilename());
                 FileHeader iconHeader = zipFile.getFileHeader(icon.getRelativeFilename());
                 if (iconHeader == null) {
-                    throw new IOException(String.format("Unable to find %s relative to the root of the ZIP file", icon.getRelativeFilename()));
+                    throw new IOException(String.format(
+                            "Unable to find %s relative to the root of the ZIP file", icon.getRelativeFilename()));
                 }
 
                 // create new directories for this file if needed
@@ -107,7 +104,7 @@ public class IconPackManager {
                 }
 
                 try (ZipInputStream inStream = zipFile.getInputStream(iconHeader);
-                     FileOutputStream outStream = new FileOutputStream(destFile)) {
+                        FileOutputStream outStream = new FileOutputStream(destFile)) {
                     IOUtils.copy(inStream, outStream);
                 }
 
@@ -139,7 +136,7 @@ public class IconPackManager {
 
         for (File dir : dirs) {
             if (!dir.isDirectory()) {
-                 continue;
+                continue;
             }
 
             UUID uuid;

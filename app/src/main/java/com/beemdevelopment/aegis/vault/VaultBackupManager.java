@@ -5,13 +5,10 @@ import android.content.UriPermission;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.documentfile.provider.DocumentFile;
-
 import com.beemdevelopment.aegis.Preferences;
 import com.beemdevelopment.aegis.util.IOUtils;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -33,8 +30,7 @@ import java.util.concurrent.Executors;
 public class VaultBackupManager {
     private static final String TAG = VaultBackupManager.class.getSimpleName();
 
-    private static final StrictDateFormat _dateFormat =
-            new StrictDateFormat("yyyyMMdd-HHmmss", Locale.ENGLISH);
+    private static final StrictDateFormat _dateFormat = new StrictDateFormat("yyyyMMdd-HHmmss", Locale.ENGLISH);
 
     public static final String FILENAME_PREFIX = "aegis-backup";
 
@@ -65,7 +61,10 @@ public class VaultBackupManager {
         DocumentFile dir = DocumentFile.fromTreeUri(_context, dirUri);
 
         try {
-            Log.i(TAG, String.format("Creating backup at %s: %s", Uri.decode(dir.getUri().toString()), fileInfo.toString()));
+            Log.i(
+                    TAG,
+                    String.format(
+                            "Creating backup at %s: %s", Uri.decode(dir.getUri().toString()), fileInfo.toString()));
 
             if (!hasPermissionsAt(dirUri)) {
                 throw new VaultRepositoryException("No persisted URI permissions");
@@ -84,7 +83,7 @@ public class VaultBackupManager {
             }
 
             try (FileInputStream inStream = new FileInputStream(tempFile);
-                 OutputStream outStream = _context.getContentResolver().openOutputStream(file.getUri())) {
+                    OutputStream outStream = _context.getContentResolver().openOutputStream(file.getUri())) {
                 if (outStream == null) {
                     throw new IOException("openOutputStream returned null");
                 }
@@ -113,14 +112,19 @@ public class VaultBackupManager {
     }
 
     private void enforceVersioning(DocumentFile dir, int versionsToKeep) {
-        Log.i(TAG, String.format("Scanning directory %s for backup files", Uri.decode(dir.getUri().toString())));
+        Log.i(
+                TAG,
+                String.format(
+                        "Scanning directory %s for backup files",
+                        Uri.decode(dir.getUri().toString())));
 
         List<BackupFile> files = new ArrayList<>();
         for (DocumentFile docFile : dir.listFiles()) {
             if (docFile.isFile() && !docFile.isVirtual()) {
                 try {
                     files.add(new BackupFile(docFile));
-                } catch (ParseException ignored) { }
+                } catch (ParseException ignored) {
+                }
             }
         }
 
@@ -131,7 +135,9 @@ public class VaultBackupManager {
             for (BackupFile file : files.subList(0, files.size() - versionsToKeep)) {
                 Log.i(TAG, String.format("Deleting %s", file.getFile().getName()));
                 if (!file.getFile().delete()) {
-                    Log.e(TAG, String.format("Unable to delete %s", file.getFile().getName()));
+                    Log.e(
+                            TAG,
+                            String.format("Unable to delete %s", file.getFile().getName()));
                 }
             }
         }
@@ -251,8 +257,7 @@ public class VaultBackupManager {
             Date d = super.parse(text, pos);
             if (!isLenient() && d != null) {
                 String format = format(d);
-                if (posIndex + format.length() != text.length() ||
-                        !text.endsWith(format)) {
+                if (posIndex + format.length() != text.length() || !text.endsWith(format)) {
                     d = null; // Not exact match
                 }
             }

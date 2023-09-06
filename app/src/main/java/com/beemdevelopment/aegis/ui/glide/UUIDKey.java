@@ -1,9 +1,7 @@
 package com.beemdevelopment.aegis.ui.glide;
 
 import androidx.annotation.NonNull;
-
 import com.bumptech.glide.load.Key;
-
 import java.security.MessageDigest;
 import java.util.UUID;
 

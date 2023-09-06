@@ -1,5 +1,10 @@
 package com.beemdevelopment.aegis.ui.slides;
 
+import static com.beemdevelopment.aegis.ui.slides.SecurityPickerSlide.CRYPT_TYPE_BIOMETRIC;
+import static com.beemdevelopment.aegis.ui.slides.SecurityPickerSlide.CRYPT_TYPE_INVALID;
+import static com.beemdevelopment.aegis.ui.slides.SecurityPickerSlide.CRYPT_TYPE_NONE;
+import static com.beemdevelopment.aegis.ui.slides.SecurityPickerSlide.CRYPT_TYPE_PASS;
+
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -14,10 +19,8 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.biometric.BiometricPrompt;
-
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.helpers.BiometricSlotInitializer;
 import com.beemdevelopment.aegis.helpers.BiometricsHelper;
@@ -34,14 +37,8 @@ import com.beemdevelopment.aegis.vault.slots.SlotException;
 import com.google.android.material.textfield.TextInputLayout;
 import com.nulabinc.zxcvbn.Strength;
 import com.nulabinc.zxcvbn.Zxcvbn;
-
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
-
-import static com.beemdevelopment.aegis.ui.slides.SecurityPickerSlide.CRYPT_TYPE_BIOMETRIC;
-import static com.beemdevelopment.aegis.ui.slides.SecurityPickerSlide.CRYPT_TYPE_INVALID;
-import static com.beemdevelopment.aegis.ui.slides.SecurityPickerSlide.CRYPT_TYPE_NONE;
-import static com.beemdevelopment.aegis.ui.slides.SecurityPickerSlide.CRYPT_TYPE_PASS;
 
 public class SecuritySetupSlide extends SlideFragment {
     private EditText _textPassword;
@@ -83,19 +80,21 @@ public class SecuritySetupSlide extends SlideFragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 Strength strength = _zxcvbn.measure(_textPassword.getText());
                 _barPasswordStrength.setProgress(strength.getScore());
-                _barPasswordStrength.setProgressTintList(ColorStateList.valueOf(Color.parseColor(PasswordStrengthHelper.getColor(strength.getScore()))));
-                _textPasswordStrength.setText((_textPassword.getText().length() != 0) ? PasswordStrengthHelper.getString(strength.getScore(), requireContext()) : "");
+                _barPasswordStrength.setProgressTintList(
+                        ColorStateList.valueOf(Color.parseColor(PasswordStrengthHelper.getColor(strength.getScore()))));
+                _textPasswordStrength.setText(
+                        (_textPassword.getText().length() != 0)
+                                ? PasswordStrengthHelper.getString(strength.getScore(), requireContext())
+                                : "");
                 _textPasswordWrapper.setError(strength.getFeedback().getWarning());
                 strength.wipe();
             }
 
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void afterTextChanged(Editable s) {
-            }
+            public void afterTextChanged(Editable s) {}
         });
 
         return view;
@@ -107,7 +106,8 @@ public class SecuritySetupSlide extends SlideFragment {
 
         _cryptType = getState().getInt("cryptType", CRYPT_TYPE_INVALID);
         if (_cryptType == CRYPT_TYPE_INVALID || _cryptType == CRYPT_TYPE_NONE) {
-            throw new RuntimeException(String.format("State of SecuritySetupSlide not properly propagated, cryptType: %d", _cryptType));
+            throw new RuntimeException(
+                    String.format("State of SecuritySetupSlide not properly propagated, cryptType: %d", _cryptType));
         }
 
         _creds = new VaultFileCredentials();
@@ -124,7 +124,8 @@ public class SecuritySetupSlide extends SlideFragment {
 
     private void deriveKey() {
         PasswordSlot slot = new PasswordSlot();
-        KeyDerivationTask.Params params = new KeyDerivationTask.Params(slot, EditTextHelper.getEditTextChars(_textPassword));
+        KeyDerivationTask.Params params =
+                new KeyDerivationTask.Params(slot, EditTextHelper.getEditTextChars(_textPassword));
         KeyDerivationTask task = new KeyDerivationTask(requireContext(), new PasswordDerivationListener());
         task.execute(getLifecycle(), params);
     }
@@ -153,7 +154,8 @@ public class SecuritySetupSlide extends SlideFragment {
     @Override
     public void onNotFinishedError() {
         if (!EditTextHelper.areEditTextsEqual(_textPassword, _textPasswordConfirm)) {
-            Toast.makeText(requireContext(), R.string.password_equality_error, Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), R.string.password_equality_error, Toast.LENGTH_SHORT)
+                    .show();
         } else if (_cryptType != SecurityPickerSlide.CRYPT_TYPE_BIOMETRIC) {
             deriveKey();
         } else if (!_creds.getSlots().has(BiometricSlot.class)) {

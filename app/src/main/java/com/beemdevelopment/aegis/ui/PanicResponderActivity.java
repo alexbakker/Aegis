@@ -3,12 +3,10 @@ package com.beemdevelopment.aegis.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
-
 import com.beemdevelopment.aegis.BuildConfig;
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.crypto.pins.GuardianProjectFDroidRSA2048;
 import com.beemdevelopment.aegis.vault.VaultRepository;
-
 import info.guardianproject.GuardianProjectRSA4096;
 import info.guardianproject.trustedintents.TrustedIntents;
 
@@ -20,7 +18,8 @@ public class PanicResponderActivity extends AegisActivity {
         super.onCreate(savedInstanceState);
 
         if (!_prefs.isPanicTriggerEnabled()) {
-            Toast.makeText(this, R.string.panic_trigger_ignore_toast, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.panic_trigger_ignore_toast, Toast.LENGTH_SHORT)
+                    .show();
             finish();
             return;
         }

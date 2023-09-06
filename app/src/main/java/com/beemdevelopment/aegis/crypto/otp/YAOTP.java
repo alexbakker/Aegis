@@ -1,7 +1,6 @@
 package com.beemdevelopment.aegis.crypto.otp;
 
 import androidx.annotation.NonNull;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -48,9 +47,7 @@ public class YAOTP {
         byte[] periodHash = HOTP.getHash(keyHash, otpAlgo, counter);
         int offset = periodHash[periodHash.length - 1] & 0xf;
         periodHash[offset] &= 0x7f;
-        long otp = ByteBuffer.wrap(periodHash)
-                .order(ByteOrder.BIG_ENDIAN)
-                .getLong(offset);
+        long otp = ByteBuffer.wrap(periodHash).order(ByteOrder.BIG_ENDIAN).getLong(offset);
 
         return new YAOTP(otp, digits);
     }

@@ -3,12 +3,9 @@ package com.beemdevelopment.aegis.ui.views;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.ui.models.AssignIconEntry;
-
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -50,6 +47,7 @@ public class AssignIconAdapter extends RecyclerView.Adapter<AssignIconHolder> {
 
     public interface Listener {
         void onAssignIconEntryClick(AssignIconEntry entry);
+
         void onSetPreloadView(View view);
     }
 }

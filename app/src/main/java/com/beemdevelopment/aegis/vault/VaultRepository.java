@@ -1,17 +1,12 @@
 package com.beemdevelopment.aegis.vault;
 
 import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.util.AtomicFile;
-
 import com.beemdevelopment.aegis.otp.GoogleAuthInfo;
 import com.beemdevelopment.aegis.util.IOUtils;
 import com.google.zxing.WriterException;
-
-import org.json.JSONObject;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -25,6 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.json.JSONObject;
 
 public class VaultRepository {
     public static final String FILENAME = "aegis.json";
@@ -88,7 +84,8 @@ public class VaultRepository {
         }
     }
 
-    public static VaultRepository fromFile(Context context, VaultFile file, VaultFileCredentials creds) throws VaultRepositoryException {
+    public static VaultRepository fromFile(Context context, VaultFile file, VaultFileCredentials creds)
+            throws VaultRepositoryException {
         if (file.isEncrypted() && creds == null) {
             throw new IllegalArgumentException("The VaultFile is encrypted but the given VaultFileCredentials is null");
         }
@@ -153,7 +150,8 @@ public class VaultRepository {
      * is enabled, the vault will be encrypted automatically. If filter is not null only specified
      * entries will be exported
      */
-    public void exportFiltered(OutputStream stream, @Nullable Vault.EntryFilter filter) throws VaultRepositoryException {
+    public void exportFiltered(OutputStream stream, @Nullable Vault.EntryFilter filter)
+            throws VaultRepositoryException {
         exportFiltered(stream, getCredentials(), filter);
     }
 
@@ -162,7 +160,9 @@ public class VaultRepository {
      * not null, it will be used to encrypt the vault first. If filter is not null only specified
      * entries will be exported
      */
-    public void exportFiltered(OutputStream stream, @Nullable VaultFileCredentials creds, @Nullable Vault.EntryFilter filter) throws VaultRepositoryException {
+    public void exportFiltered(
+            OutputStream stream, @Nullable VaultFileCredentials creds, @Nullable Vault.EntryFilter filter)
+            throws VaultRepositoryException {
         if (creds != null) {
             creds = creds.exportable();
         }
@@ -187,7 +187,8 @@ public class VaultRepository {
      * Exports the vault by serializing the list of entries to a newline-separated list of
      * Google Authenticator URI's and writing it to the given OutputStream.
      */
-    public void exportGoogleUris(OutputStream outStream, @Nullable Vault.EntryFilter filter) throws VaultRepositoryException {
+    public void exportGoogleUris(OutputStream outStream, @Nullable Vault.EntryFilter filter)
+            throws VaultRepositoryException {
         try (PrintStream stream = new PrintStream(outStream, false, StandardCharsets.UTF_8.name())) {
             for (VaultEntry entry : getEntries()) {
                 if (filter == null || filter.includeEntry(entry)) {
@@ -207,9 +208,7 @@ public class VaultRepository {
     public void exportHtml(OutputStream outStream, @Nullable Vault.EntryFilter filter) throws VaultRepositoryException {
         Collection<VaultEntry> entries = getEntries();
         if (filter != null) {
-            entries = entries.stream()
-                    .filter(filter::includeEntry)
-                    .collect(Collectors.toList());
+            entries = entries.stream().filter(filter::includeEntry).collect(Collectors.toList());
         }
 
         try (PrintStream ps = new PrintStream(outStream, false, StandardCharsets.UTF_8.name())) {
@@ -275,8 +274,7 @@ public class VaultRepository {
 
     @Nullable
     public VaultGroup findGroupByName(String name) {
-        return _vault.getGroups().getValues()
-                .stream()
+        return _vault.getGroups().getValues().stream()
                 .filter(g -> g.getName().equals(name))
                 .findFirst()
                 .orElse(null);

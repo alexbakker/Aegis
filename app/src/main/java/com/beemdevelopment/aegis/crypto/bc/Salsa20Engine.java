@@ -24,36 +24,29 @@ package com.beemdevelopment.aegis.crypto.bc;
  * Implementation of Daniel J. Bernstein's Salsa20 stream cipher, Snuffle 2005
  */
 public class Salsa20Engine {
-    private Salsa20Engine()
-    {
+    private Salsa20Engine() {}
 
-    }
-
-    public static void salsaCore(int rounds, int[] input, int[] x)
-    {
-        if (input.length != 16)
-        {
+    public static void salsaCore(int rounds, int[] input, int[] x) {
+        if (input.length != 16) {
             throw new IllegalArgumentException();
         }
-        if (x.length != 16)
-        {
+        if (x.length != 16) {
             throw new IllegalArgumentException();
         }
-        if (rounds % 2 != 0)
-        {
+        if (rounds % 2 != 0) {
             throw new IllegalArgumentException("Number of rounds must be even");
         }
 
-        int x00 = input[ 0];
-        int x01 = input[ 1];
-        int x02 = input[ 2];
-        int x03 = input[ 3];
-        int x04 = input[ 4];
-        int x05 = input[ 5];
-        int x06 = input[ 6];
-        int x07 = input[ 7];
-        int x08 = input[ 8];
-        int x09 = input[ 9];
+        int x00 = input[0];
+        int x01 = input[1];
+        int x02 = input[2];
+        int x03 = input[3];
+        int x04 = input[4];
+        int x05 = input[5];
+        int x06 = input[6];
+        int x07 = input[7];
+        int x08 = input[8];
+        int x09 = input[9];
         int x10 = input[10];
         int x11 = input[11];
         int x12 = input[12];
@@ -61,8 +54,7 @@ public class Salsa20Engine {
         int x14 = input[14];
         int x15 = input[15];
 
-        for (int i = rounds; i > 0; i -= 2)
-        {
+        for (int i = rounds; i > 0; i -= 2) {
             x04 ^= Integer.rotateLeft(x00 + x12, 7);
             x08 ^= Integer.rotateLeft(x04 + x00, 9);
             x12 ^= Integer.rotateLeft(x08 + x04, 13);
@@ -98,16 +90,16 @@ public class Salsa20Engine {
             x15 ^= Integer.rotateLeft(x14 + x13, 18);
         }
 
-        x[ 0] = x00 + input[ 0];
-        x[ 1] = x01 + input[ 1];
-        x[ 2] = x02 + input[ 2];
-        x[ 3] = x03 + input[ 3];
-        x[ 4] = x04 + input[ 4];
-        x[ 5] = x05 + input[ 5];
-        x[ 6] = x06 + input[ 6];
-        x[ 7] = x07 + input[ 7];
-        x[ 8] = x08 + input[ 8];
-        x[ 9] = x09 + input[ 9];
+        x[0] = x00 + input[0];
+        x[1] = x01 + input[1];
+        x[2] = x02 + input[2];
+        x[3] = x03 + input[3];
+        x[4] = x04 + input[4];
+        x[5] = x05 + input[5];
+        x[6] = x06 + input[6];
+        x[7] = x07 + input[7];
+        x[8] = x08 + input[8];
+        x[9] = x09 + input[9];
         x[10] = x10 + input[10];
         x[11] = x11 + input[11];
         x[12] = x12 + input[12];

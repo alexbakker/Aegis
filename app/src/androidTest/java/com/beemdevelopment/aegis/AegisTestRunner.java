@@ -4,10 +4,8 @@ import android.app.Application;
 import android.app.Instrumentation;
 import android.content.Context;
 import android.preference.PreferenceManager;
-
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.runner.AndroidJUnitRunner;
-
 import com.beemdevelopment.aegis.util.IOUtils;
 
 public class AegisTestRunner extends AndroidJUnitRunner {
@@ -30,10 +28,7 @@ public class AegisTestRunner extends AndroidJUnitRunner {
 
         // clear preferences so that the intro is started from MainActivity
         ApplicationProvider.getApplicationContext().getFilesDir();
-        PreferenceManager.getDefaultSharedPreferences(context)
-                .edit()
-                .clear()
-                .apply();
+        PreferenceManager.getDefaultSharedPreferences(context).edit().clear().apply();
 
         super.callApplicationOnCreate(app);
     }

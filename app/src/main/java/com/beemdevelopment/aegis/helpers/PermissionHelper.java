@@ -3,17 +3,13 @@ package com.beemdevelopment.aegis.helpers;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
-
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 public class PermissionHelper {
-    private PermissionHelper() {
-
-    }
+    private PermissionHelper() {}
 
     public static boolean granted(Context context, String permission) {
         return ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED;

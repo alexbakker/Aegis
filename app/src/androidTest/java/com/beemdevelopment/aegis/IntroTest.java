@@ -20,7 +20,6 @@ import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.Intent;
 import android.net.Uri;
-
 import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.IdlingResource;
 import androidx.test.espresso.ViewInteraction;
@@ -29,7 +28,6 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.viewpager2.widget.ViewPager2;
-
 import com.beemdevelopment.aegis.rules.ScreenshotTestRule;
 import com.beemdevelopment.aegis.ui.IntroActivity;
 import com.beemdevelopment.aegis.util.IOUtils;
@@ -37,7 +35,11 @@ import com.beemdevelopment.aegis.vault.VaultRepository;
 import com.beemdevelopment.aegis.vault.slots.BiometricSlot;
 import com.beemdevelopment.aegis.vault.slots.PasswordSlot;
 import com.beemdevelopment.aegis.vault.slots.SlotList;
-
+import dagger.hilt.android.testing.HiltAndroidTest;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -45,13 +47,6 @@ import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-import dagger.hilt.android.testing.HiltAndroidTest;
 
 @RunWith(AndroidJUnit4.class)
 @HiltAndroidTest
@@ -69,7 +64,8 @@ public class IntroTest extends AegisTest {
         Intents.init();
 
         _activityRule.getScenario().onActivity(activity -> {
-            _viewPager2IdlingResource = new ViewPager2IdlingResource(activity.findViewById(R.id.pager), "viewPagerIdlingResource");
+            _viewPager2IdlingResource =
+                    new ViewPager2IdlingResource(activity.findViewById(R.id.pager), "viewPagerIdlingResource");
             IdlingRegistry.getInstance().register(_viewPager2IdlingResource);
         });
     }
@@ -182,7 +178,7 @@ public class IntroTest extends AegisTest {
     private Uri getResourceUri(String resourceName) {
         File targetFile = new File(getInstrumentation().getTargetContext().getExternalCacheDir(), resourceName);
         try (InputStream inStream = getClass().getResourceAsStream(resourceName);
-             FileOutputStream outStream = new FileOutputStream(targetFile)) {
+                FileOutputStream outStream = new FileOutputStream(targetFile)) {
             IOUtils.copy(inStream, outStream);
         } catch (IOException e) {
             throw new RuntimeException(e);

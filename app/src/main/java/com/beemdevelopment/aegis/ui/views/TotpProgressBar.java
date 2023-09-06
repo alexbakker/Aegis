@@ -7,9 +7,7 @@ import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.animation.LinearInterpolator;
 import android.widget.ProgressBar;
-
 import androidx.annotation.RequiresApi;
-
 import com.beemdevelopment.aegis.helpers.AnimationsHelper;
 import com.beemdevelopment.aegis.otp.TotpInfo;
 
@@ -64,13 +62,14 @@ public class TotpProgressBar extends ProgressBar {
         long millisTillRotation = TotpInfo.getMillisTillNextRotation(_period);
         int currentProgress = (int) (maxProgress * ((float) millisTillRotation / (_period * 1000)));
 
-        // start progress animation, compensating for any changes to the animator duration scale settings
+        // start progress animation, compensating for any changes to the animator duration scale
+        // settings
         float animPart = (float) maxProgress / _period;
         int animEnd = (int) (Math.floor(currentProgress / animPart) * animPart);
         int animPartDuration = _animDurationScale > 0 ? (int) (1000 / _animDurationScale) : 0;
         float animDurationFraction = (float) (currentProgress - animEnd) / animPart;
         int realAnimDuration = (int) (1000 * animDurationFraction);
-        int animDuration =  (int) (animPartDuration * animDurationFraction);
+        int animDuration = (int) (animPartDuration * animDurationFraction);
 
         ObjectAnimator animation = ObjectAnimator.ofInt(this, "progress", currentProgress, animEnd);
         animation.setDuration(animDuration);

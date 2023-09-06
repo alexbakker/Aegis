@@ -9,14 +9,12 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.helpers.AnimationsHelper;
 import com.beemdevelopment.aegis.helpers.FabScrollHelper;
@@ -29,10 +27,8 @@ import com.beemdevelopment.aegis.ui.tasks.ImportIconPackTask;
 import com.beemdevelopment.aegis.ui.views.IconPackAdapter;
 import com.beemdevelopment.aegis.vault.VaultManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import javax.inject.Inject;
-
 import dagger.hilt.android.AndroidEntryPoint;
+import javax.inject.Inject;
 
 @AndroidEntryPoint
 public class IconPacksManagerFragment extends Fragment implements IconPackAdapter.Listener {

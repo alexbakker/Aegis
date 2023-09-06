@@ -1,7 +1,6 @@
 package com.beemdevelopment.aegis.ui.tasks;
 
 import android.content.Context;
-
 import com.beemdevelopment.aegis.R;
 import com.topjohnwu.superuser.Shell;
 
@@ -15,7 +14,8 @@ public class RootShellTask extends ProgressDialogTask<Object, Shell> {
 
     @Override
     protected Shell doInBackground(Object... params) {
-        // To access other app's internal storage directory, run libsu commands inside the global mount namespace
+        // To access other app's internal storage directory, run libsu commands inside the global
+        // mount namespace
         return Shell.Builder.create().setFlags(Shell.FLAG_MOUNT_MASTER).build();
     }
 

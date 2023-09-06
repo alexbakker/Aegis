@@ -2,15 +2,9 @@ package com.beemdevelopment.aegis.icons;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.beemdevelopment.aegis.util.JsonUtils;
 import com.google.common.base.Objects;
 import com.google.common.io.Files;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -19,6 +13,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class IconPack {
     private UUID _uuid;
@@ -59,9 +56,7 @@ public class IconPack {
             return new ArrayList<>();
         }
 
-        return _icons.stream()
-                .filter(i -> i.isSuggestedFor(issuer))
-                .collect(Collectors.toList());
+        return _icons.stream().filter(i -> i.isSuggestedFor(issuer)).collect(Collectors.toList());
     }
 
     @Nullable

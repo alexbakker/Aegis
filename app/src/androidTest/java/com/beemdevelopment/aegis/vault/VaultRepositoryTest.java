@@ -8,15 +8,12 @@ import static org.junit.Assert.assertTrue;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SmallTest;
-
 import com.beemdevelopment.aegis.AegisTest;
 import com.beemdevelopment.aegis.vault.slots.PasswordSlot;
-
+import dagger.hilt.android.testing.HiltAndroidTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import dagger.hilt.android.testing.HiltAndroidTest;
 
 @RunWith(AndroidJUnit4.class)
 @HiltAndroidTest
@@ -38,6 +35,7 @@ public class VaultRepositoryTest extends AegisTest {
         _vaultManager.enableEncryption(creds);
         assertTrue(vault.isEncryptionEnabled());
         assertNotNull(vault.getCredentials());
-        assertEquals(vault.getCredentials().getSlots().findAll(PasswordSlot.class).size(), 1);
+        assertEquals(
+                vault.getCredentials().getSlots().findAll(PasswordSlot.class).size(), 1);
     }
 }

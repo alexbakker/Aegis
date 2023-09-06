@@ -2,12 +2,10 @@ package com.beemdevelopment.aegis.helpers;
 
 import android.text.Editable;
 import android.widget.EditText;
-
 import java.util.Arrays;
 
 public class EditTextHelper {
-    private EditTextHelper() {
-    }
+    private EditTextHelper() {}
 
     public static char[] getEditTextChars(EditText text) {
         Editable editable = text.getText();

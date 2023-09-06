@@ -3,16 +3,12 @@ package com.beemdevelopment.aegis.ui.views;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.helpers.TextDrawableHelper;
-import com.beemdevelopment.aegis.icons.IconType;
 import com.beemdevelopment.aegis.ui.glide.IconLoader;
 import com.beemdevelopment.aegis.ui.models.AssignIconEntry;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
@@ -44,8 +40,9 @@ public class AssignIconHolder extends RecyclerView.ViewHolder implements AssignI
         _issuer.setText(entry.getEntry().getIssuer());
         _accountName.setText(entry.getEntry().getName());
 
-        if(!entry.getEntry().hasIcon()) {
-            TextDrawable drawable = TextDrawableHelper.generate(entry.getEntry().getIssuer(), entry.getEntry().getName(), _oldIcon);
+        if (!entry.getEntry().hasIcon()) {
+            TextDrawable drawable = TextDrawableHelper.generate(
+                    entry.getEntry().getIssuer(), entry.getEntry().getName(), _oldIcon);
             _oldIcon.setImageDrawable(drawable);
         } else {
             Glide.with(_view.getContext())

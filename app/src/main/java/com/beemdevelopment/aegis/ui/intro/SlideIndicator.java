@@ -7,9 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
-
 import androidx.annotation.Nullable;
-
 import com.beemdevelopment.aegis.R;
 
 public class SlideIndicator extends View {
@@ -57,7 +55,8 @@ public class SlideIndicator extends View {
         }
 
         if (index + 1 > _slideCount) {
-            throw new IllegalStateException(String.format("Slide index out of range, slides: %d, index: %d", _slideCount, index));
+            throw new IllegalStateException(
+                    String.format("Slide index out of range, slides: %d, index: %d", _slideCount, index));
         }
 
         _slideIndex = index;
@@ -82,13 +81,13 @@ public class SlideIndicator extends View {
             offset = (_slideCount - 1) * (dotDp / 2) + spaces * spaceDp;
         }
 
-        canvas.translate((getWidth() / 2f) - offset,getHeight() / 2f);
+        canvas.translate((getWidth() / 2f) - offset, getHeight() / 2f);
 
         for (int i = 0; i < _slideCount; i++) {
             int slideIndex = isRtl() ? (_slideCount - 1) - _slideIndex : _slideIndex;
             _paint.setColor(i == slideIndex ? _dotColorSelected : _dotColor);
-            canvas.drawCircle(0,0, dotDp / 2, _paint);
-            canvas.translate(dotDp + spaceDp,0);
+            canvas.drawCircle(0, 0, dotDp / 2, _paint);
+            canvas.translate(dotDp + spaceDp, 0);
         }
     }
 

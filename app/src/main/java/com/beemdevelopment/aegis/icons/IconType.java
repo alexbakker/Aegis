@@ -1,7 +1,6 @@
 package com.beemdevelopment.aegis.icons;
 
 import com.google.common.io.Files;
-
 import java.util.Locale;
 
 public enum IconType {

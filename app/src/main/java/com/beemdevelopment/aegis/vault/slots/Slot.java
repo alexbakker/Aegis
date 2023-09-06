@@ -8,27 +8,24 @@ import com.beemdevelopment.aegis.crypto.SCryptParameters;
 import com.beemdevelopment.aegis.encoding.EncodingException;
 import com.beemdevelopment.aegis.encoding.Hex;
 import com.beemdevelopment.aegis.util.UUIDMap;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public abstract class Slot extends UUIDMap.Value {
-    public final static byte TYPE_RAW = 0x00;
-    public final static byte TYPE_PASSWORD = 0x01;
-    public final static byte TYPE_BIOMETRIC = 0x02;
+    public static final byte TYPE_RAW = 0x00;
+    public static final byte TYPE_PASSWORD = 0x01;
+    public static final byte TYPE_BIOMETRIC = 0x02;
 
     private byte[] _encryptedMasterKey;
     private CryptParameters _encryptedMasterKeyParams;
@@ -134,11 +131,7 @@ public abstract class Slot extends UUIDMap.Value {
                     break;
                 case Slot.TYPE_PASSWORD:
                     SCryptParameters scryptParams = new SCryptParameters(
-                            obj.getInt("n"),
-                            obj.getInt("r"),
-                            obj.getInt("p"),
-                            Hex.decode(obj.getString("salt"))
-                    );
+                            obj.getInt("n"), obj.getInt("r"), obj.getInt("p"), Hex.decode(obj.getString("salt")));
                     boolean repaired = obj.optBoolean("repaired", false);
                     boolean isBackup = obj.optBoolean("is_backup", false);
                     slot = new PasswordSlot(uuid, key, keyParams, scryptParams, repaired, isBackup);

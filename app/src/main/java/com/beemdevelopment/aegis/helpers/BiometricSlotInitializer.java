@@ -4,15 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.biometric.BiometricPrompt;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-
 import com.beemdevelopment.aegis.crypto.KeyStoreHandle;
 import com.beemdevelopment.aegis.crypto.KeyStoreHandleException;
 import com.beemdevelopment.aegis.vault.slots.BiometricSlot;
 import com.beemdevelopment.aegis.vault.slots.Slot;
 import com.beemdevelopment.aegis.vault.slots.SlotException;
-
 import java.util.Objects;
-
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 
@@ -121,7 +118,8 @@ public class BiometricSlotInitializer extends BiometricPrompt.AuthenticationCall
     @Override
     public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
         super.onAuthenticationSucceeded(result);
-        _listener.onInitializeSlot(_slot, Objects.requireNonNull(result.getCryptoObject()).getCipher());
+        _listener.onInitializeSlot(
+                _slot, Objects.requireNonNull(result.getCryptoObject()).getCipher());
     }
 
     @Override
@@ -131,6 +129,7 @@ public class BiometricSlotInitializer extends BiometricPrompt.AuthenticationCall
 
     public interface Listener {
         void onInitializeSlot(BiometricSlot slot, Cipher cipher);
+
         void onSlotInitializationFailed(int errorCode, @NonNull CharSequence errString);
     }
 }

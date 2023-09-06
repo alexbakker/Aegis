@@ -1,7 +1,6 @@
 package com.beemdevelopment.aegis.importers;
 
 import android.content.Context;
-
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.crypto.CryptoUtils;
 import com.beemdevelopment.aegis.encoding.Base32;
@@ -16,11 +15,6 @@ import com.beemdevelopment.aegis.util.IOUtils;
 import com.beemdevelopment.aegis.util.JsonUtils;
 import com.beemdevelopment.aegis.vault.VaultEntry;
 import com.topjohnwu.superuser.io.SuFile;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -31,7 +25,6 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -40,6 +33,9 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class TwoFASImporter extends DatabaseImporter {
     private static final int ITERATION_COUNT = 10_000;
@@ -73,7 +69,8 @@ public class TwoFASImporter extends DatabaseImporter {
 
             String[] parts = encryptedString.split(":");
             if (parts.length < 3) {
-                throw new DatabaseImporterException(String.format("Unexpected format of encrypted data (parts: %d)", parts.length));
+                throw new DatabaseImporterException(
+                        String.format("Unexpected format of encrypted data (parts: %d)", parts.length));
             }
 
             byte[] data = Base64.decode(parts[0]);
@@ -106,8 +103,7 @@ public class TwoFASImporter extends DatabaseImporter {
             _iv = iv;
         }
 
-        private SecretKey deriveKey(char[] password)
-                throws NoSuchAlgorithmException, InvalidKeySpecException {
+        private SecretKey deriveKey(char[] password) throws NoSuchAlgorithmException, InvalidKeySpecException {
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
             KeySpec spec = new PBEKeySpec(password, _salt, ITERATION_COUNT, KEY_SIZE);
             SecretKey key = factory.generateSecret(spec);
@@ -135,14 +131,19 @@ public class TwoFASImporter extends DatabaseImporter {
 
         @Override
         public void decrypt(Context context, DecryptListener listener) {
-            Dialogs.showPasswordInputDialog(context, R.string.enter_password_2fas_message, 0, password -> {
-                try {
-                    DecryptedState state = decrypt(password);
-                    listener.onStateDecrypted(state);
-                } catch (DatabaseImporterException e) {
-                    listener.onError(e);
-                }
-            }, dialog -> listener.onCanceled());
+            Dialogs.showPasswordInputDialog(
+                    context,
+                    R.string.enter_password_2fas_message,
+                    0,
+                    password -> {
+                        try {
+                            DecryptedState state = decrypt(password);
+                            listener.onStateDecrypted(state);
+                        } catch (DatabaseImporterException e) {
+                            listener.onError(e);
+                        }
+                    },
+                    dialog -> listener.onCanceled());
         }
     }
 
@@ -188,7 +189,8 @@ public class TwoFASImporter extends DatabaseImporter {
                     long counter = info.optLong("counter", 0);
                     otp = new HotpInfo(secret, algorithm, digits, counter);
                 } else {
-                    throw new DatabaseImporterEntryException(String.format("Unrecognized tokenType: %s", tokenType), obj.toString());
+                    throw new DatabaseImporterEntryException(
+                            String.format("Unrecognized tokenType: %s", tokenType), obj.toString());
                 }
 
                 return new VaultEntry(otp, name, issuer);

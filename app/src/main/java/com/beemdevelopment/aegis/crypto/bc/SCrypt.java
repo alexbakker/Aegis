@@ -34,10 +34,8 @@ import org.bouncycastle.util.Pack;
  * Scrypt was created by Colin Percival and is specified in <a
  * href="https://tools.ietf.org/html/rfc7914">RFC 7914 - The scrypt Password-Based Key Derivation Function</a>
  */
-public class SCrypt
-{
-    private SCrypt()
-    {
+public class SCrypt {
+    private SCrypt() {
         // not used.
     }
 
@@ -54,51 +52,41 @@ public class SCrypt
      * @param dkLen the length of the key to generate.
      * @return the generated key.
      */
-    public static byte[] generate(byte[] P, byte[] S, int N, int r, int p, int dkLen)
-    {
-        if (P == null)
-        {
+    public static byte[] generate(byte[] P, byte[] S, int N, int r, int p, int dkLen) {
+        if (P == null) {
             throw new IllegalArgumentException("Passphrase P must be provided.");
         }
-        if (S == null)
-        {
+        if (S == null) {
             throw new IllegalArgumentException("Salt S must be provided.");
         }
-        if (N <= 1 || !isPowerOf2(N))
-        {
+        if (N <= 1 || !isPowerOf2(N)) {
             throw new IllegalArgumentException("Cost parameter N must be > 1 and a power of 2");
         }
         // Only value of r that cost (as an int) could be exceeded for is 1
-        if (r == 1 && N >= 65536)
-        {
+        if (r == 1 && N >= 65536) {
             throw new IllegalArgumentException("Cost parameter N must be > 1 and < 65536.");
         }
-        if (r < 1)
-        {
+        if (r < 1) {
             throw new IllegalArgumentException("Block size r must be >= 1.");
         }
         int maxParallel = Integer.MAX_VALUE / (128 * r * 8);
-        if (p < 1 || p > maxParallel)
-        {
+        if (p < 1 || p > maxParallel) {
             throw new IllegalArgumentException("Parallelisation parameter p must be >= 1 and <= " + maxParallel
                     + " (based on block size r of " + r + ")");
         }
-        if (dkLen < 1)
-        {
+        if (dkLen < 1) {
             throw new IllegalArgumentException("Generated key length dkLen must be >= 1.");
         }
         return MFcrypt(P, S, N, r, p, dkLen);
     }
 
-    private static byte[] MFcrypt(byte[] P, byte[] S, int N, int r, int p, int dkLen)
-    {
+    private static byte[] MFcrypt(byte[] P, byte[] S, int N, int r, int p, int dkLen) {
         int MFLenBytes = r * 128;
         byte[] bytes = SingleIterationPBKDF2(P, S, p * MFLenBytes);
 
         int[] B = null;
 
-        try
-        {
+        try {
             int BLen = bytes.length >>> 2;
             B = new int[BLen];
 
@@ -109,15 +97,13 @@ public class SCrypt
              * larger than 32KiB, except that the minimum chunk size is 2 * r * 32.
              */
             int d = 0, total = N * r;
-            while ((N - d) > 2 && total > (1 << 10))
-            {
+            while ((N - d) > 2 && total > (1 << 10)) {
                 ++d;
                 total >>>= 1;
             }
 
             int MFLenWords = MFLenBytes >>> 2;
-            for (int BOff = 0; BOff < BLen; BOff += MFLenWords)
-            {
+            for (int BOff = 0; BOff < BLen; BOff += MFLenWords) {
                 // TODO These can be done in parallel threads
                 SMix(B, BOff, N, d, r);
             }
@@ -125,24 +111,20 @@ public class SCrypt
             Pack.intToLittleEndian(B, bytes, 0);
 
             return SingleIterationPBKDF2(P, bytes, dkLen);
-        }
-        finally
-        {
+        } finally {
             Clear(bytes);
             Clear(B);
         }
     }
 
-    private static byte[] SingleIterationPBKDF2(byte[] P, byte[] S, int dkLen)
-    {
+    private static byte[] SingleIterationPBKDF2(byte[] P, byte[] S, int dkLen) {
         PBEParametersGenerator pGen = new PKCS5S2ParametersGenerator(new SHA256Digest());
         pGen.init(P, S, 1);
-        KeyParameter key = (KeyParameter)pGen.generateDerivedMacParameters(dkLen * 8);
+        KeyParameter key = (KeyParameter) pGen.generateDerivedMacParameters(dkLen * 8);
         return key.getKey();
     }
 
-    private static void SMix(int[] B, int BOff, int N, int d, int r)
-    {
+    private static void SMix(int[] B, int BOff, int N, int d, int r) {
         int powN = Integers.numberOfTrailingZeros(N);
         int blocksPerChunk = N >>> d;
         int chunkCount = 1 << d, chunkMask = blocksPerChunk - 1, chunkPow = powN - d;
@@ -156,18 +138,15 @@ public class SCrypt
         int[] X = new int[BCount];
         int[][] VV = new int[chunkCount][];
 
-        try
-        {
+        try {
             System.arraycopy(B, BOff, X, 0, BCount);
 
-            for (int c = 0; c < chunkCount; ++c)
-            {
+            for (int c = 0; c < chunkCount; ++c) {
                 int[] V = new int[blocksPerChunk * BCount];
                 VV[c] = V;
 
                 int off = 0;
-                for (int i = 0; i < blocksPerChunk; i += 2)
-                {
+                for (int i = 0; i < blocksPerChunk; i += 2) {
                     System.arraycopy(X, 0, V, off, BCount);
                     off += BCount;
                     BlockMix(X, blockX1, blockX2, blockY, r);
@@ -178,8 +157,7 @@ public class SCrypt
             }
 
             int mask = N - 1;
-            for (int i = 0; i < N; ++i)
-            {
+            for (int i = 0; i < N; ++i) {
                 int j = X[BCount - 16] & mask;
                 int[] V = VV[j >>> chunkPow];
                 int VOff = (j & chunkMask) * BCount;
@@ -189,22 +167,18 @@ public class SCrypt
             }
 
             System.arraycopy(X, 0, B, BOff, BCount);
-        }
-        finally
-        {
+        } finally {
             ClearAll(VV);
-            ClearAll(new int[][]{X, blockX1, blockX2, blockY});
+            ClearAll(new int[][] {X, blockX1, blockX2, blockY});
         }
     }
 
-    private static void BlockMix(int[] B, int[] X1, int[] X2, int[] Y, int r)
-    {
+    private static void BlockMix(int[] B, int[] X1, int[] X2, int[] Y, int r) {
         System.arraycopy(B, B.length - 16, X1, 0, 16);
 
         int BOff = 0, YOff = 0, halfLen = B.length >>> 1;
 
-        for (int i = 2 * r; i > 0; --i)
-        {
+        for (int i = 2 * r; i > 0; --i) {
             Xor(X1, B, BOff, X2);
 
             Salsa20Engine.salsaCore(8, X2, X1);
@@ -215,41 +189,32 @@ public class SCrypt
         }
     }
 
-    private static void Xor(int[] a, int[] b, int bOff, int[] output)
-    {
-        for (int i = output.length - 1; i >= 0; --i)
-        {
+    private static void Xor(int[] a, int[] b, int bOff, int[] output) {
+        for (int i = output.length - 1; i >= 0; --i) {
             output[i] = a[i] ^ b[bOff + i];
         }
     }
 
-    private static void Clear(byte[] array)
-    {
-        if (array != null)
-        {
-            Arrays.fill(array, (byte)0);
+    private static void Clear(byte[] array) {
+        if (array != null) {
+            Arrays.fill(array, (byte) 0);
         }
     }
 
-    private static void Clear(int[] array)
-    {
-        if (array != null)
-        {
+    private static void Clear(int[] array) {
+        if (array != null) {
             Arrays.fill(array, 0);
         }
     }
 
-    private static void ClearAll(int[][] arrays)
-    {
-        for (int i = 0; i < arrays.length; ++i)
-        {
+    private static void ClearAll(int[][] arrays) {
+        for (int i = 0; i < arrays.length; ++i) {
             Clear(arrays[i]);
         }
     }
 
     // note: we know X is non-zero
-    private static boolean isPowerOf2(int x)
-    {
+    private static boolean isPowerOf2(int x) {
         return ((x & (x - 1)) == 0);
     }
 }

@@ -8,9 +8,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 public class Cloner {
-    private Cloner() {
-
-    }
+    private Cloner() {}
 
     /**
      * Returns an exact clone of the given Serializable object.

@@ -1,12 +1,10 @@
 package com.beemdevelopment.aegis.ui.tasks;
 
 import android.content.Context;
-
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.crypto.CryptoUtils;
 import com.beemdevelopment.aegis.crypto.SCryptParameters;
 import com.beemdevelopment.aegis.vault.slots.PasswordSlot;
-
 import javax.crypto.SecretKey;
 
 public class KeyDerivationTask extends ProgressDialogTask<KeyDerivationTask.Params, KeyDerivationTask.Result> {
@@ -24,11 +22,7 @@ public class KeyDerivationTask extends ProgressDialogTask<KeyDerivationTask.Para
         Params params = args[0];
         byte[] salt = CryptoUtils.generateSalt();
         SCryptParameters scryptParams = new SCryptParameters(
-                CryptoUtils.CRYPTO_SCRYPT_N,
-                CryptoUtils.CRYPTO_SCRYPT_r,
-                CryptoUtils.CRYPTO_SCRYPT_p,
-                salt
-        );
+                CryptoUtils.CRYPTO_SCRYPT_N, CryptoUtils.CRYPTO_SCRYPT_r, CryptoUtils.CRYPTO_SCRYPT_p, salt);
 
         PasswordSlot slot = params.getSlot();
         SecretKey key = slot.deriveKey(params.getPassword(), scryptParams);

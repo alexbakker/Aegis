@@ -2,7 +2,6 @@ package com.beemdevelopment.aegis.otp;
 
 import com.beemdevelopment.aegis.crypto.otp.OTP;
 import com.beemdevelopment.aegis.crypto.otp.TOTP;
-
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Locale;

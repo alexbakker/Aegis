@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.camera.core.CameraInfoUnavailableException;
 import androidx.camera.core.CameraSelector;
@@ -16,7 +15,6 @@ import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
-
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.ThemeMap;
 import com.beemdevelopment.aegis.helpers.QrCodeAnalyzer;
@@ -26,7 +24,6 @@ import com.beemdevelopment.aegis.ui.dialogs.Dialogs;
 import com.beemdevelopment.aegis.vault.VaultEntry;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.zxing.Result;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -64,27 +61,30 @@ public class ScannerActivity extends AegisActivity implements QrCodeAnalyzer.Lis
         _executor = Executors.newSingleThreadExecutor();
 
         _cameraProviderFuture = ProcessCameraProvider.getInstance(this);
-        _cameraProviderFuture.addListener(() -> {
-            try {
-                _cameraProvider = _cameraProviderFuture.get();
-            } catch (ExecutionException | InterruptedException e) {
-                // if we're to believe the Android documentation, this should never happen
-                // https://developer.android.com/training/camerax/preview#check-provider
-                throw new RuntimeException(e);
-            }
+        _cameraProviderFuture.addListener(
+                () -> {
+                    try {
+                        _cameraProvider = _cameraProviderFuture.get();
+                    } catch (ExecutionException | InterruptedException e) {
+                        // if we're to believe the Android documentation, this should never happen
+                        // https://developer.android.com/training/camerax/preview#check-provider
+                        throw new RuntimeException(e);
+                    }
 
-            addCamera(CameraSelector.LENS_FACING_BACK);
-            addCamera(CameraSelector.LENS_FACING_FRONT);
-            if (_lenses.size() == 0) {
-                Toast.makeText(this, getString(R.string.no_cameras_available), Toast.LENGTH_LONG).show();
-                finish();
-                return;
-            }
-            _currentLens = _lenses.get(0);
-            updateCameraIcon();
+                    addCamera(CameraSelector.LENS_FACING_BACK);
+                    addCamera(CameraSelector.LENS_FACING_FRONT);
+                    if (_lenses.size() == 0) {
+                        Toast.makeText(this, getString(R.string.no_cameras_available), Toast.LENGTH_LONG)
+                                .show();
+                        finish();
+                        return;
+                    }
+                    _currentLens = _lenses.get(0);
+                    updateCameraIcon();
 
-            bindPreview(_cameraProvider);
-        }, ContextCompat.getMainExecutor(this));
+                    bindPreview(_cameraProvider);
+                },
+                ContextCompat.getMainExecutor(this));
     }
 
     @Override
@@ -115,7 +115,9 @@ public class ScannerActivity extends AegisActivity implements QrCodeAnalyzer.Lis
 
         if (item.getItemId() == R.id.action_camera) {
             unbindPreview(_cameraProvider);
-            _currentLens = _currentLens == CameraSelector.LENS_FACING_BACK ? CameraSelector.LENS_FACING_FRONT : CameraSelector.LENS_FACING_BACK;
+            _currentLens = _currentLens == CameraSelector.LENS_FACING_BACK
+                    ? CameraSelector.LENS_FACING_FRONT
+                    : CameraSelector.LENS_FACING_BACK;
             bindPreview(_cameraProvider);
             updateCameraIcon();
             return true;
@@ -126,7 +128,8 @@ public class ScannerActivity extends AegisActivity implements QrCodeAnalyzer.Lis
 
     private void addCamera(int lens) {
         try {
-            CameraSelector camera = new CameraSelector.Builder().requireLensFacing(lens).build();
+            CameraSelector camera =
+                    new CameraSelector.Builder().requireLensFacing(lens).build();
             if (_cameraProvider.hasCamera(camera)) {
                 _lenses.add(lens);
             }
@@ -157,9 +160,8 @@ public class ScannerActivity extends AegisActivity implements QrCodeAnalyzer.Lis
         Preview preview = new Preview.Builder().build();
         preview.setSurfaceProvider(_previewView.getSurfaceProvider());
 
-        CameraSelector selector = new CameraSelector.Builder()
-                .requireLensFacing(_currentLens)
-                .build();
+        CameraSelector selector =
+                new CameraSelector.Builder().requireLensFacing(_currentLens).build();
 
         _analysis = new ImageAnalysis.Builder()
                 .setTargetResolution(QrCodeAnalyzer.RESOLUTION)
@@ -195,9 +197,11 @@ public class ScannerActivity extends AegisActivity implements QrCodeAnalyzer.Lis
 
                     unbindPreview(_cameraProvider);
 
-                    Dialogs.showErrorDialog(this,
+                    Dialogs.showErrorDialog(
+                            this,
                             e.isPhoneFactor() ? R.string.read_qr_error_phonefactor : R.string.read_qr_error,
-                            e, ((dialog, which) -> bindPreview(_cameraProvider)));
+                            e,
+                            ((dialog, which) -> bindPreview(_cameraProvider)));
                 }
             }
         });
@@ -219,7 +223,8 @@ public class ScannerActivity extends AegisActivity implements QrCodeAnalyzer.Lis
 
         int batchIndex = export.getBatchIndex();
         if (_batchId != export.getBatchId()) {
-            Toast.makeText(this, R.string.google_qr_export_unrelated, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.google_qr_export_unrelated, Toast.LENGTH_SHORT)
+                    .show();
         } else if (_batchIndex == -1 || _batchIndex == batchIndex - 1) {
             for (GoogleAuthInfo info : export.getEntries()) {
                 VaultEntry entry = new VaultEntry(info);
@@ -231,9 +236,22 @@ public class ScannerActivity extends AegisActivity implements QrCodeAnalyzer.Lis
                 finish(_entries);
             }
 
-            Toast.makeText(this, getResources().getQuantityString(R.plurals.google_qr_export_scanned, export.getBatchSize(), _batchIndex + 1, export.getBatchSize()), Toast.LENGTH_SHORT).show();
+            Toast.makeText(
+                            this,
+                            getResources()
+                                    .getQuantityString(
+                                            R.plurals.google_qr_export_scanned,
+                                            export.getBatchSize(),
+                                            _batchIndex + 1,
+                                            export.getBatchSize()),
+                            Toast.LENGTH_SHORT)
+                    .show();
         } else if (_batchIndex != batchIndex) {
-            Toast.makeText(this, getString(R.string.google_qr_export_unexpected, _batchIndex + 1, batchIndex + 1), Toast.LENGTH_SHORT).show();
+            Toast.makeText(
+                            this,
+                            getString(R.string.google_qr_export_unexpected, _batchIndex + 1, batchIndex + 1),
+                            Toast.LENGTH_SHORT)
+                    .show();
         }
     }
 

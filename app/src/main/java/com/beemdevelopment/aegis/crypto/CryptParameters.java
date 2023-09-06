@@ -2,11 +2,9 @@ package com.beemdevelopment.aegis.crypto;
 
 import com.beemdevelopment.aegis.encoding.EncodingException;
 import com.beemdevelopment.aegis.encoding.Hex;
-
+import java.io.Serializable;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.Serializable;
 
 public class CryptParameters implements Serializable {
     private byte[] _nonce;

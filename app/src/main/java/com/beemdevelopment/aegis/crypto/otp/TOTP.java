@@ -5,8 +5,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class TOTP {
 
-    private TOTP() {
-    }
+    private TOTP() {}
 
     public static OTP generateOTP(byte[] secret, String algo, int digits, long period, long seconds)
             throws InvalidKeyException, NoSuchAlgorithmException {

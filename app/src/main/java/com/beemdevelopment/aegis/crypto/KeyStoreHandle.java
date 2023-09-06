@@ -3,9 +3,7 @@ package com.beemdevelopment.aegis.crypto;
 import android.os.Build;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
-
 import androidx.annotation.RequiresApi;
-
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -17,7 +15,6 @@ import java.security.ProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.Collections;
-
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
@@ -51,19 +48,20 @@ public class KeyStoreHandle {
 
         try {
             KeyGenerator generator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, STORE_NAME);
-            generator.init(new KeyGenParameterSpec.Builder(id,
-                    KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
-                    .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
-                    .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-                    .setUserAuthenticationRequired(true)
-                    .setRandomizedEncryptionRequired(true)
-                    .setKeySize(CryptoUtils.CRYPTO_AEAD_KEY_SIZE * 8)
-                    .build());
+            generator.init(
+                    new KeyGenParameterSpec.Builder(id, KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                            .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                            .setUserAuthenticationRequired(true)
+                            .setRandomizedEncryptionRequired(true)
+                            .setKeySize(CryptoUtils.CRYPTO_AEAD_KEY_SIZE * 8)
+                            .build());
 
             return generator.generateKey();
         } catch (ProviderException e) {
             // a ProviderException can occur at runtime with buggy Keymaster HAL implementations
-            // so if this was caused by an android.security.KeyStoreException, throw a KeyStoreHandleException instead
+            // so if this was caused by an android.security.KeyStoreException, throw a
+            // KeyStoreHandleException instead
             Throwable cause = e.getCause();
             if (cause != null && cause.getClass().getName().equals("android.security.KeyStoreException")) {
                 throw new KeyStoreHandleException(cause);
@@ -101,7 +99,8 @@ public class KeyStoreHandle {
             Cipher cipher = Cipher.getInstance(CryptoUtils.CRYPTO_AEAD);
             cipher.init(Cipher.ENCRYPT_MODE, key);
         } catch (InvalidKeyException e) {
-            // some devices throw a plain InvalidKeyException, not KeyPermanentlyInvalidatedException
+            // some devices throw a plain InvalidKeyException, not
+            // KeyPermanentlyInvalidatedException
             return true;
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
             throw new RuntimeException(e);

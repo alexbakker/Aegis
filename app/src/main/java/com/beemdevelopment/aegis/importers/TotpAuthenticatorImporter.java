@@ -3,9 +3,7 @@ package com.beemdevelopment.aegis.importers;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.util.Xml;
-
 import androidx.appcompat.app.AlertDialog;
-
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.crypto.CryptoUtils;
 import com.beemdevelopment.aegis.encoding.Base32;
@@ -19,13 +17,6 @@ import com.beemdevelopment.aegis.util.IOUtils;
 import com.beemdevelopment.aegis.util.PreferenceParser;
 import com.beemdevelopment.aegis.vault.VaultEntry;
 import com.topjohnwu.superuser.io.SuFile;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -35,7 +26,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -43,6 +33,11 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 public class TotpAuthenticatorImporter extends DatabaseImporter {
     private static final String _subPath = "shared_prefs/TOTP_Authenticator_Preferences.xml";
@@ -51,9 +46,9 @@ public class TotpAuthenticatorImporter extends DatabaseImporter {
     // WARNING: DON'T DO THIS IN YOUR OWN CODE
     // this is a hardcoded password and nonce, used solely to decrypt TOTP Authenticator backups
     private static final char[] PASSWORD = "TotpAuthenticator".toCharArray();
-    private static final byte[] IV = new byte[]{
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    private static final byte[] IV = new byte[] {
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
 
     private static final String PREF_KEY = "STATIC_TOTP_CODES_LIST";
@@ -84,7 +79,8 @@ public class TotpAuthenticatorImporter extends DatabaseImporter {
                 }
 
                 if (data == null) {
-                    throw new DatabaseImporterException(String.format("Key %s not found in shared preference file", PREF_KEY));
+                    throw new DatabaseImporterException(
+                            String.format("Key %s not found in shared preference file", PREF_KEY));
                 }
 
                 List<JSONObject> entries = parse(data);
@@ -157,9 +153,12 @@ public class TotpAuthenticatorImporter extends DatabaseImporter {
             Dialogs.showSecureDialog(new AlertDialog.Builder(context)
                     .setMessage(R.string.choose_totpauth_importer)
                     .setPositiveButton(R.string.yes, (dialog, which) -> {
-                        Dialogs.showPasswordInputDialog(context, password -> {
-                            decrypt(password, listener);
-                        }, dialog1 -> listener.onCanceled());
+                        Dialogs.showPasswordInputDialog(
+                                context,
+                                password -> {
+                                    decrypt(password, listener);
+                                },
+                                dialog1 -> listener.onCanceled());
                     })
                     .setNegativeButton(R.string.no, (dialog, which) -> {
                         decrypt(PASSWORD, listener);
@@ -218,7 +217,8 @@ public class TotpAuthenticatorImporter extends DatabaseImporter {
                         secret = Base64.decode(secretString);
                         break;
                     default:
-                        throw new DatabaseImporterEntryException(String.format("Unsupported secret encoding: base %d", base), obj.toString());
+                        throw new DatabaseImporterEntryException(
+                                String.format("Unsupported secret encoding: base %d", base), obj.toString());
                 }
 
                 TotpInfo info = new TotpInfo(secret);

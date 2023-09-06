@@ -2,19 +2,16 @@ package com.beemdevelopment.aegis.importers;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
-
 import com.beemdevelopment.aegis.util.IOUtils;
 import com.topjohnwu.superuser.io.SuFile;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class FreeOtpPlusImporter extends DatabaseImporter {
     private static final String _subPath = "shared_prefs/tokens.xml";

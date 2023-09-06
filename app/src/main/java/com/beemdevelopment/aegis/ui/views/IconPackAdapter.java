@@ -3,13 +3,10 @@ package com.beemdevelopment.aegis.ui.views;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.icons.IconPack;
-
 import java.util.ArrayList;
 import java.util.List;
 

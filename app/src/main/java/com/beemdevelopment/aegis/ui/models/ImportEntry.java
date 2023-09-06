@@ -1,7 +1,6 @@
 package com.beemdevelopment.aegis.ui.models;
 
 import com.beemdevelopment.aegis.vault.VaultEntry;
-
 import java.io.Serializable;
 
 public class ImportEntry implements Serializable {

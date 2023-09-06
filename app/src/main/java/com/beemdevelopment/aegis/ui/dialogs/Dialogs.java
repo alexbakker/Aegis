@@ -23,12 +23,10 @@ import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.activity.ComponentActivity;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
-
 import com.beemdevelopment.aegis.Preferences;
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.helpers.EditTextHelper;
@@ -44,18 +42,14 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.nulabinc.zxcvbn.Strength;
 import com.nulabinc.zxcvbn.Zxcvbn;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
-
 import javax.crypto.Cipher;
 
 public class Dialogs {
-    private Dialogs() {
-
-    }
+    private Dialogs() {}
 
     public static void secureDialog(Dialog dialog) {
         if (new Preferences(dialog.getContext()).isSecureScreenEnabled()) {
@@ -68,7 +62,8 @@ public class Dialogs {
         dialog.show();
     }
 
-    public static void showDeleteEntriesDialog(Context context, List<VaultEntry> services, DialogInterface.OnClickListener onDelete) {
+    public static void showDeleteEntriesDialog(
+            Context context, List<VaultEntry> services, DialogInterface.OnClickListener onDelete) {
         View view = LayoutInflater.from(context).inflate(R.layout.dialog_delete_entry, null);
         TextView textMessage = view.findViewById(R.id.text_message);
         TextView textExplanation = view.findViewById(R.id.text_explanation);
@@ -80,7 +75,8 @@ public class Dialogs {
         String title, message;
         if (services.size() > 1) {
             title = context.getString(R.string.delete_entries);
-            message = context.getResources().getQuantityString(R.plurals.delete_entries_description, services.size(), services.size());
+            message = context.getResources()
+                    .getQuantityString(R.plurals.delete_entries_description, services.size(), services.size());
         } else {
             title = context.getString(R.string.delete_entry);
             message = context.getString(R.string.delete_entry_description);
@@ -107,7 +103,8 @@ public class Dialogs {
         }
     }
 
-    public static void showDiscardDialog(Context context, DialogInterface.OnClickListener onSave, DialogInterface.OnClickListener onDiscard) {
+    public static void showDiscardDialog(
+            Context context, DialogInterface.OnClickListener onSave, DialogInterface.OnClickListener onDiscard) {
         showSecureDialog(new AlertDialog.Builder(context)
                 .setTitle(context.getString(R.string.discard_changes))
                 .setMessage(context.getString(R.string.discard_changes_description))
@@ -183,8 +180,12 @@ public class Dialogs {
 
             Strength strength = zxcvbn.measure(textPassword.getText());
             barPasswordStrength.setProgress(strength.getScore());
-            barPasswordStrength.setProgressTintList(ColorStateList.valueOf(Color.parseColor(PasswordStrengthHelper.getColor(strength.getScore()))));
-            textPasswordStrength.setText((textPassword.getText().length() != 0) ? PasswordStrengthHelper.getString(strength.getScore(), activity) : "");
+            barPasswordStrength.setProgressTintList(
+                    ColorStateList.valueOf(Color.parseColor(PasswordStrengthHelper.getColor(strength.getScore()))));
+            textPasswordStrength.setText(
+                    (textPassword.getText().length() != 0)
+                            ? PasswordStrengthHelper.getString(strength.getScore(), activity)
+                            : "");
             textPasswordWrapper.setError(strength.getFeedback().getWarning());
             strength.wipe();
         });
@@ -194,7 +195,14 @@ public class Dialogs {
         showSecureDialog(dialog);
     }
 
-    private static void showTextInputDialog(Context context, @StringRes int titleId, @StringRes int messageId, @StringRes int hintId, TextInputListener listener, DialogInterface.OnCancelListener cancelListener, boolean isSecret) {
+    private static void showTextInputDialog(
+            Context context,
+            @StringRes int titleId,
+            @StringRes int messageId,
+            @StringRes int hintId,
+            TextInputListener listener,
+            DialogInterface.OnCancelListener cancelListener,
+            boolean isSecret) {
         final AtomicReference<Button> buttonOK = new AtomicReference<>();
         View view = LayoutInflater.from(context).inflate(R.layout.dialog_text_input, null);
         TextInputEditText input = view.findViewById(R.id.text_input);
@@ -239,11 +247,21 @@ public class Dialogs {
         showSecureDialog(dialog);
     }
 
-    private static void showTextInputDialog(Context context, @StringRes int titleId, @StringRes int hintId, TextInputListener listener, boolean isSecret) {
+    private static void showTextInputDialog(
+            Context context,
+            @StringRes int titleId,
+            @StringRes int hintId,
+            TextInputListener listener,
+            boolean isSecret) {
         showTextInputDialog(context, titleId, 0, hintId, listener, null, isSecret);
     }
 
-    public static void showTextInputDialog(Context context, @StringRes int titleId, @StringRes int hintId, TextInputListener listener, @Nullable DialogInterface.OnCancelListener onCancel) {
+    public static void showTextInputDialog(
+            Context context,
+            @StringRes int titleId,
+            @StringRes int hintId,
+            TextInputListener listener,
+            @Nullable DialogInterface.OnCancelListener onCancel) {
         showTextInputDialog(context, titleId, 0, hintId, listener, onCancel, false);
     }
 
@@ -251,7 +269,8 @@ public class Dialogs {
         showTextInputDialog(context, R.string.set_password, R.string.password, listener, true);
     }
 
-    public static void showPasswordInputDialog(Context context, TextInputListener listener, DialogInterface.OnCancelListener cancelListener) {
+    public static void showPasswordInputDialog(
+            Context context, TextInputListener listener, DialogInterface.OnCancelListener cancelListener) {
         showTextInputDialog(context, R.string.set_password, 0, R.string.password, listener, cancelListener, true);
     }
 
@@ -259,15 +278,30 @@ public class Dialogs {
         showTextInputDialog(context, R.string.set_password, messageId, R.string.password, listener, null, true);
     }
 
-    public static void showPasswordInputDialog(Context context, @StringRes int messageId, TextInputListener listener, DialogInterface.OnCancelListener cancelListener) {
-        showTextInputDialog(context, R.string.set_password, messageId, R.string.password, listener, cancelListener, true);
+    public static void showPasswordInputDialog(
+            Context context,
+            @StringRes int messageId,
+            TextInputListener listener,
+            DialogInterface.OnCancelListener cancelListener) {
+        showTextInputDialog(
+                context, R.string.set_password, messageId, R.string.password, listener, cancelListener, true);
     }
 
-    public static void showPasswordInputDialog(Context context, @StringRes int titleId, @StringRes int messageId, TextInputListener listener, DialogInterface.OnCancelListener cancelListener) {
+    public static void showPasswordInputDialog(
+            Context context,
+            @StringRes int titleId,
+            @StringRes int messageId,
+            TextInputListener listener,
+            DialogInterface.OnCancelListener cancelListener) {
         showTextInputDialog(context, titleId, messageId, R.string.password, listener, cancelListener, true);
     }
 
-    public static void showCheckboxDialog(Context context, @StringRes int titleId, @StringRes int messageId, @StringRes int checkboxMessageId, CheckboxInputListener listener) {
+    public static void showCheckboxDialog(
+            Context context,
+            @StringRes int titleId,
+            @StringRes int messageId,
+            @StringRes int checkboxMessageId,
+            CheckboxInputListener listener) {
         View view = LayoutInflater.from(context).inflate(R.layout.dialog_checkbox, null);
         CheckBox checkBox = view.findViewById(R.id.checkbox);
         checkBox.setText(checkboxMessageId);
@@ -275,10 +309,9 @@ public class Dialogs {
         AlertDialog.Builder builder = new AlertDialog.Builder(context)
                 .setTitle(titleId)
                 .setView(view)
-                .setNegativeButton(R.string.no, (dialog1, which) ->
-                        listener.onCheckboxInputResult(false))
-                .setPositiveButton(R.string.yes, (dialog1, which) ->
-                        listener.onCheckboxInputResult(checkBox.isChecked()));
+                .setNegativeButton(R.string.no, (dialog1, which) -> listener.onCheckboxInputResult(false))
+                .setPositiveButton(
+                        R.string.yes, (dialog1, which) -> listener.onCheckboxInputResult(checkBox.isChecked()));
 
         if (messageId != 0) {
             builder.setMessage(messageId);
@@ -293,12 +326,14 @@ public class Dialogs {
             buttonOK.set(button);
         });
 
-        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> buttonOK.get().setEnabled(isChecked));
+        checkBox.setOnCheckedChangeListener(
+                (buttonView, isChecked) -> buttonOK.get().setEnabled(isChecked));
 
         showSecureDialog(dialog);
     }
 
-    public static void showTapToRevealTimeoutPickerDialog(Context context, int currentValue, NumberInputListener listener) {
+    public static void showTapToRevealTimeoutPickerDialog(
+            Context context, int currentValue, NumberInputListener listener) {
         View view = LayoutInflater.from(context).inflate(R.layout.dialog_number_picker, null);
         NumberPicker numberPicker = view.findViewById(R.id.numberPicker);
         numberPicker.setMinValue(1);
@@ -309,14 +344,15 @@ public class Dialogs {
         AlertDialog dialog = new AlertDialog.Builder(context)
                 .setTitle(R.string.set_number)
                 .setView(view)
-                .setPositiveButton(android.R.string.ok, (dialog1, which) ->
-                        listener.onNumberInputResult(numberPicker.getValue()))
+                .setPositiveButton(
+                        android.R.string.ok, (dialog1, which) -> listener.onNumberInputResult(numberPicker.getValue()))
                 .create();
 
         showSecureDialog(dialog);
     }
 
-    public static void showBackupVersionsPickerDialog(Context context, int currentVersionCount, NumberInputListener listener) {
+    public static void showBackupVersionsPickerDialog(
+            Context context, int currentVersionCount, NumberInputListener listener) {
         final int max = 30;
         String[] numbers = new String[max / 5];
         for (int i = 0; i < numbers.length; i++) {
@@ -334,8 +370,8 @@ public class Dialogs {
         AlertDialog dialog = new AlertDialog.Builder(context)
                 .setTitle(R.string.set_number)
                 .setView(view)
-                .setPositiveButton(android.R.string.ok, (dialog1, which) ->
-                        listener.onNumberInputResult(numberPicker.getValue()))
+                .setPositiveButton(
+                        android.R.string.ok, (dialog1, which) -> listener.onNumberInputResult(numberPicker.getValue()))
                 .create();
 
         showSecureDialog(dialog);
@@ -353,19 +389,23 @@ public class Dialogs {
         showErrorDialog(context, message, error, null);
     }
 
-    public static void showErrorDialog(Context context, @StringRes int message, Exception e, DialogInterface.OnClickListener listener) {
+    public static void showErrorDialog(
+            Context context, @StringRes int message, Exception e, DialogInterface.OnClickListener listener) {
         showErrorDialog(context, message, e.toString(), listener);
     }
 
-    public static void showErrorDialog(Context context, String message, Exception e, DialogInterface.OnClickListener listener) {
+    public static void showErrorDialog(
+            Context context, String message, Exception e, DialogInterface.OnClickListener listener) {
         showErrorDialog(context, message, e.toString(), listener);
     }
 
-    public static void showErrorDialog(Context context, @StringRes int message, CharSequence error, DialogInterface.OnClickListener listener) {
+    public static void showErrorDialog(
+            Context context, @StringRes int message, CharSequence error, DialogInterface.OnClickListener listener) {
         showErrorDialog(context, context.getString(message), error, listener);
     }
 
-    public static void showErrorDialog(Context context, String message, CharSequence error, DialogInterface.OnClickListener listener) {
+    public static void showErrorDialog(
+            Context context, String message, CharSequence error, DialogInterface.OnClickListener listener) {
         View view = LayoutInflater.from(context).inflate(R.layout.dialog_error, null);
         TextView textDetails = view.findViewById(R.id.error_details);
         textDetails.setText(error);
@@ -405,14 +445,21 @@ public class Dialogs {
         Dialogs.showSecureDialog(dialog);
     }
 
-    public static void showBackupErrorDialog(Context context, Preferences.BackupResult backupRes, DialogInterface.OnClickListener listener) {
-        String system = context.getString(backupRes.isBuiltIn() ? R.string.backup_system_builtin : R.string.backup_system_android);
-        String message = context.getString(R.string.backup_error_dialog_details, system, backupRes.getElapsedSince(context));
+    public static void showBackupErrorDialog(
+            Context context, Preferences.BackupResult backupRes, DialogInterface.OnClickListener listener) {
+        String system = context.getString(
+                backupRes.isBuiltIn() ? R.string.backup_system_builtin : R.string.backup_system_android);
+        String message =
+                context.getString(R.string.backup_error_dialog_details, system, backupRes.getElapsedSince(context));
         Dialogs.showErrorDialog(context, message, backupRes.getError(), listener);
     }
 
     public static void showMultiMessageDialog(
-            Context context, @StringRes int title, String message, List<CharSequence> messages, DialogInterface.OnClickListener listener) {
+            Context context,
+            @StringRes int title,
+            String message,
+            List<CharSequence> messages,
+            DialogInterface.OnClickListener listener) {
         Dialogs.showSecureDialog(new AlertDialog.Builder(context)
                 .setTitle(title)
                 .setMessage(message)
@@ -429,7 +476,11 @@ public class Dialogs {
     }
 
     public static <T extends Throwable> void showMultiErrorDialog(
-            Context context, @StringRes int title, String message, List<T> errors, DialogInterface.OnClickListener listener) {
+            Context context,
+            @StringRes int title,
+            String message,
+            List<T> errors,
+            DialogInterface.OnClickListener listener) {
         List<CharSequence> messages = new ArrayList<>();
         for (Throwable e : errors) {
             messages.add(e.toString());
@@ -439,7 +490,10 @@ public class Dialogs {
     }
 
     private static void showDetailedMultiMessageDialog(
-            Context context, @StringRes int title, List<CharSequence> messages, DialogInterface.OnClickListener listener) {
+            Context context,
+            @StringRes int title,
+            List<CharSequence> messages,
+            DialogInterface.OnClickListener listener) {
         SpannableStringBuilder builder = new SpannableStringBuilder();
         for (CharSequence message : messages) {
             builder.append(message);
@@ -464,13 +518,14 @@ public class Dialogs {
                 ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("text/plain", builder.toString());
                 clipboard.setPrimaryClip(clip);
-                Toast.makeText(context, R.string.errors_copied, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.errors_copied, Toast.LENGTH_SHORT)
+                        .show();
             });
         });
 
         Dialogs.showSecureDialog(dialog);
     }
-    
+
     public static void showTimeSyncWarningDialog(Context context, Dialog.OnClickListener listener) {
         Preferences prefs = new Preferences(context);
         View view = LayoutInflater.from(context).inflate(R.layout.dialog_time_sync, null);
@@ -498,7 +553,8 @@ public class Dialogs {
 
     public static void showImportersDialog(Context context, boolean isDirect, ImporterListener listener) {
         List<DatabaseImporter.Definition> importers = DatabaseImporter.getImporters(isDirect);
-        List<String> names = importers.stream().map(DatabaseImporter.Definition::getName).collect(Collectors.toList());
+        List<String> names =
+                importers.stream().map(DatabaseImporter.Definition::getName).collect(Collectors.toList());
 
         int i = 0;
         if (!isDirect) {
@@ -523,14 +579,19 @@ public class Dialogs {
                 .create());
     }
 
-    public static void showPartialGoogleAuthImportWarningDialog(Context context, List<Integer> missingIndexes, int entries, List<CharSequence> scanningErrors, DialogInterface.OnClickListener dismissHandler) {
+    public static void showPartialGoogleAuthImportWarningDialog(
+            Context context,
+            List<Integer> missingIndexes,
+            int entries,
+            List<CharSequence> scanningErrors,
+            DialogInterface.OnClickListener dismissHandler) {
         String missingIndexesAsString = missingIndexes.stream()
                 .map(index -> context.getString(R.string.missing_qr_code_descriptor, index + 1))
                 .collect(Collectors.joining("\n"));
 
         View view = LayoutInflater.from(context).inflate(R.layout.dialog_error, null);
         TextView errorDetails = view.findViewById(R.id.error_details);
-        for (CharSequence error: scanningErrors) {
+        for (CharSequence error : scanningErrors) {
             errorDetails.append(error);
             errorDetails.append("\n\n");
         }
@@ -540,9 +601,10 @@ public class Dialogs {
                 .setMessage(context.getString(R.string.partial_google_auth_import_warning, missingIndexesAsString))
                 .setView(view)
                 .setCancelable(false)
-                .setPositiveButton(context.getString(R.string.import_partial_export_anyway, entries), (dialog, which) -> {
-                    dismissHandler.onClick(dialog, which);
-                })
+                .setPositiveButton(
+                        context.getString(R.string.import_partial_export_anyway, entries), (dialog, which) -> {
+                            dismissHandler.onClick(dialog, which);
+                        })
                 .setNegativeButton(android.R.string.cancel, null);
 
         if (scanningErrors.size() > 0) {
@@ -585,6 +647,7 @@ public class Dialogs {
 
     public interface PasswordSlotListener {
         void onSlotResult(PasswordSlot slot, Cipher cipher);
+
         void onException(Exception e);
     }
 

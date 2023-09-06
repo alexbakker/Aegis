@@ -2,10 +2,8 @@ package com.beemdevelopment.aegis.importers;
 
 import android.content.Context;
 import android.content.DialogInterface;
-
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Lifecycle;
-
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.helpers.ContextHelper;
 import com.beemdevelopment.aegis.ui.dialogs.Dialogs;
@@ -20,15 +18,13 @@ import com.beemdevelopment.aegis.vault.VaultGroup;
 import com.beemdevelopment.aegis.vault.slots.PasswordSlot;
 import com.beemdevelopment.aegis.vault.slots.SlotList;
 import com.topjohnwu.superuser.io.SuFile;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.UUID;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class AegisImporter extends DatabaseImporter {
 
@@ -87,26 +83,31 @@ public class AegisImporter extends DatabaseImporter {
 
         @Override
         public void decrypt(Context context, DecryptListener listener) {
-            Dialogs.showPasswordInputDialog(context, R.string.enter_password_aegis_title, 0, (Dialogs.TextInputListener) password -> {
-                List<PasswordSlot> slots = getSlots().findAll(PasswordSlot.class);
-                PasswordSlotDecryptTask.Params params = new PasswordSlotDecryptTask.Params(slots, password);
-                PasswordSlotDecryptTask task = new PasswordSlotDecryptTask(context, result -> {
-                    try {
-                        if (result == null) {
-                            throw new DatabaseImporterException("Password incorrect");
-                        }
+            Dialogs.showPasswordInputDialog(
+                    context,
+                    R.string.enter_password_aegis_title,
+                    0,
+                    (Dialogs.TextInputListener) password -> {
+                        List<PasswordSlot> slots = getSlots().findAll(PasswordSlot.class);
+                        PasswordSlotDecryptTask.Params params = new PasswordSlotDecryptTask.Params(slots, password);
+                        PasswordSlotDecryptTask task = new PasswordSlotDecryptTask(context, result -> {
+                            try {
+                                if (result == null) {
+                                    throw new DatabaseImporterException("Password incorrect");
+                                }
 
-                        VaultFileCredentials creds = new VaultFileCredentials(result.getKey(), getSlots());
-                        State state = decrypt(creds);
-                        listener.onStateDecrypted(state);
-                    } catch (DatabaseImporterException e) {
-                        listener.onError(e);
-                    }
-                });
+                                VaultFileCredentials creds = new VaultFileCredentials(result.getKey(), getSlots());
+                                State state = decrypt(creds);
+                                listener.onStateDecrypted(state);
+                            } catch (DatabaseImporterException e) {
+                                listener.onError(e);
+                            }
+                        });
 
-                Lifecycle lifecycle = ContextHelper.getLifecycle(context);
-                task.execute(lifecycle, params);
-            }, (DialogInterface.OnCancelListener) dialog -> listener.onCanceled());
+                        Lifecycle lifecycle = ContextHelper.getLifecycle(context);
+                        task.execute(lifecycle, params);
+                    },
+                    (DialogInterface.OnCancelListener) dialog -> listener.onCanceled());
         }
     }
 

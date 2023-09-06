@@ -3,19 +3,15 @@ package com.beemdevelopment.aegis.receivers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-
 import com.beemdevelopment.aegis.BuildConfig;
 import com.beemdevelopment.aegis.Preferences;
 import com.beemdevelopment.aegis.vault.VaultManager;
-
-import javax.inject.Inject;
-
 import dagger.hilt.android.AndroidEntryPoint;
+import javax.inject.Inject;
 
 @AndroidEntryPoint
 public class VaultLockReceiver extends BroadcastReceiver {
-    public static final String ACTION_LOCK_VAULT
-            = String.format("%s.LOCK_VAULT", BuildConfig.APPLICATION_ID);
+    public static final String ACTION_LOCK_VAULT = String.format("%s.LOCK_VAULT", BuildConfig.APPLICATION_ID);
 
     @Inject
     protected VaultManager _vaultManager;
@@ -24,7 +20,7 @@ public class VaultLockReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction() == null
                 || (!intent.getAction().equals(ACTION_LOCK_VAULT)
-                && !intent.getAction().equals(Intent.ACTION_SCREEN_OFF))) {
+                        && !intent.getAction().equals(Intent.ACTION_SCREEN_OFF))) {
             return;
         }
 

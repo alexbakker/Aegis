@@ -2,11 +2,9 @@ package com.beemdevelopment.aegis.ui.tasks;
 
 import android.content.Context;
 import android.net.Uri;
-
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.helpers.QrCodeHelper;
 import com.beemdevelopment.aegis.helpers.SafHelper;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -29,7 +27,8 @@ public class QrDecodeTask extends ProgressDialogTask<List<Uri>, List<QrDecodeTas
         for (Uri uri : uris) {
             String fileName = SafHelper.getFileName(context, uri);
             if (uris.size() > 1) {
-                publishProgress(context.getString(R.string.analyzing_qr_multiple, uris.indexOf(uri) + 1, uris.size(), fileName));
+                publishProgress(context.getString(
+                        R.string.analyzing_qr_multiple, uris.indexOf(uri) + 1, uris.size(), fileName));
             }
 
             try (InputStream inStream = context.getContentResolver().openInputStream(uri)) {

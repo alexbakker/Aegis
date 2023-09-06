@@ -4,18 +4,15 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.ui.dialogs.Dialogs;
 import com.beemdevelopment.aegis.ui.views.GroupAdapter;
 import com.beemdevelopment.aegis.vault.VaultGroup;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -102,7 +99,8 @@ public class GroupManagerActivity extends AegisActivity implements GroupAdapter.
                 .setTitle(R.string.remove_unused_groups)
                 .setMessage(R.string.remove_unused_groups_description)
                 .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
-                    Set<VaultGroup> unusedGroups = new HashSet<>(_vaultManager.getVault().getGroups());
+                    Set<VaultGroup> unusedGroups =
+                            new HashSet<>(_vaultManager.getVault().getGroups());
                     unusedGroups.removeAll(_vaultManager.getVault().getUsedGroups());
 
                     for (VaultGroup group : unusedGroups) {
@@ -134,9 +132,7 @@ public class GroupManagerActivity extends AegisActivity implements GroupAdapter.
             return;
         }
 
-        Dialogs.showDiscardDialog(this,
-                (dialog, which) -> saveAndFinish(),
-                (dialog, which) -> finish());
+        Dialogs.showDiscardDialog(this, (dialog, which) -> saveAndFinish(), (dialog, which) -> finish());
     }
 
     @Override

@@ -35,7 +35,8 @@ public class FabScrollHelper {
                             _isAnimating = false;
                             super.onAnimationEnd(animation);
                         }
-                    }).start();
+                    })
+                    .start();
         } else {
             _isAnimating = true;
             CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) _fabMenu.getLayoutParams();
@@ -50,8 +51,8 @@ public class FabScrollHelper {
                             _fabMenu.setVisibility(View.INVISIBLE);
                             super.onAnimationEnd(animation);
                         }
-                    }).start();
+                    })
+                    .start();
         }
-
     }
 }

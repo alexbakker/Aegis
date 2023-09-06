@@ -1,15 +1,12 @@
 package com.beemdevelopment.aegis.vault;
 
 import androidx.annotation.Nullable;
-
 import com.beemdevelopment.aegis.util.UUIDMap;
-
+import java.util.Optional;
+import java.util.UUID;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.Optional;
-import java.util.UUID;
 
 public class Vault {
     private static final int VERSION = 3;
@@ -29,7 +26,8 @@ public class Vault {
                 }
             }
 
-            // Always include all groups, even if they're not assigned to any entry (before or after the entry filter)
+            // Always include all groups, even if they're not assigned to any entry (before or after
+            // the entry filter)
             JSONArray groupsArray = new JSONArray();
             for (VaultGroup group : _groups) {
                 groupsArray.put(group.toJson());
@@ -73,7 +71,7 @@ public class Vault {
                 vault.migrateOldGroup(entry);
 
                 // check the vault has a group corresponding to each one the entry claims to be in
-                for (UUID groupUuid: entry.getGroups()) {
+                for (UUID groupUuid : entry.getGroups()) {
                     if (!groups.has(groupUuid)) {
                         entry.removeGroup(groupUuid);
                     }
@@ -90,10 +88,9 @@ public class Vault {
 
     public void migrateOldGroup(VaultEntry entry) {
         if (entry.getOldGroup() != null) {
-            Optional<VaultGroup> optGroup = getGroups().getValues()
-                                                 .stream()
-                                                 .filter(g -> g.getName().equals(entry.getOldGroup()))
-                                                 .findFirst();
+            Optional<VaultGroup> optGroup = getGroups().getValues().stream()
+                    .filter(g -> g.getName().equals(entry.getOldGroup()))
+                    .findFirst();
 
             if (optGroup.isPresent()) {
                 entry.addGroup(optGroup.get().getUUID());

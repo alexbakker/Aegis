@@ -4,9 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.helpers.IconViewHelper;
 import com.beemdevelopment.aegis.helpers.ThemeHelper;
@@ -15,7 +13,6 @@ import com.beemdevelopment.aegis.icons.IconType;
 import com.beemdevelopment.aegis.ui.glide.IconLoader;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-
 import java.io.File;
 
 public class IconHolder extends RecyclerView.ViewHolder {

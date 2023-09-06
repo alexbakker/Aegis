@@ -7,12 +7,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-
 import com.beemdevelopment.aegis.util.IOUtils;
 import com.google.common.io.Files;
 import com.topjohnwu.superuser.io.SuFile;
 import com.topjohnwu.superuser.io.SuFileInputStream;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -73,7 +71,8 @@ public class SqlImporterHelper {
         return files;
     }
 
-    public <T extends Entry> List<T> read(Class<T> type, InputStream inStream, String table) throws DatabaseImporterException {
+    public <T extends Entry> List<T> read(Class<T> type, InputStream inStream, String table)
+            throws DatabaseImporterException {
         File file = null;
         try {
             // create a temporary copy of the database so that SQLiteDatabase can open it
@@ -109,8 +108,10 @@ public class SqlImporterHelper {
                 }
 
                 return entries;
-            } catch (InstantiationException | IllegalAccessException
-                    | NoSuchMethodException | InvocationTargetException e) {
+            } catch (InstantiationException
+                    | IllegalAccessException
+                    | NoSuchMethodException
+                    | InvocationTargetException e) {
                 throw new RuntimeException(e);
             }
         } catch (SQLiteException e) {
@@ -142,9 +143,7 @@ public class SqlImporterHelper {
         return cursor.getLong(cursor.getColumnIndex(columnName));
     }
 
-    public static abstract class Entry {
-        public Entry(Cursor cursor) {
-
-        }
+    public abstract static class Entry {
+        public Entry(Cursor cursor) {}
     }
 }

@@ -2,13 +2,11 @@ package com.beemdevelopment.aegis.otp;
 
 import com.beemdevelopment.aegis.encoding.Base32;
 import com.beemdevelopment.aegis.encoding.EncodingException;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Locale;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public abstract class OtpInfo implements Serializable {
     public static final int DEFAULT_DIGITS = 6;
@@ -76,8 +74,10 @@ public abstract class OtpInfo implements Serializable {
     }
 
     public static boolean isAlgorithmValid(String algorithm) {
-        return algorithm.equals("SHA1") || algorithm.equals("SHA256") ||
-                algorithm.equals("SHA512") || algorithm.equals("MD5");
+        return algorithm.equals("SHA1")
+                || algorithm.equals("SHA256")
+                || algorithm.equals("SHA512")
+                || algorithm.equals("MD5");
     }
 
     public void setAlgorithm(String algorithm) throws OtpInfoException {

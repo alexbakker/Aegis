@@ -2,7 +2,6 @@ package com.beemdevelopment.aegis.ui.models;
 
 import com.beemdevelopment.aegis.icons.IconPack;
 import com.beemdevelopment.aegis.vault.VaultEntry;
-
 import java.io.Serializable;
 
 public class AssignIconEntry implements Serializable {
@@ -24,7 +23,9 @@ public class AssignIconEntry implements Serializable {
         return _entry;
     }
 
-    public IconPack.Icon getNewIcon() { return _newIcon; }
+    public IconPack.Icon getNewIcon() {
+        return _newIcon;
+    }
 
     public void setNewIcon(IconPack.Icon icon) {
         _newIcon = icon;

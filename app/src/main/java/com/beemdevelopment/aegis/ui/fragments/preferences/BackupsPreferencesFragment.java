@@ -10,11 +10,9 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.preference.Preference;
 import androidx.preference.SwitchPreferenceCompat;
-
 import com.beemdevelopment.aegis.Preferences;
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.ui.dialogs.Dialogs;
@@ -75,12 +73,13 @@ public class BackupsPreferencesFragment extends PreferencesFragment {
 
         _backupReminderPreference = requirePreference("pref_backup_reminder");
         _backupReminderPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-            if (!(boolean)newValue) {
-                Dialogs.showCheckboxDialog(getContext(), R.string.pref_backups_reminder_dialog_title,
+            if (!(boolean) newValue) {
+                Dialogs.showCheckboxDialog(
+                        getContext(),
+                        R.string.pref_backups_reminder_dialog_title,
                         R.string.pref_backups_reminder_dialog_summary,
                         R.string.understand_risk_accept,
-                        this::saveAndDisableBackupReminder
-                );
+                        this::saveAndDisableBackupReminder);
             } else {
                 _prefs.setIsBackupReminderEnabled(true);
                 return true;
@@ -102,7 +101,9 @@ public class BackupsPreferencesFragment extends PreferencesFragment {
         Uri backupLocation = _prefs.getBackupsLocation();
         _backupsLocationPreference = requirePreference("pref_backups_location");
         if (backupLocation != null) {
-            _backupsLocationPreference.setSummary(String.format("%s: %s", getString(R.string.pref_backups_location_summary), Uri.decode(backupLocation.toString())));
+            _backupsLocationPreference.setSummary(String.format(
+                    "%s: %s",
+                    getString(R.string.pref_backups_location_summary), Uri.decode(backupLocation.toString())));
         }
         _backupsLocationPreference.setOnPreferenceClickListener(preference -> {
             selectBackupsLocation();
@@ -119,12 +120,20 @@ public class BackupsPreferencesFragment extends PreferencesFragment {
         });
 
         _backupsVersionsPreference = requirePreference("pref_backups_versions");
-        _backupsVersionsPreference.setSummary(getResources().getQuantityString(R.plurals.pref_backups_versions_summary, _prefs.getBackupsVersionCount(), _prefs.getBackupsVersionCount()));
+        _backupsVersionsPreference.setSummary(getResources()
+                .getQuantityString(
+                        R.plurals.pref_backups_versions_summary,
+                        _prefs.getBackupsVersionCount(),
+                        _prefs.getBackupsVersionCount()));
         _backupsVersionsPreference.setOnPreferenceClickListener(preference -> {
             Dialogs.showBackupVersionsPickerDialog(requireContext(), _prefs.getBackupsVersionCount(), number -> {
                 number = number * 5 + 5;
                 _prefs.setBackupsVersionCount(number);
-                _backupsVersionsPreference.setSummary(getResources().getQuantityString(R.plurals.pref_backups_versions_summary, _prefs.getBackupsVersionCount(), _prefs.getBackupsVersionCount()));
+                _backupsVersionsPreference.setSummary(getResources()
+                        .getQuantityString(
+                                R.plurals.pref_backups_versions_summary,
+                                _prefs.getBackupsVersionCount(),
+                                _prefs.getBackupsVersionCount()));
             });
             return false;
         });
@@ -155,7 +164,8 @@ public class BackupsPreferencesFragment extends PreferencesFragment {
 
         _prefs.setBackupsLocation(uri);
         _prefs.setIsBackupsEnabled(true);
-        _backupsLocationPreference.setSummary(String.format("%s: %s", getString(R.string.pref_backups_location_summary), Uri.decode(uri.toString())));
+        _backupsLocationPreference.setSummary(
+                String.format("%s: %s", getString(R.string.pref_backups_location_summary), Uri.decode(uri.toString())));
         updateBackupPreference();
         scheduleBackup();
     }
@@ -212,7 +222,11 @@ public class BackupsPreferencesFragment extends PreferencesFragment {
         }
 
         Spannable spannable = new SpannableString(message);
-        spannable.setSpan(new ForegroundColorSpan(getResources().getColor(color)), 0, message.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannable.setSpan(
+                new ForegroundColorSpan(getResources().getColor(color)),
+                0,
+                message.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         if (color == R.color.warning_color) {
             spannable.setSpan(new StyleSpan(Typeface.BOLD), 0, message.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
@@ -232,7 +246,8 @@ public class BackupsPreferencesFragment extends PreferencesFragment {
     private void scheduleBackup() {
         try {
             _vaultManager.scheduleBackup();
-            Toast.makeText(requireContext(), R.string.backup_successful, Toast.LENGTH_LONG).show();
+            Toast.makeText(requireContext(), R.string.backup_successful, Toast.LENGTH_LONG)
+                    .show();
         } catch (VaultRepositoryException e) {
             e.printStackTrace();
             Dialogs.showErrorDialog(requireContext(), R.string.backup_error, e);

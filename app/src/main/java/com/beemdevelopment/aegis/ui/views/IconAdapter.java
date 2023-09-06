@@ -4,15 +4,12 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.icons.IconPack;
 import com.beemdevelopment.aegis.icons.IconType;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -232,6 +229,7 @@ public class IconAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public interface Listener {
         void onIconSelected(IconPack.Icon icon);
+
         void onCustomSelected();
     }
 

@@ -7,18 +7,15 @@ import static org.junit.Assert.assertThrows;
 import com.beemdevelopment.aegis.crypto.CryptoUtils;
 import com.beemdevelopment.aegis.crypto.MasterKey;
 import com.beemdevelopment.aegis.crypto.SCryptParameters;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import org.junit.Before;
+import org.junit.Test;
 
 public class SlotTest {
     private MasterKey _masterKey;
@@ -29,10 +26,9 @@ public class SlotTest {
     }
 
     @Test
-    public void testRawSlotCrypto() throws
-            InvalidAlgorithmParameterException, NoSuchAlgorithmException,
-            InvalidKeyException, NoSuchPaddingException,
-            SlotException, SlotIntegrityException {
+    public void testRawSlotCrypto()
+            throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, InvalidKeyException,
+                    NoSuchPaddingException, SlotException, SlotIntegrityException {
         RawSlot slot = new RawSlot();
         SecretKey rawKey = CryptoUtils.generateKey();
         Cipher cipher = CryptoUtils.createEncryptCipher(rawKey);
@@ -45,17 +41,15 @@ public class SlotTest {
     }
 
     @Test
-    public void testPasswordSlotCrypto() throws
-            InvalidAlgorithmParameterException, NoSuchAlgorithmException,
-            InvalidKeyException, NoSuchPaddingException,
-            SlotException, SlotIntegrityException {
+    public void testPasswordSlotCrypto()
+            throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, InvalidKeyException,
+                    NoSuchPaddingException, SlotException, SlotIntegrityException {
         final char[] password = "test".toCharArray();
         final SCryptParameters scryptParams = new SCryptParameters(
                 CryptoUtils.CRYPTO_SCRYPT_N,
                 CryptoUtils.CRYPTO_SCRYPT_p,
                 CryptoUtils.CRYPTO_SCRYPT_r,
-                new byte[CryptoUtils.CRYPTO_AEAD_KEY_SIZE]
-        );
+                new byte[CryptoUtils.CRYPTO_AEAD_KEY_SIZE]);
 
         PasswordSlot slot = new PasswordSlot();
         SecretKey passwordKey = slot.deriveKey(password, scryptParams);
@@ -69,10 +63,9 @@ public class SlotTest {
     }
 
     @Test
-    public void testSlotIntegrity() throws
-            InvalidAlgorithmParameterException, NoSuchAlgorithmException,
-            InvalidKeyException, NoSuchPaddingException,
-            SlotException, SlotIntegrityException {
+    public void testSlotIntegrity()
+            throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, InvalidKeyException,
+                    NoSuchPaddingException, SlotException, SlotIntegrityException {
         RawSlot slot = new RawSlot();
         SecretKey rawKey = CryptoUtils.generateKey();
         Cipher cipher = CryptoUtils.createEncryptCipher(rawKey);
@@ -103,7 +96,8 @@ public class SlotTest {
         slots.add(passSlot);
         slots.add(passSlot2);
 
-        assertArrayEquals(slots.getValues().toArray(), slots.exportable().getValues().toArray());
+        assertArrayEquals(
+                slots.getValues().toArray(), slots.exportable().getValues().toArray());
 
         SlotList backupSlots = new SlotList();
         PasswordSlot backupSlot = new PasswordSlot();
@@ -111,7 +105,10 @@ public class SlotTest {
         slots.add(backupSlot);
         backupSlots.add(backupSlot);
 
-        assertArrayEquals(backupSlots.getValues().toArray(), slots.exportable().getValues().toArray());
-        assertNotEquals(slots.getValues().toArray(), slots.exportable().getValues().toArray());
+        assertArrayEquals(
+                backupSlots.getValues().toArray(),
+                slots.exportable().getValues().toArray());
+        assertNotEquals(
+                slots.getValues().toArray(), slots.exportable().getValues().toArray());
     }
 }

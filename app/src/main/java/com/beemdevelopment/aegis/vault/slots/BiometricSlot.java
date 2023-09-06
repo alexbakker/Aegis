@@ -1,7 +1,6 @@
 package com.beemdevelopment.aegis.vault.slots;
 
 import com.beemdevelopment.aegis.crypto.CryptParameters;
-
 import java.util.UUID;
 
 public class BiometricSlot extends RawSlot {

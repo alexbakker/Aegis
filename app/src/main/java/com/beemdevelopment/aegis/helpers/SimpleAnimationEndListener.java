@@ -10,9 +10,7 @@ public class SimpleAnimationEndListener implements Animation.AnimationListener {
     }
 
     @Override
-    public void onAnimationStart(Animation animation) {
-
-    }
+    public void onAnimationStart(Animation animation) {}
 
     @Override
     public void onAnimationEnd(Animation animation) {
@@ -22,9 +20,7 @@ public class SimpleAnimationEndListener implements Animation.AnimationListener {
     }
 
     @Override
-    public void onAnimationRepeat(Animation animation) {
-
-    }
+    public void onAnimationRepeat(Animation animation) {}
 
     public interface Listener {
         void onAnimationEnd(Animation animation);

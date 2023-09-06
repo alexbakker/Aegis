@@ -3,7 +3,6 @@ package com.beemdevelopment.aegis.importers;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-
 import com.beemdevelopment.aegis.encoding.Base64;
 import com.beemdevelopment.aegis.encoding.EncodingException;
 import com.beemdevelopment.aegis.otp.GoogleAuthInfo;
@@ -13,7 +12,6 @@ import com.beemdevelopment.aegis.otp.TotpInfo;
 import com.beemdevelopment.aegis.vault.VaultEntry;
 import com.topjohnwu.superuser.Shell;
 import com.topjohnwu.superuser.io.SuFile;
-
 import java.io.InputStream;
 import java.util.List;
 
@@ -41,7 +39,8 @@ public class MicrosoftAuthImporter extends DatabaseImporter {
     }
 
     @Override
-    public DatabaseImporter.State readFromApp(Shell shell) throws PackageManager.NameNotFoundException, DatabaseImporterException {
+    public DatabaseImporter.State readFromApp(Shell shell)
+            throws PackageManager.NameNotFoundException, DatabaseImporterException {
         SuFile path = getAppPath();
         path.setShell(shell);
 
@@ -91,7 +90,8 @@ public class MicrosoftAuthImporter extends DatabaseImporter {
                         secret = Base64.decode(entry.getSecret());
                         break;
                     default:
-                        throw new DatabaseImporterEntryException(String.format("Unsupported OTP type: %d", entry.getType()), entry.toString());
+                        throw new DatabaseImporterEntryException(
+                                String.format("Unsupported OTP type: %d", entry.getType()), entry.toString());
                 }
 
                 OtpInfo info = new TotpInfo(secret, OtpInfo.DEFAULT_ALGORITHM, digits, TotpInfo.DEFAULT_PERIOD);

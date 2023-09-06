@@ -1,17 +1,14 @@
 package com.beemdevelopment.aegis.rules;
 
 import android.graphics.Bitmap;
-
 import androidx.test.runner.screenshot.BasicScreenCaptureProcessor;
 import androidx.test.runner.screenshot.ScreenCapture;
 import androidx.test.runner.screenshot.ScreenCaptureProcessor;
 import androidx.test.runner.screenshot.Screenshot;
-
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
-
 import java.io.IOException;
 import java.util.HashSet;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 
 public class ScreenshotTestRule extends TestWatcher {
     @Override

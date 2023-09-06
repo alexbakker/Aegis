@@ -1,14 +1,11 @@
 package com.beemdevelopment.aegis.ui.tasks;
 
 import android.content.Context;
-
 import com.beemdevelopment.aegis.R;
-
-import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
-import org.bouncycastle.crypto.params.Argon2Parameters;
-
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
+import org.bouncycastle.crypto.params.Argon2Parameters;
 
 public class Argon2Task extends ProgressDialogTask<Argon2Task.Params, SecretKey> {
     private final Callback _cb;

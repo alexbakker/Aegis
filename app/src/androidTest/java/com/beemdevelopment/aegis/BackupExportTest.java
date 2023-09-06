@@ -22,7 +22,6 @@ import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.Intent;
 import android.net.Uri;
-
 import androidx.annotation.Nullable;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.intent.Intents;
@@ -30,7 +29,6 @@ import androidx.test.espresso.matcher.RootMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SmallTest;
-
 import com.beemdevelopment.aegis.crypto.CryptoUtils;
 import com.beemdevelopment.aegis.crypto.MasterKey;
 import com.beemdevelopment.aegis.encoding.Hex;
@@ -53,7 +51,15 @@ import com.beemdevelopment.aegis.vault.slots.SlotException;
 import com.beemdevelopment.aegis.vault.slots.SlotIntegrityException;
 import com.beemdevelopment.aegis.vault.slots.SlotList;
 import com.beemdevelopment.aegis.vectors.VaultEntries;
-
+import dagger.hilt.android.testing.HiltAndroidTest;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.List;
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -62,23 +68,12 @@ import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.List;
-
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-
-import dagger.hilt.android.testing.HiltAndroidTest;
-
 @RunWith(AndroidJUnit4.class)
 @HiltAndroidTest
 @SmallTest
 public class BackupExportTest extends AegisTest {
-    private final ActivityScenarioRule<PreferencesActivity> _activityRule = new ActivityScenarioRule<>(PreferencesActivity.class);
+    private final ActivityScenarioRule<PreferencesActivity> _activityRule =
+            new ActivityScenarioRule<>(PreferencesActivity.class);
 
     @Rule
     public final TestRule testRule = RuleChain.outerRule(_activityRule).around(new ScreenshotTestRule());
@@ -113,7 +108,9 @@ public class BackupExportTest extends AegisTest {
         openExportDialog();
         onView(withId(R.id.checkbox_export_encrypt)).perform(click());
         onView(withId(R.id.dropdown_export_format)).perform(click());
-        onView(withText(R.string.export_format_google_auth_uri)).inRoot(RootMatchers.isPlatformPopup()).perform(click());
+        onView(withText(R.string.export_format_google_auth_uri))
+                .inRoot(RootMatchers.isPlatformPopup())
+                .perform(click());
         onView(withId(android.R.id.button1)).perform(click());
         onView(withId(R.id.checkbox_accept)).perform(click());
         File file = doExport();
@@ -155,7 +152,9 @@ public class BackupExportTest extends AegisTest {
         openExportDialog();
         onView(withId(R.id.checkbox_export_encrypt)).perform(click());
         onView(withId(R.id.dropdown_export_format)).perform(click());
-        onView(withText(R.string.export_format_google_auth_uri)).inRoot(RootMatchers.isPlatformPopup()).perform(click());
+        onView(withText(R.string.export_format_google_auth_uri))
+                .inRoot(RootMatchers.isPlatformPopup())
+                .perform(click());
         onView(withId(android.R.id.button1)).perform(click());
         onView(withId(R.id.checkbox_accept)).perform(click());
         File file = doExport();
@@ -180,7 +179,9 @@ public class BackupExportTest extends AegisTest {
         openExportDialog();
         onView(withId(R.id.checkbox_export_encrypt)).perform(click());
         onView(withId(R.id.dropdown_export_format)).perform(click());
-        onView(withText(R.string.export_format_html)).inRoot(RootMatchers.isPlatformPopup()).perform(click());
+        onView(withText(R.string.export_format_html))
+                .inRoot(RootMatchers.isPlatformPopup())
+                .perform(click());
         onView(withId(android.R.id.button1)).perform(click());
         onView(withId(R.id.checkbox_accept)).perform(click());
         doExport();
@@ -193,7 +194,9 @@ public class BackupExportTest extends AegisTest {
         openExportDialog();
         onView(withId(R.id.checkbox_export_encrypt)).perform(click());
         onView(withId(R.id.dropdown_export_format)).perform(click());
-        onView(withText(R.string.export_format_html)).inRoot(RootMatchers.isPlatformPopup()).perform(click());
+        onView(withText(R.string.export_format_html))
+                .inRoot(RootMatchers.isPlatformPopup())
+                .perform(click());
         onView(withId(android.R.id.button1)).perform(click());
         onView(withId(R.id.checkbox_accept)).perform(click());
         doExport();
@@ -215,10 +218,15 @@ public class BackupExportTest extends AegisTest {
         initEncryptedVault();
         setSeparateBackupExportPassword();
 
-        onView(withId(androidx.preference.R.id.recycler_view)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText(R.string.pref_section_security_title)), click()));
-        onView(withId(androidx.preference.R.id.recycler_view)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText(R.string.pref_backup_password_change_title)), click()));
+        onView(withId(androidx.preference.R.id.recycler_view))
+                .perform(RecyclerViewActions.actionOnItem(
+                        hasDescendant(withText(R.string.pref_section_security_title)), click()));
+        onView(withId(androidx.preference.R.id.recycler_view))
+                .perform(RecyclerViewActions.actionOnItem(
+                        hasDescendant(withText(R.string.pref_backup_password_change_title)), click()));
         onView(withId(R.id.text_password)).perform(typeText(VAULT_BACKUP_PASSWORD_CHANGED), closeSoftKeyboard());
-        onView(withId(R.id.text_password_confirm)).perform(typeText(VAULT_BACKUP_PASSWORD_CHANGED), closeSoftKeyboard());
+        onView(withId(R.id.text_password_confirm))
+                .perform(typeText(VAULT_BACKUP_PASSWORD_CHANGED), closeSoftKeyboard());
         onView(withId(android.R.id.button1)).perform(click());
         onView(isRoot()).perform(pressBack());
 
@@ -244,8 +252,12 @@ public class BackupExportTest extends AegisTest {
         initEncryptedVault();
         setSeparateBackupExportPassword();
 
-        onView(withId(androidx.preference.R.id.recycler_view)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText(R.string.pref_section_security_title)), click()));
-        onView(withId(androidx.preference.R.id.recycler_view)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText(R.string.pref_set_password_title)), click()));
+        onView(withId(androidx.preference.R.id.recycler_view))
+                .perform(RecyclerViewActions.actionOnItem(
+                        hasDescendant(withText(R.string.pref_section_security_title)), click()));
+        onView(withId(androidx.preference.R.id.recycler_view))
+                .perform(RecyclerViewActions.actionOnItem(
+                        hasDescendant(withText(R.string.pref_set_password_title)), click()));
         onView(withId(R.id.text_password)).perform(typeText(VAULT_PASSWORD_CHANGED), closeSoftKeyboard());
         onView(withId(R.id.text_password_confirm)).perform(typeText(VAULT_PASSWORD_CHANGED), closeSoftKeyboard());
         onView(withId(android.R.id.button1)).perform(click());
@@ -273,8 +285,12 @@ public class BackupExportTest extends AegisTest {
         assertEquals(creds.getSlots().findRegularPasswordSlots().size(), 1);
         assertEquals(creds.getSlots().findBackupPasswordSlots().size(), 0);
 
-        onView(withId(androidx.preference.R.id.recycler_view)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText(R.string.pref_section_security_title)), click()));
-        onView(withId(androidx.preference.R.id.recycler_view)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText(R.string.pref_backup_password_title)), click()));
+        onView(withId(androidx.preference.R.id.recycler_view))
+                .perform(RecyclerViewActions.actionOnItem(
+                        hasDescendant(withText(R.string.pref_section_security_title)), click()));
+        onView(withId(androidx.preference.R.id.recycler_view))
+                .perform(RecyclerViewActions.actionOnItem(
+                        hasDescendant(withText(R.string.pref_backup_password_title)), click()));
         onView(withId(R.id.text_password)).perform(typeText(VAULT_BACKUP_PASSWORD), closeSoftKeyboard());
         onView(withId(R.id.text_password_confirm)).perform(typeText(VAULT_BACKUP_PASSWORD), closeSoftKeyboard());
         onView(withId(android.R.id.button1)).perform(click());
@@ -288,7 +304,8 @@ public class BackupExportTest extends AegisTest {
         }
     }
 
-    private void verifyPasswordSlotChange(VaultFileCredentials creds, PasswordSlot slot, String oldPassword, String newPassword) {
+    private void verifyPasswordSlotChange(
+            VaultFileCredentials creds, PasswordSlot slot, String oldPassword, String newPassword) {
         assertThrows(SlotIntegrityException.class, () -> decryptPasswordSlot(slot, oldPassword));
         MasterKey masterKey;
         try {
@@ -313,8 +330,12 @@ public class BackupExportTest extends AegisTest {
     }
 
     private void openExportDialog() {
-        onView(withId(androidx.preference.R.id.recycler_view)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText(R.string.pref_section_import_export_title)), click()));
-        onView(withId(androidx.preference.R.id.recycler_view)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText(R.string.pref_export_title)), click()));
+        onView(withId(androidx.preference.R.id.recycler_view))
+                .perform(RecyclerViewActions.actionOnItem(
+                        hasDescendant(withText(R.string.pref_section_import_export_title)), click()));
+        onView(withId(androidx.preference.R.id.recycler_view))
+                .perform(
+                        RecyclerViewActions.actionOnItem(hasDescendant(withText(R.string.pref_export_title)), click()));
     }
 
     private MasterKey decryptPasswordSlot(PasswordSlot slot, String password) throws SlotIntegrityException {
@@ -329,7 +350,8 @@ public class BackupExportTest extends AegisTest {
 
     private File getExportFileUri() {
         String dirName = Hex.encode(CryptoUtils.generateRandomBytes(8));
-        File dir = new File(getInstrumentation().getTargetContext().getExternalCacheDir(), String.format("export-%s", dirName));
+        File dir = new File(
+                getInstrumentation().getTargetContext().getExternalCacheDir(), String.format("export-%s", dirName));
         if (!dir.mkdirs()) {
             throw new RuntimeException(String.format("Unable to create export directory: %s", dir));
         }
@@ -357,7 +379,11 @@ public class BackupExportTest extends AegisTest {
             }
 
             repo = VaultRepository.fromFile(getInstrumentation().getContext(), vaultFile, creds);
-        } catch (SlotException | SlotIntegrityException | VaultRepositoryException | VaultFileException | IOException e) {
+        } catch (SlotException
+                | SlotIntegrityException
+                | VaultRepositoryException
+                | VaultFileException
+                | IOException e) {
             throw new RuntimeException("Unable to read back vault file", e);
         }
 
@@ -366,7 +392,8 @@ public class BackupExportTest extends AegisTest {
     }
 
     private void readTxtExport(File file) {
-        GoogleAuthUriImporter importer = new GoogleAuthUriImporter(getInstrumentation().getContext());
+        GoogleAuthUriImporter importer =
+                new GoogleAuthUriImporter(getInstrumentation().getContext());
 
         Collection<VaultEntry> entries;
         try (InputStream inStream = new FileInputStream(file)) {
@@ -387,7 +414,9 @@ public class BackupExportTest extends AegisTest {
         int i = 0;
         for (VaultEntry entry : entries) {
             VaultEntry vector = vectors.get(i);
-            String message = String.format("Entries are not equivalent: (%s) (%s)", vector.toJson().toString(), entry.toJson().toString());
+            String message = String.format(
+                    "Entries are not equivalent: (%s) (%s)",
+                    vector.toJson().toString(), entry.toJson().toString());
             assertTrue(message, vector.equivalates(entry));
             try {
                 assertEquals(message, vector.getInfo().getOtp(), entry.getInfo().getOtp());

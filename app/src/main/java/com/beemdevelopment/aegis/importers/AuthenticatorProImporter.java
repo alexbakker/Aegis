@@ -3,9 +3,7 @@ package com.beemdevelopment.aegis.importers;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-
 import androidx.lifecycle.Lifecycle;
-
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.encoding.Base32;
 import com.beemdevelopment.aegis.encoding.EncodingException;
@@ -21,12 +19,6 @@ import com.beemdevelopment.aegis.ui.tasks.PBKDFTask;
 import com.beemdevelopment.aegis.util.IOUtils;
 import com.beemdevelopment.aegis.vault.VaultEntry;
 import com.topjohnwu.superuser.io.SuFile;
-
-import org.bouncycastle.crypto.params.Argon2Parameters;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -37,13 +29,16 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
+import org.bouncycastle.crypto.params.Argon2Parameters;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class AuthenticatorProImporter extends DatabaseImporter {
     private static final String HEADER = "AUTHENTICATORPRO";
@@ -157,27 +152,35 @@ public class AuthenticatorProImporter extends DatabaseImporter {
                 _cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(_iv));
                 byte[] decrypted = _cipher.doFinal(_data);
                 return new JsonState(new JSONObject(new String(decrypted, StandardCharsets.UTF_8)));
-            } catch (InvalidAlgorithmParameterException | IllegalBlockSizeException
-                     | JSONException | InvalidKeyException | BadPaddingException e) {
+            } catch (InvalidAlgorithmParameterException
+                    | IllegalBlockSizeException
+                    | JSONException
+                    | InvalidKeyException
+                    | BadPaddingException e) {
                 throw new DatabaseImporterException(e);
             }
         }
 
         @Override
         public void decrypt(Context context, DecryptListener listener) throws DatabaseImporterException {
-            Dialogs.showPasswordInputDialog(context, R.string.enter_password_aegis_title, 0, (Dialogs.TextInputListener) password -> {
-                Argon2Task.Params params = getKeyDerivationParams(password);
-                Argon2Task task = new Argon2Task(context, key -> {
-                    try {
-                        AuthenticatorProImporter.JsonState state = decrypt(key);
-                        listener.onStateDecrypted(state);
-                    } catch (DatabaseImporterException e) {
-                        listener.onError(e);
-                    }
-                });
-                Lifecycle lifecycle = ContextHelper.getLifecycle(context);
-                task.execute(lifecycle, params);
-            }, dialog -> listener.onCanceled());
+            Dialogs.showPasswordInputDialog(
+                    context,
+                    R.string.enter_password_aegis_title,
+                    0,
+                    (Dialogs.TextInputListener) password -> {
+                        Argon2Task.Params params = getKeyDerivationParams(password);
+                        Argon2Task task = new Argon2Task(context, key -> {
+                            try {
+                                AuthenticatorProImporter.JsonState state = decrypt(key);
+                                listener.onStateDecrypted(state);
+                            } catch (DatabaseImporterException e) {
+                                listener.onError(e);
+                            }
+                        });
+                        Lifecycle lifecycle = ContextHelper.getLifecycle(context);
+                        task.execute(lifecycle, params);
+                    },
+                    dialog -> listener.onCanceled());
         }
 
         private Argon2Task.Params getKeyDerivationParams(char[] password) {
@@ -191,7 +194,7 @@ public class AuthenticatorProImporter extends DatabaseImporter {
         }
 
         private static EncryptedState parseHeader(DataInputStream stream)
-            throws IOException, NoSuchPaddingException, NoSuchAlgorithmException {
+                throws IOException, NoSuchPaddingException, NoSuchAlgorithmException {
             byte[] salt = new byte[SALT_SIZE];
             stream.readFully(salt);
 
@@ -232,27 +235,35 @@ public class AuthenticatorProImporter extends DatabaseImporter {
                 _cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(_iv));
                 byte[] decrypted = _cipher.doFinal(_data);
                 return new JsonState(new JSONObject(new String(decrypted, StandardCharsets.UTF_8)));
-            } catch (InvalidAlgorithmParameterException | IllegalBlockSizeException
-                     | JSONException | InvalidKeyException | BadPaddingException e) {
+            } catch (InvalidAlgorithmParameterException
+                    | IllegalBlockSizeException
+                    | JSONException
+                    | InvalidKeyException
+                    | BadPaddingException e) {
                 throw new DatabaseImporterException(e);
             }
         }
 
         @Override
         public void decrypt(Context context, DecryptListener listener) throws DatabaseImporterException {
-            Dialogs.showPasswordInputDialog(context, R.string.enter_password_aegis_title, 0, (Dialogs.TextInputListener) password -> {
-                PBKDFTask.Params params = getKeyDerivationParams(password);
-                PBKDFTask task = new PBKDFTask(context, key -> {
-                    try {
-                        AuthenticatorProImporter.JsonState state = decrypt(key);
-                        listener.onStateDecrypted(state);
-                    } catch (DatabaseImporterException e) {
-                        listener.onError(e);
-                    }
-                });
-                Lifecycle lifecycle = ContextHelper.getLifecycle(context);
-                task.execute(lifecycle, params);
-            }, dialog -> listener.onCanceled());
+            Dialogs.showPasswordInputDialog(
+                    context,
+                    R.string.enter_password_aegis_title,
+                    0,
+                    (Dialogs.TextInputListener) password -> {
+                        PBKDFTask.Params params = getKeyDerivationParams(password);
+                        PBKDFTask task = new PBKDFTask(context, key -> {
+                            try {
+                                AuthenticatorProImporter.JsonState state = decrypt(key);
+                                listener.onStateDecrypted(state);
+                            } catch (DatabaseImporterException e) {
+                                listener.onError(e);
+                            }
+                        });
+                        Lifecycle lifecycle = ContextHelper.getLifecycle(context);
+                        task.execute(lifecycle, params);
+                    },
+                    dialog -> listener.onCanceled());
         }
 
         private PBKDFTask.Params getKeyDerivationParams(char[] password) {
@@ -260,7 +271,7 @@ public class AuthenticatorProImporter extends DatabaseImporter {
         }
 
         private static LegacyEncryptedState parseHeader(DataInputStream stream)
-            throws IOException, NoSuchPaddingException, NoSuchAlgorithmException {
+                throws IOException, NoSuchPaddingException, NoSuchAlgorithmException {
             byte[] salt = new byte[SALT_SIZE];
             stream.readFully(salt);
 

@@ -1,10 +1,8 @@
 package com.beemdevelopment.aegis.importers;
 
 import android.content.Context;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.Lifecycle;
-
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.crypto.CryptParameters;
 import com.beemdevelopment.aegis.crypto.CryptResult;
@@ -22,11 +20,6 @@ import com.beemdevelopment.aegis.ui.tasks.PBKDFTask;
 import com.beemdevelopment.aegis.util.IOUtils;
 import com.beemdevelopment.aegis.vault.VaultEntry;
 import com.topjohnwu.superuser.io.SuFile;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -37,13 +30,15 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Locale;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class AndOtpImporter extends DatabaseImporter {
     private static final int INT_SIZE = 4;
@@ -117,13 +112,15 @@ public class AndOtpImporter extends DatabaseImporter {
             byte[] iterBytes = Arrays.copyOfRange(_data, 0, INT_SIZE);
             int iterations = ByteBuffer.wrap(iterBytes).getInt();
             if (iterations < 1) {
-                throw new DatabaseImporterException(String.format("Invalid number of iterations for PBKDF: %d", iterations));
+                throw new DatabaseImporterException(
+                        String.format("Invalid number of iterations for PBKDF: %d", iterations));
             }
             // If number of iterations is this high, it's probably not an andOTP file, so
             // abort early in order to prevent having to wait for an extremely long key derivation
             // process, only to find out that the user picked the wrong file
             if (iterations > 10_000_000L) {
-                throw new DatabaseImporterException(String.format("Unexpectedly high number of iterations: %d", iterations));
+                throw new DatabaseImporterException(
+                        String.format("Unexpectedly high number of iterations: %d", iterations));
             }
 
             byte[] salt = Arrays.copyOfRange(_data, INT_SIZE, INT_SIZE + SALT_SIZE);
@@ -149,14 +146,14 @@ public class AndOtpImporter extends DatabaseImporter {
             return decryptContent(key, INT_SIZE + SALT_SIZE);
         }
 
-        protected DecryptedState decryptNewFormat(char[] password)
-            throws DatabaseImporterException {
+        protected DecryptedState decryptNewFormat(char[] password) throws DatabaseImporterException {
             PBKDFTask.Params params = getKeyDerivationParams(password);
             SecretKey key = PBKDFTask.deriveKey(params);
             return decryptNewFormat(key);
         }
 
-        private void decrypt(Context context, char[] password, boolean oldFormat, DecryptListener listener) throws DatabaseImporterException {
+        private void decrypt(Context context, char[] password, boolean oldFormat, DecryptListener listener)
+                throws DatabaseImporterException {
             if (oldFormat) {
                 DecryptedState state = decryptOldFormat(password);
                 listener.onStateDecrypted(state);
@@ -177,9 +174,9 @@ public class AndOtpImporter extends DatabaseImporter {
 
         @Override
         public void decrypt(Context context, DecryptListener listener) {
-            String[] choices = new String[]{
-                    context.getResources().getString(R.string.andotp_new_format),
-                    context.getResources().getString(R.string.andotp_old_format)
+            String[] choices = new String[] {
+                context.getResources().getString(R.string.andotp_new_format),
+                context.getResources().getString(R.string.andotp_old_format)
             };
 
             Dialogs.showSecureDialog(new AlertDialog.Builder(context)
@@ -187,13 +184,16 @@ public class AndOtpImporter extends DatabaseImporter {
                     .setSingleChoiceItems(choices, 0, null)
                     .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                         int i = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
-                        Dialogs.showPasswordInputDialog(context, password -> {
-                            try {
-                                decrypt(context, password, i != 0, listener);
-                            } catch (DatabaseImporterException e) {
-                                listener.onError(e);
-                            }
-                        }, dialog1 -> listener.onCanceled());
+                        Dialogs.showPasswordInputDialog(
+                                context,
+                                password -> {
+                                    try {
+                                        decrypt(context, password, i != 0, listener);
+                                    } catch (DatabaseImporterException e) {
+                                        listener.onError(e);
+                                    }
+                                },
+                                dialog1 -> listener.onCanceled());
                     })
                     .create());
         }
@@ -265,8 +265,7 @@ public class AndOtpImporter extends DatabaseImporter {
                 }
 
                 return new VaultEntry(info, name, issuer);
-            } catch (DatabaseImporterException | EncodingException | OtpInfoException |
-                     JSONException e) {
+            } catch (DatabaseImporterException | EncodingException | OtpInfoException | JSONException e) {
                 throw new DatabaseImporterEntryException(e, obj.toString());
             }
         }

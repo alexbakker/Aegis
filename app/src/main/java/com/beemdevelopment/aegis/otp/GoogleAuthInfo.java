@@ -1,9 +1,7 @@
 package com.beemdevelopment.aegis.otp;
 
 import android.net.Uri;
-
 import androidx.annotation.NonNull;
-
 import com.beemdevelopment.aegis.GoogleAuthProtos;
 import com.beemdevelopment.aegis.encoding.Base32;
 import com.beemdevelopment.aegis.encoding.Base64;
@@ -11,7 +9,6 @@ import com.beemdevelopment.aegis.encoding.EncodingException;
 import com.beemdevelopment.aegis.encoding.Hex;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
-
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -215,7 +212,11 @@ public class GoogleAuthInfo implements Transferable, Serializable {
                         digits = 8;
                         break;
                     default:
-                        throw new GoogleAuthInfoException(uri, String.format("Unsupported digits: %d", params.getDigits().ordinal()));
+                        throw new GoogleAuthInfoException(
+                                uri,
+                                String.format(
+                                        "Unsupported digits: %d",
+                                        params.getDigits().ordinal()));
                 }
 
                 String algo;
@@ -232,7 +233,11 @@ public class GoogleAuthInfo implements Transferable, Serializable {
                         algo = "SHA512";
                         break;
                     default:
-                        throw new GoogleAuthInfoException(uri, String.format("Unsupported hash algorithm: %d", params.getAlgorithm().ordinal()));
+                        throw new GoogleAuthInfoException(
+                                uri,
+                                String.format(
+                                        "Unsupported hash algorithm: %d",
+                                        params.getAlgorithm().ordinal()));
                 }
 
                 byte[] secret = params.getSecret().toByteArray();
@@ -250,7 +255,11 @@ public class GoogleAuthInfo implements Transferable, Serializable {
                         otp = new HotpInfo(secret, algo, digits, params.getCounter());
                         break;
                     default:
-                        throw new GoogleAuthInfoException(uri, String.format("Unsupported algorithm: %d", params.getType().ordinal()));
+                        throw new GoogleAuthInfoException(
+                                uri,
+                                String.format(
+                                        "Unsupported algorithm: %d",
+                                        params.getType().ordinal()));
                 }
             } catch (OtpInfoException e) {
                 throw new GoogleAuthInfoException(uri, e);
@@ -367,9 +376,8 @@ public class GoogleAuthInfo implements Transferable, Serializable {
                 return indicesMissing;
             }
 
-            Set<Integer> indicesPresent = exports.stream()
-                    .map(Export::getBatchIndex)
-                    .collect(Collectors.toSet());
+            Set<Integer> indicesPresent =
+                    exports.stream().map(Export::getBatchIndex).collect(Collectors.toSet());
 
             for (int i = 0; i < exports.get(0).getBatchSize(); i++) {
                 if (!indicesPresent.contains(i)) {
@@ -403,11 +411,12 @@ public class GoogleAuthInfo implements Transferable, Serializable {
                     .setBatchSize(_batchSize)
                     .setVersion(1);
 
-            for (GoogleAuthInfo info: _entries) {
-                GoogleAuthProtos.MigrationPayload.OtpParameters.Builder parameters = GoogleAuthProtos.MigrationPayload.OtpParameters.newBuilder()
-                        .setSecret(ByteString.copyFrom(info.getOtpInfo().getSecret()))
-                        .setName(info.getAccountName())
-                        .setIssuer(info.getIssuer());
+            for (GoogleAuthInfo info : _entries) {
+                GoogleAuthProtos.MigrationPayload.OtpParameters.Builder parameters =
+                        GoogleAuthProtos.MigrationPayload.OtpParameters.newBuilder()
+                                .setSecret(ByteString.copyFrom(info.getOtpInfo().getSecret()))
+                                .setName(info.getAccountName())
+                                .setIssuer(info.getIssuer());
 
                 switch (info.getOtpInfo().getAlgorithm(false)) {
                     case "SHA1":
@@ -423,7 +432,11 @@ public class GoogleAuthInfo implements Transferable, Serializable {
                         parameters.setAlgorithm(GoogleAuthProtos.MigrationPayload.Algorithm.ALGORITHM_MD5);
                         break;
                     default:
-                        throw new GoogleAuthInfoException(info.getUri(), String.format("Unsupported Algorithm: %s", info.getOtpInfo().getAlgorithm(false)));
+                        throw new GoogleAuthInfoException(
+                                info.getUri(),
+                                String.format(
+                                        "Unsupported Algorithm: %s",
+                                        info.getOtpInfo().getAlgorithm(false)));
                 }
 
                 switch (info.getOtpInfo().getDigits()) {
@@ -434,7 +447,11 @@ public class GoogleAuthInfo implements Transferable, Serializable {
                         parameters.setDigits(GoogleAuthProtos.MigrationPayload.DigitCount.DIGIT_COUNT_EIGHT);
                         break;
                     default:
-                        throw new GoogleAuthInfoException(info.getUri(), String.format("Unsupported number of digits: %s", info.getOtpInfo().getDigits()));
+                        throw new GoogleAuthInfoException(
+                                info.getUri(),
+                                String.format(
+                                        "Unsupported number of digits: %s",
+                                        info.getOtpInfo().getDigits()));
                 }
 
                 switch (info.getOtpInfo().getType().toLowerCase()) {
@@ -446,15 +463,18 @@ public class GoogleAuthInfo implements Transferable, Serializable {
                         parameters.setType(GoogleAuthProtos.MigrationPayload.OtpType.OTP_TYPE_TOTP);
                         break;
                     default:
-                        throw new GoogleAuthInfoException(info.getUri(), String.format("Type unsupported by GoogleAuthProtos: %s", info.getOtpInfo().getType()));
+                        throw new GoogleAuthInfoException(
+                                info.getUri(),
+                                String.format(
+                                        "Type unsupported by GoogleAuthProtos: %s",
+                                        info.getOtpInfo().getType()));
                 }
 
                 builder.addOtpParameters(parameters.build());
             }
 
-            Uri.Builder exportUriBuilder = new Uri.Builder()
-                    .scheme(SCHEME_EXPORT)
-                    .authority("offline");
+            Uri.Builder exportUriBuilder =
+                    new Uri.Builder().scheme(SCHEME_EXPORT).authority("offline");
 
             String data = Base64.encode(builder.build().toByteArray());
             exportUriBuilder.appendQueryParameter("data", data);

@@ -4,13 +4,11 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 public class HOTP {
-    private HOTP() {
-    }
+    private HOTP() {}
 
     public static OTP generateOTP(byte[] secret, String algo, int digits, long counter)
             throws NoSuchAlgorithmException, InvalidKeyException {

@@ -1,7 +1,6 @@
 package com.beemdevelopment.aegis.ui.tasks;
 
 import android.content.Context;
-
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.crypto.CryptoUtils;
 import com.beemdevelopment.aegis.crypto.MasterKey;
@@ -9,13 +8,12 @@ import com.beemdevelopment.aegis.vault.slots.PasswordSlot;
 import com.beemdevelopment.aegis.vault.slots.Slot;
 import com.beemdevelopment.aegis.vault.slots.SlotException;
 import com.beemdevelopment.aegis.vault.slots.SlotIntegrityException;
-
 import java.util.List;
-
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 
-public class PasswordSlotDecryptTask extends ProgressDialogTask<PasswordSlotDecryptTask.Params, PasswordSlotDecryptTask.Result> {
+public class PasswordSlotDecryptTask
+        extends ProgressDialogTask<PasswordSlotDecryptTask.Params, PasswordSlotDecryptTask.Result> {
     private Callback _cb;
 
     public PasswordSlotDecryptTask(Context context, Callback cb) {
@@ -54,8 +52,10 @@ public class PasswordSlotDecryptTask extends ProgressDialogTask<PasswordSlotDecr
         try {
             masterKey = decryptPasswordSlot(slot, key);
         } catch (SlotIntegrityException e) {
-            // a bug introduced in afb9e59 caused passwords longer than 64 bytes to produce a different key than before
-            // so, try again with the old password encode function if the password is longer than 64 bytes
+            // a bug introduced in afb9e59 caused passwords longer than 64 bytes to produce a
+            // different key than before
+            // so, try again with the old password encode function if the password is longer than 64
+            // bytes
             if (slot.isRepaired() || oldPasswordBytes.length <= 64) {
                 throw e;
             }
@@ -66,7 +66,9 @@ public class PasswordSlotDecryptTask extends ProgressDialogTask<PasswordSlotDecr
         }
 
         // if necessary, repair the slot by re-encrypting the master key with the correct key
-        // slots with passwords smaller than 64 bytes also get this treatment to make sure those also have 'repaired' set to true
+        // slots with passwords smaller than 64 bytes also get this treatment to make sure those
+        // also have 'repaired'
+        // set to true
         boolean repaired = false;
         if (!slot.isRepaired()) {
             Cipher cipher = Slot.createEncryptCipher(key);

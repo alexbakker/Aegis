@@ -2,11 +2,9 @@ package com.beemdevelopment.aegis.ui.intro;
 
 import android.content.Context;
 import android.os.Bundle;
-
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-
 import java.lang.ref.WeakReference;
 
 public abstract class SlideFragment extends Fragment implements IntroActivityInterface {
@@ -42,18 +40,14 @@ public abstract class SlideFragment extends Fragment implements IntroActivityInt
     /**
      * Called if the user tried to move to the next slide, but isFinished returned false.
      */
-    protected void onNotFinishedError() {
-
-    }
+    protected void onNotFinishedError() {}
 
     /**
      * Called when the SlideFragment is expected to write its state to the given shared
      * introState. This is only called if the user navigates to the next slide, not
      * when a previous slide is next to be shown.
      */
-    protected void onSaveIntroState(@NonNull Bundle introState) {
-
-    }
+    protected void onSaveIntroState(@NonNull Bundle introState) {}
 
     @Override
     public void goToNextSlide() {

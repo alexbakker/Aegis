@@ -1,7 +1,6 @@
 package com.beemdevelopment.aegis;
 
 import androidx.annotation.StringRes;
-
 import java.util.concurrent.TimeUnit;
 
 public enum PassReminderFreq {

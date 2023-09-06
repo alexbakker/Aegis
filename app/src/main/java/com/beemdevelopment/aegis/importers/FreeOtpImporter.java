@@ -3,7 +3,6 @@ package com.beemdevelopment.aegis.importers;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.util.Xml;
-
 import com.beemdevelopment.aegis.otp.HotpInfo;
 import com.beemdevelopment.aegis.otp.OtpInfo;
 import com.beemdevelopment.aegis.otp.OtpInfoException;
@@ -12,18 +11,16 @@ import com.beemdevelopment.aegis.otp.TotpInfo;
 import com.beemdevelopment.aegis.util.PreferenceParser;
 import com.beemdevelopment.aegis.vault.VaultEntry;
 import com.topjohnwu.superuser.io.SuFile;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 public class FreeOtpImporter extends DatabaseImporter {
     private static final String _subPath = "shared_prefs/tokens.xml";
@@ -119,7 +116,7 @@ public class FreeOtpImporter extends DatabaseImporter {
     private static byte[] toBytes(JSONArray array) throws JSONException {
         byte[] bytes = new byte[array.length()];
         for (int i = 0; i < array.length(); i++) {
-            bytes[i] = (byte)array.getInt(i);
+            bytes[i] = (byte) array.getInt(i);
         }
         return bytes;
     }

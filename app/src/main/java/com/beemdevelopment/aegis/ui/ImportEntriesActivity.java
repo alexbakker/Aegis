@@ -7,14 +7,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.beemdevelopment.aegis.AssignIconsActivity;
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.helpers.FabScrollHelper;
@@ -22,7 +20,6 @@ import com.beemdevelopment.aegis.importers.DatabaseImporter;
 import com.beemdevelopment.aegis.importers.DatabaseImporterEntryException;
 import com.beemdevelopment.aegis.importers.DatabaseImporterException;
 import com.beemdevelopment.aegis.ui.dialogs.Dialogs;
-import com.beemdevelopment.aegis.ui.models.AssignIconEntry;
 import com.beemdevelopment.aegis.ui.models.ImportEntry;
 import com.beemdevelopment.aegis.ui.tasks.RootShellTask;
 import com.beemdevelopment.aegis.ui.views.ImportEntriesAdapter;
@@ -32,7 +29,6 @@ import com.beemdevelopment.aegis.vault.VaultGroup;
 import com.beemdevelopment.aegis.vault.VaultRepository;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -93,7 +89,8 @@ public class ImportEntriesActivity extends AegisActivity {
         });
         _fabScrollHelper = new FabScrollHelper(fab);
 
-        DatabaseImporter.Definition importerDef = (DatabaseImporter.Definition) getIntent().getSerializableExtra("importerDef");
+        DatabaseImporter.Definition importerDef =
+                (DatabaseImporter.Definition) getIntent().getSerializableExtra("importerDef");
         startImport(importerDef, (File) getIntent().getSerializableExtra("file"));
     }
 
@@ -149,7 +146,8 @@ public class ImportEntriesActivity extends AegisActivity {
                 processImporterState(state);
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
-                Toast.makeText(this, R.string.app_lookup_error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.app_lookup_error, Toast.LENGTH_SHORT)
+                        .show();
                 finish();
             } catch (DatabaseImporterException e) {
                 e.printStackTrace();
@@ -177,7 +175,8 @@ public class ImportEntriesActivity extends AegisActivity {
                     @Override
                     public void onError(Exception e) {
                         e.printStackTrace();
-                        Dialogs.showErrorDialog(ImportEntriesActivity.this, R.string.decryption_error, e, (dialog, which) -> finish());
+                        Dialogs.showErrorDialog(
+                                ImportEntriesActivity.this, R.string.decryption_error, e, (dialog, which) -> finish());
                     }
 
                     @Override
@@ -216,7 +215,8 @@ public class ImportEntriesActivity extends AegisActivity {
 
         List<DatabaseImporterEntryException> errors = result.getErrors();
         if (errors.size() > 0) {
-            String message = getResources().getQuantityString(R.plurals.import_error_dialog, errors.size(), errors.size());
+            String message =
+                    getResources().getQuantityString(R.plurals.import_error_dialog, errors.size(), errors.size());
             Dialogs.showMultiErrorDialog(this, R.string.import_error_title, message, errors, null);
         }
 
@@ -224,11 +224,12 @@ public class ImportEntriesActivity extends AegisActivity {
     }
 
     private void showWipeEntriesDialog() {
-        Dialogs.showCheckboxDialog(this, R.string.dialog_wipe_entries_title,
+        Dialogs.showCheckboxDialog(
+                this,
+                R.string.dialog_wipe_entries_title,
                 R.string.dialog_wipe_entries_message,
                 R.string.dialog_wipe_entries_checkbox,
-                this::saveAndFinish
-        );
+                this::saveAndFinish);
     }
 
     private void saveAndFinish(boolean wipeEntries) {
@@ -283,9 +284,10 @@ public class ImportEntriesActivity extends AegisActivity {
         }
 
         if (saveAndBackupVault()) {
-            String toastMessage = getResources().getQuantityString(R.plurals.imported_entries_count, selectedEntries.size(), selectedEntries.size());
+            String toastMessage = getResources()
+                    .getQuantityString(
+                            R.plurals.imported_entries_count, selectedEntries.size(), selectedEntries.size());
             Toast.makeText(this, toastMessage, Toast.LENGTH_SHORT).show();
-
 
             setResult(RESULT_OK, null);
 
@@ -315,10 +317,13 @@ public class ImportEntriesActivity extends AegisActivity {
 
     private void findDuplicates(List<ImportEntry> importEntries) {
         List<UUID> duplicateEntries = new ArrayList<>();
-        for (ImportEntry importEntry: importEntries) {
-            boolean exists = _vaultManager.getVault().getEntries().stream().anyMatch(item ->
-                    item.getIssuer().equals(importEntry.getEntry().getIssuer()) &&
-                    Arrays.equals(item.getInfo().getSecret(), importEntry.getEntry().getInfo().getSecret()));
+        for (ImportEntry importEntry : importEntries) {
+            boolean exists = _vaultManager.getVault().getEntries().stream()
+                    .anyMatch(item ->
+                            item.getIssuer().equals(importEntry.getEntry().getIssuer())
+                                    && Arrays.equals(
+                                            item.getInfo().getSecret(),
+                                            importEntry.getEntry().getInfo().getSecret()));
 
             if (exists) {
                 duplicateEntries.add(importEntry.getEntry().getUUID());
@@ -330,7 +335,12 @@ public class ImportEntriesActivity extends AegisActivity {
         }
 
         _adapter.setCheckboxStates(duplicateEntries, false);
-        Snackbar snackbar = Snackbar.make(_view, getResources().getQuantityString(R.plurals.import_duplicate_toast, duplicateEntries.size(), duplicateEntries.size()), Snackbar.LENGTH_INDEFINITE);
+        Snackbar snackbar = Snackbar.make(
+                _view,
+                getResources()
+                        .getQuantityString(
+                                R.plurals.import_duplicate_toast, duplicateEntries.size(), duplicateEntries.size()),
+                Snackbar.LENGTH_INDEFINITE);
         snackbar.setAction(R.string.undo, new View.OnClickListener() {
             @Override
             public void onClick(View v) {

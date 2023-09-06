@@ -3,10 +3,8 @@ package com.beemdevelopment.aegis.ui.fragments.preferences;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.preference.Preference;
-
 import com.beemdevelopment.aegis.AccountNamePosition;
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.Theme;
@@ -44,7 +42,9 @@ public class AppearancePreferencesFragment extends PreferencesFragment {
 
         int currentTheme = _prefs.getCurrentTheme().ordinal();
         Preference darkModePreference = requirePreference("pref_dark_mode");
-        darkModePreference.setSummary(String.format("%s: %s", getString(R.string.selected), getResources().getStringArray(R.array.theme_titles)[currentTheme]));
+        darkModePreference.setSummary(String.format(
+                "%s: %s",
+                getString(R.string.selected), getResources().getStringArray(R.array.theme_titles)[currentTheme]));
         darkModePreference.setOnPreferenceClickListener(preference -> {
             int currentTheme1 = _prefs.getCurrentTheme().ordinal();
 
@@ -79,7 +79,10 @@ public class AppearancePreferencesFragment extends PreferencesFragment {
 
         int currentViewMode = _prefs.getCurrentViewMode().ordinal();
         Preference viewModePreference = requirePreference("pref_view_mode");
-        viewModePreference.setSummary(String.format("%s: %s", getString(R.string.selected), getResources().getStringArray(R.array.view_mode_titles)[currentViewMode]));
+        viewModePreference.setSummary(String.format(
+                "%s: %s",
+                getString(R.string.selected),
+                getResources().getStringArray(R.array.view_mode_titles)[currentViewMode]));
         viewModePreference.setOnPreferenceClickListener(preference -> {
             int currentViewMode1 = _prefs.getCurrentViewMode().ordinal();
 
@@ -88,7 +91,10 @@ public class AppearancePreferencesFragment extends PreferencesFragment {
                     .setSingleChoiceItems(R.array.view_mode_titles, currentViewMode1, (dialog, which) -> {
                         int i = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
                         _prefs.setCurrentViewMode(ViewMode.fromInteger(i));
-                        viewModePreference.setSummary(String.format("%s: %s", getString(R.string.selected), getResources().getStringArray(R.array.view_mode_titles)[i]));
+                        viewModePreference.setSummary(String.format(
+                                "%s: %s",
+                                getString(R.string.selected),
+                                getResources().getStringArray(R.array.view_mode_titles)[i]));
                         getResult().putExtra("needsRefresh", true);
                         overrideAccountNamePosition(ViewMode.fromInteger(i) == ViewMode.TILES);
                         dialog.dismiss();
@@ -113,19 +119,26 @@ public class AppearancePreferencesFragment extends PreferencesFragment {
 
         int currentAccountNamePosition = _prefs.getAccountNamePosition().ordinal();
         _currentAccountNamePositionPreference = requirePreference("pref_account_name_position");
-        _currentAccountNamePositionPreference.setSummary(String.format("%s: %s", getString(R.string.selected), getResources().getStringArray(R.array.account_name_position_titles)[currentAccountNamePosition]));
+        _currentAccountNamePositionPreference.setSummary(String.format(
+                "%s: %s",
+                getString(R.string.selected),
+                getResources().getStringArray(R.array.account_name_position_titles)[currentAccountNamePosition]));
         _currentAccountNamePositionPreference.setOnPreferenceClickListener(preference -> {
             int currentAccountNamePosition1 = _prefs.getAccountNamePosition().ordinal();
 
             Dialogs.showSecureDialog(new AlertDialog.Builder(requireContext())
                     .setTitle(getString(R.string.choose_account_name_position))
-                    .setSingleChoiceItems(R.array.account_name_position_titles, currentAccountNamePosition1, (dialog, which) -> {
-                        int i = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
-                        _prefs.setAccountNamePosition(AccountNamePosition.fromInteger(i));
-                        _currentAccountNamePositionPreference.setSummary(String.format("%s: %s", getString(R.string.selected), getResources().getStringArray(R.array.account_name_position_titles)[i]));
-                        getResult().putExtra("needsRefresh", true);
-                        dialog.dismiss();
-                    })
+                    .setSingleChoiceItems(
+                            R.array.account_name_position_titles, currentAccountNamePosition1, (dialog, which) -> {
+                                int i = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
+                                _prefs.setAccountNamePosition(AccountNamePosition.fromInteger(i));
+                                _currentAccountNamePositionPreference.setSummary(String.format(
+                                        "%s: %s",
+                                        getString(R.string.selected),
+                                        getResources().getStringArray(R.array.account_name_position_titles)[i]));
+                                getResult().putExtra("needsRefresh", true);
+                                dialog.dismiss();
+                            })
                     .setNegativeButton(android.R.string.cancel, null)
                     .create());
 
@@ -144,10 +157,16 @@ public class AppearancePreferencesFragment extends PreferencesFragment {
     private void overrideAccountNamePosition(boolean override) {
         if (override) {
             _currentAccountNamePositionPreference.setEnabled(false);
-            _currentAccountNamePositionPreference.setSummary(getString(R.string.pref_account_name_position_summary_override));
+            _currentAccountNamePositionPreference.setSummary(
+                    getString(R.string.pref_account_name_position_summary_override));
         } else {
             _currentAccountNamePositionPreference.setEnabled(true);
-            _currentAccountNamePositionPreference.setSummary(String.format("%s: %s", getString(R.string.selected), getResources().getStringArray(R.array.account_name_position_titles)[_prefs.getAccountNamePosition().ordinal()]));
+            _currentAccountNamePositionPreference.setSummary(String.format(
+                    "%s: %s",
+                    getString(R.string.selected),
+                    getResources()
+                            .getStringArray(R.array.account_name_position_titles)[
+                            _prefs.getAccountNamePosition().ordinal()]));
         }
     }
 }

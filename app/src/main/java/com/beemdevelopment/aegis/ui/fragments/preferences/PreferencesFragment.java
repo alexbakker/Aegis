@@ -4,23 +4,19 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.animation.Animation;
-
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
-
 import com.beemdevelopment.aegis.Preferences;
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.helpers.AnimationsHelper;
 import com.beemdevelopment.aegis.ui.dialogs.Dialogs;
 import com.beemdevelopment.aegis.vault.VaultManager;
 import com.beemdevelopment.aegis.vault.VaultRepositoryException;
-
-import javax.inject.Inject;
-
 import dagger.hilt.android.AndroidEntryPoint;
+import javax.inject.Inject;
 
 @AndroidEntryPoint
 public abstract class PreferencesFragment extends PreferenceFragmentCompat {

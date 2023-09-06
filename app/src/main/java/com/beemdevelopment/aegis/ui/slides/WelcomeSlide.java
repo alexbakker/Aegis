@@ -6,9 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
-
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.importers.AegisImporter;
 import com.beemdevelopment.aegis.importers.DatabaseImporter;
@@ -18,7 +16,6 @@ import com.beemdevelopment.aegis.ui.intro.SlideFragment;
 import com.beemdevelopment.aegis.ui.tasks.ImportFileTask;
 import com.beemdevelopment.aegis.vault.VaultFileCredentials;
 import com.beemdevelopment.aegis.vault.VaultRepository;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -79,9 +76,7 @@ public class WelcomeSlide extends SlideFragment {
                         }
 
                         @Override
-                        protected void onCanceled() {
-
-                        }
+                        protected void onCanceled() {}
                     });
                 } else {
                     importVault(result.getFile());

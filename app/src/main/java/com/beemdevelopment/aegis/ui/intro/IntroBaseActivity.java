@@ -3,7 +3,6 @@ package com.beemdevelopment.aegis.ui.intro;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
-
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,11 +11,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
-
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.helpers.AnimationsHelper;
 import com.beemdevelopment.aegis.ui.AegisActivity;
-
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -104,7 +101,8 @@ public abstract class IntroBaseActivity extends AegisActivity implements IntroAc
     public void skipToSlide(Class<? extends SlideFragment> type) {
         int i = _slides.indexOf(type);
         if (i == -1) {
-            throw new IllegalStateException(String.format("Cannot skip to slide of type %s because it is not in the slide list", type.getName()));
+            throw new IllegalStateException(String.format(
+                    "Cannot skip to slide of type %s because it is not in the slide list", type.getName()));
         }
 
         setPagerPosition(i);
@@ -118,7 +116,8 @@ public abstract class IntroBaseActivity extends AegisActivity implements IntroAc
      * @param newSlide the next slide that will be shown.
      * @return whether to block the transition.
      */
-    protected boolean onBeforeSlideChanged(@Nullable Class<? extends SlideFragment> oldSlide, @NonNull Class<? extends SlideFragment> newSlide) {
+    protected boolean onBeforeSlideChanged(
+            @Nullable Class<? extends SlideFragment> oldSlide, @NonNull Class<? extends SlideFragment> newSlide) {
         return false;
     }
 
@@ -127,9 +126,8 @@ public abstract class IntroBaseActivity extends AegisActivity implements IntroAc
      * @param oldSlide the slide that was previously shown.
      * @param newSlide the slide that is now shown.
      */
-    protected void onAfterSlideChanged(@Nullable Class<? extends SlideFragment> oldSlide, @NonNull Class<? extends SlideFragment> newSlide) {
-
-    }
+    protected void onAfterSlideChanged(
+            @Nullable Class<? extends SlideFragment> oldSlide, @NonNull Class<? extends SlideFragment> newSlide) {}
 
     private void setPagerPosition(int pos) {
         Class<? extends SlideFragment> oldSlide = _currentSlide.get().getClass();
@@ -153,10 +151,7 @@ public abstract class IntroBaseActivity extends AegisActivity implements IntroAc
 
     private void updatePagerControls() {
         int pos = _pager.getCurrentItem();
-        _btnPrevious.setVisibility(
-                pos != 0 && pos != _slides.size() - 1
-                        ? View.VISIBLE
-                        : View.INVISIBLE);
+        _btnPrevious.setVisibility(pos != 0 && pos != _slides.size() - 1 ? View.VISIBLE : View.INVISIBLE);
         if (pos == _slides.size() - 1) {
             _btnNext.setImageResource(R.drawable.circular_button_done);
         }
@@ -173,7 +168,8 @@ public abstract class IntroBaseActivity extends AegisActivity implements IntroAc
 
     public void addSlide(Class<? extends SlideFragment> type) {
         if (_slides.contains(type)) {
-            throw new IllegalStateException(String.format("Only one slide of type %s may be added to the intro", type.getName()));
+            throw new IllegalStateException(
+                    String.format("Only one slide of type %s may be added to the intro", type.getName()));
         }
 
         _slides.add(type);

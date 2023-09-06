@@ -1,10 +1,8 @@
 package com.beemdevelopment.aegis.ui.fragments.preferences;
 
 import android.os.Bundle;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.preference.Preference;
-
 import com.beemdevelopment.aegis.CopyBehavior;
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.ui.dialogs.Dialogs;
@@ -19,7 +17,10 @@ public class BehaviorPreferencesFragment extends PreferencesFragment {
 
         int currentCopyBehavior = _prefs.getCopyBehavior().ordinal();
         Preference copyBehaviorPreference = requirePreference("pref_copy_behavior");
-        copyBehaviorPreference.setSummary(String.format("%s: %s", getString(R.string.selected), getResources().getStringArray(R.array.copy_behavior_titles)[currentCopyBehavior]));
+        copyBehaviorPreference.setSummary(String.format(
+                "%s: %s",
+                getString(R.string.selected),
+                getResources().getStringArray(R.array.copy_behavior_titles)[currentCopyBehavior]));
         copyBehaviorPreference.setOnPreferenceClickListener(preference -> {
             int currentCopyBehavior1 = _prefs.getCopyBehavior().ordinal();
 
@@ -28,7 +29,10 @@ public class BehaviorPreferencesFragment extends PreferencesFragment {
                     .setSingleChoiceItems(R.array.copy_behavior_titles, currentCopyBehavior1, (dialog, which) -> {
                         int i = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
                         _prefs.setCopyBehavior(CopyBehavior.fromInteger(i));
-                        copyBehaviorPreference.setSummary(String.format("%s: %s", getString(R.string.selected), getResources().getStringArray(R.array.copy_behavior_titles)[i]));
+                        copyBehaviorPreference.setSummary(String.format(
+                                "%s: %s",
+                                getString(R.string.selected),
+                                getResources().getStringArray(R.array.copy_behavior_titles)[i]));
                         getResult().putExtra("needsRefresh", true);
                         dialog.dismiss();
                     })

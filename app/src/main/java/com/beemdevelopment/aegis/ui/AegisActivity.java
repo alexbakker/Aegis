@@ -7,10 +7,8 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.WindowManager;
 import android.widget.Toast;
-
 import androidx.annotation.CallSuper;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.beemdevelopment.aegis.Preferences;
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.Theme;
@@ -18,19 +16,16 @@ import com.beemdevelopment.aegis.ThemeMap;
 import com.beemdevelopment.aegis.icons.IconPackManager;
 import com.beemdevelopment.aegis.vault.VaultManager;
 import com.beemdevelopment.aegis.vault.VaultRepositoryException;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import dagger.hilt.InstallIn;
 import dagger.hilt.android.AndroidEntryPoint;
 import dagger.hilt.android.EarlyEntryPoint;
 import dagger.hilt.android.EarlyEntryPoints;
 import dagger.hilt.components.SingletonComponent;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Locale;
+import java.util.Map;
+import javax.inject.Inject;
 
 @AndroidEntryPoint
 public abstract class AegisActivity extends AppCompatActivity implements VaultManager.LockListener {
@@ -45,7 +40,8 @@ public abstract class AegisActivity extends AppCompatActivity implements VaultMa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // set the theme and locale before creating the activity
-        _prefs = EarlyEntryPoints.get(getApplicationContext(), PrefEntryPoint.class).getPreferences();
+        _prefs = EarlyEntryPoints.get(getApplicationContext(), PrefEntryPoint.class)
+                .getPreferences();
         onSetTheme();
         setLocale(_prefs.getLocale());
         super.onCreate(savedInstanceState);
@@ -137,7 +133,8 @@ public abstract class AegisActivity extends AppCompatActivity implements VaultMa
             _vaultManager.save();
             return true;
         } catch (VaultRepositoryException e) {
-            Toast.makeText(this, getString(R.string.saving_error), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.saving_error), Toast.LENGTH_LONG)
+                    .show();
             return false;
         }
     }
@@ -147,7 +144,8 @@ public abstract class AegisActivity extends AppCompatActivity implements VaultMa
             _vaultManager.saveAndBackup();
             return true;
         } catch (VaultRepositoryException e) {
-            Toast.makeText(this, getString(R.string.saving_error), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.saving_error), Toast.LENGTH_LONG)
+                    .show();
             return false;
         }
     }

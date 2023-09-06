@@ -1,16 +1,13 @@
 package com.beemdevelopment.aegis.util;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 public class PreferenceParser {
-    private PreferenceParser() {
-        
-    }
+    private PreferenceParser() {}
 
     public static List<XmlEntry> parse(XmlPullParser parser) throws IOException, XmlPullParserException {
         List<XmlEntry> entries = new ArrayList<>();

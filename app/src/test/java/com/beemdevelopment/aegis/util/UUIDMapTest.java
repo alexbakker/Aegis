@@ -65,56 +65,36 @@ public class UUIDMapTest {
         UUIDMap<Value> map = fillNewMap(4);
         Value[] values = map.getValues().toArray(new Value[0]);
         map.move(values[0], values[3]);
-        assertArrayEquals(map.getValues().toArray(new Value[0]), new Value[]{
-                values[1],
-                values[2],
-                values[3],
-                values[0]
-        });
+        assertArrayEquals(
+                map.getValues().toArray(new Value[0]), new Value[] {values[1], values[2], values[3], values[0]});
 
         // move the last value to the first value
         map = fillNewMap(4);
         values = map.getValues().toArray(new Value[0]);
         map.move(values[3], values[0]);
-        assertArrayEquals(map.getValues().toArray(new Value[0]), new Value[]{
-                values[3],
-                values[0],
-                values[1],
-                values[2]
-        });
+        assertArrayEquals(
+                map.getValues().toArray(new Value[0]), new Value[] {values[3], values[0], values[1], values[2]});
 
         // move the second value to the third value
         map = fillNewMap(4);
         values = map.getValues().toArray(new Value[0]);
         map.move(values[1], values[2]);
-        assertArrayEquals(map.getValues().toArray(new Value[0]), new Value[]{
-                values[0],
-                values[2],
-                values[1],
-                values[3]
-        });
+        assertArrayEquals(
+                map.getValues().toArray(new Value[0]), new Value[] {values[0], values[2], values[1], values[3]});
 
         // move the third value to the second value
         map = fillNewMap(4);
         values = map.getValues().toArray(new Value[0]);
         map.move(values[2], values[1]);
-        assertArrayEquals(map.getValues().toArray(new Value[0]), new Value[]{
-                values[0],
-                values[2],
-                values[1],
-                values[3]
-        });
+        assertArrayEquals(
+                map.getValues().toArray(new Value[0]), new Value[] {values[0], values[2], values[1], values[3]});
 
         // move the third value to the first value
         map = fillNewMap(4);
         values = map.getValues().toArray(new Value[0]);
         map.move(values[2], values[0]);
-        assertArrayEquals(map.getValues().toArray(new Value[0]), new Value[]{
-                values[2],
-                values[0],
-                values[1],
-                values[3]
-        });
+        assertArrayEquals(
+                map.getValues().toArray(new Value[0]), new Value[] {values[2], values[0], values[1], values[3]});
     }
 
     private UUIDMap<Value> fillNewMap(int n) {
@@ -133,7 +113,5 @@ public class UUIDMapTest {
         return value;
     }
 
-    private static class Value extends UUIDMap.Value {
-
-    }
+    private static class Value extends UUIDMap.Value {}
 }

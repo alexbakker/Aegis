@@ -9,9 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class IOUtils {
-    private IOUtils() {
-
-    }
+    private IOUtils() {}
 
     public static byte[] readFile(FileInputStream inStream) throws IOException {
         try (DataInputStream outStream = new DataInputStream(inStream)) {

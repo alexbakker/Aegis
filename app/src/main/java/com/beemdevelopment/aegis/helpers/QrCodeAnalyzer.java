@@ -4,15 +4,12 @@ import static android.graphics.ImageFormat.YUV_420_888;
 
 import android.util.Log;
 import android.util.Size;
-
 import androidx.annotation.NonNull;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageProxy;
-
 import com.google.zxing.NotFoundException;
 import com.google.zxing.PlanarYUVLuminanceSource;
 import com.google.zxing.Result;
-
 import java.nio.ByteBuffer;
 
 public class QrCodeAnalyzer implements ImageAnalysis.Analyzer {
@@ -41,15 +38,7 @@ public class QrCodeAnalyzer implements ImageAnalysis.Analyzer {
         buf.rewind();
 
         PlanarYUVLuminanceSource source = new PlanarYUVLuminanceSource(
-                data,
-                plane.getRowStride(),
-                image.getHeight(),
-                0,
-                0,
-                image.getWidth(),
-                image.getHeight(),
-                false
-        );
+                data, plane.getRowStride(), image.getHeight(), 0, 0, image.getWidth(), image.getHeight(), false);
 
         try {
             Result result = QrCodeHelper.decodeFromSource(source);

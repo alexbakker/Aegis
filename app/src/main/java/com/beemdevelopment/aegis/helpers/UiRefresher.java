@@ -24,13 +24,15 @@ public class UiRefresher {
         _running = true;
 
         _listener.onRefresh();
-        _handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                _listener.onRefresh();
-                _handler.postDelayed(this, _listener.getMillisTillNextRefresh());
-            }
-        }, _listener.getMillisTillNextRefresh());
+        _handler.postDelayed(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        _listener.onRefresh();
+                        _handler.postDelayed(this, _listener.getMillisTillNextRefresh());
+                    }
+                },
+                _listener.getMillisTillNextRefresh());
     }
 
     public void stop() {
@@ -40,6 +42,7 @@ public class UiRefresher {
 
     public interface Listener {
         void onRefresh();
+
         long getMillisTillNextRefresh();
     }
 }

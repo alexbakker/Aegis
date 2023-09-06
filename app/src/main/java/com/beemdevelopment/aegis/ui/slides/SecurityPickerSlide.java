@@ -8,9 +8,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
-
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.helpers.BiometricsHelper;
 import com.beemdevelopment.aegis.ui.intro.SlideFragment;
@@ -66,7 +64,8 @@ public class SecurityPickerSlide extends SlideFragment {
 
     @Override
     public void onNotFinishedError() {
-         Toast.makeText(requireContext(), R.string.snackbar_authentication_method, Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(), R.string.snackbar_authentication_method, Toast.LENGTH_SHORT)
+                .show();
     }
 
     @Override

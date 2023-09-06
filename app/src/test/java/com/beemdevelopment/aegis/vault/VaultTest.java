@@ -3,18 +3,15 @@ package com.beemdevelopment.aegis.vault;
 import static org.junit.Assert.assertEquals;
 
 import com.beemdevelopment.aegis.util.IOUtils;
-
-import org.junit.Test;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.junit.Test;
 
 public class VaultTest {
     @Test
-    public void testGroupConversion()
-            throws IOException, VaultFileException, VaultException {
+    public void testGroupConversion() throws IOException, VaultFileException, VaultException {
         Vault vault;
         try (InputStream inStream = getClass().getResourceAsStream("aegis_plain_grouped_v2.json")) {
             byte[] bytes = IOUtils.readAll(inStream);
@@ -31,9 +28,11 @@ public class VaultTest {
 
     private static void checkGroups(Vault vault) {
         // No old groups should be present anymore
-        assertEquals(0, vault.getEntries().getValues().stream()
-                .filter(e -> e.getOldGroup() != null)
-                .count());
+        assertEquals(
+                0,
+                vault.getEntries().getValues().stream()
+                        .filter(e -> e.getOldGroup() != null)
+                        .count());
 
         // New groups should have been created, and groups with the same name
         // should have been merged into a single group
@@ -54,18 +53,24 @@ public class VaultTest {
         VaultGroup group2 = foundGroups.get(0);
 
         // Two entries in group1
-        assertEquals(2, vault.getEntries().getValues().stream()
-                .filter(e -> e.getGroups().contains(group1.getUUID()))
-                .count());
+        assertEquals(
+                2,
+                vault.getEntries().getValues().stream()
+                        .filter(e -> e.getGroups().contains(group1.getUUID()))
+                        .count());
 
         // One entry in group2
-        assertEquals(1, vault.getEntries().getValues().stream()
-                .filter(e -> e.getGroups().contains(group2.getUUID()))
-                .count());
+        assertEquals(
+                1,
+                vault.getEntries().getValues().stream()
+                        .filter(e -> e.getGroups().contains(group2.getUUID()))
+                        .count());
 
         // Rest of the entries in no groups
-        assertEquals(vault.getEntries().getValues().size() - 3, vault.getEntries().getValues().stream()
-                .filter(e -> e.getGroups().isEmpty())
-                .count());
+        assertEquals(
+                vault.getEntries().getValues().size() - 3,
+                vault.getEntries().getValues().stream()
+                        .filter(e -> e.getGroups().isEmpty())
+                        .count());
     }
 }

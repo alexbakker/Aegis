@@ -13,14 +13,12 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.beemdevelopment.aegis.CopyBehavior;
 import com.beemdevelopment.aegis.AccountNamePosition;
-import com.beemdevelopment.aegis.R;
+import com.beemdevelopment.aegis.CopyBehavior;
 import com.beemdevelopment.aegis.Preferences;
+import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.SortCategory;
 import com.beemdevelopment.aegis.ViewMode;
 import com.beemdevelopment.aegis.helpers.ItemTouchHelperAdapter;
@@ -31,7 +29,6 @@ import com.beemdevelopment.aegis.otp.OtpInfoException;
 import com.beemdevelopment.aegis.otp.TotpInfo;
 import com.beemdevelopment.aegis.util.CollectionUtils;
 import com.beemdevelopment.aegis.vault.VaultEntry;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -124,7 +121,9 @@ public class EntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         _tempHighlightEntry = highlightEntry;
     }
 
-    public void setCopyBehavior(CopyBehavior copyBehavior) { _copyBehavior = copyBehavior; }
+    public void setCopyBehavior(CopyBehavior copyBehavior) {
+        _copyBehavior = copyBehavior;
+    }
 
     public void setPauseFocused(boolean pauseFocused) {
         _pauseFocused = pauseFocused;
@@ -155,7 +154,7 @@ public class EntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             }
         }
 
-        if (position < 0){
+        if (position < 0) {
             _shownEntries.add(entry);
 
             position = getItemCount() - 1;
@@ -173,7 +172,7 @@ public class EntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public void addEntries(Collection<VaultEntry> entries) {
-        for (VaultEntry entry: entries) {
+        for (VaultEntry entry : entries) {
             entry.setUsageCount(_usageCounts.containsKey(entry.getUUID()) ? _usageCounts.get(entry.getUUID()) : 0);
         }
 
@@ -256,7 +255,8 @@ public class EntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             if (groups.isEmpty() && !_groupFilter.contains(null)) {
                 return true;
             }
-            if (!groups.isEmpty() && _groupFilter.stream().filter(Objects::nonNull).noneMatch(groups::contains)) {
+            if (!groups.isEmpty()
+                    && _groupFilter.stream().filter(Objects::nonNull).noneMatch(groups::contains)) {
                 return true;
             }
         }
@@ -349,18 +349,20 @@ public class EntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         _viewMode = viewMode;
     }
 
-    public void setUsageCounts(Map<UUID, Integer> usageCounts) { _usageCounts = usageCounts; }
+    public void setUsageCounts(Map<UUID, Integer> usageCounts) {
+        _usageCounts = usageCounts;
+    }
 
-    public Map<UUID, Integer> getUsageCounts() { return _usageCounts; }
+    public Map<UUID, Integer> getUsageCounts() {
+        return _usageCounts;
+    }
 
     public int getShownFavoritesCount() {
         return (int) _shownEntries.stream().filter(VaultEntry::isFavorite).count();
     }
 
     @Override
-    public void onItemDismiss(int position) {
-
-    }
+    public void onItemDismiss(int position) {}
 
     @Override
     public void onItemDrop(int position) {
@@ -430,18 +432,31 @@ public class EntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
             boolean hidden = _tapToReveal && entry != _focusedEntry;
             boolean paused = _pauseFocused && entry == _focusedEntry;
-            boolean dimmed = (_highlightEntry || _tempHighlightEntry) && _focusedEntry != null && _focusedEntry != entry;
-            boolean showProgress = entry.getInfo() instanceof TotpInfo && ((TotpInfo) entry.getInfo()).getPeriod() != getMostFrequentPeriod();
+            boolean dimmed =
+                    (_highlightEntry || _tempHighlightEntry) && _focusedEntry != null && _focusedEntry != entry;
+            boolean showProgress = entry.getInfo() instanceof TotpInfo
+                    && ((TotpInfo) entry.getInfo()).getPeriod() != getMostFrequentPeriod();
             boolean showAccountName = true;
             if (_onlyShowNecessaryAccountNames) {
                 // Only show account name when there's multiple entries found with the same issuer.
                 showAccountName = _entries.stream()
-                        .filter(x -> x.getIssuer().equals(entry.getIssuer()))
-                        .count() > 1;
+                                .filter(x -> x.getIssuer().equals(entry.getIssuer()))
+                                .count()
+                        > 1;
             }
 
-            AccountNamePosition accountNamePosition = showAccountName ? _accountNamePosition : AccountNamePosition.HIDDEN;
-            entryHolder.setData(entry, _codeGroupSize, _viewMode, accountNamePosition, _showIcon, showProgress, hidden, paused, dimmed);
+            AccountNamePosition accountNamePosition =
+                    showAccountName ? _accountNamePosition : AccountNamePosition.HIDDEN;
+            entryHolder.setData(
+                    entry,
+                    _codeGroupSize,
+                    _viewMode,
+                    accountNamePosition,
+                    _showIcon,
+                    showProgress,
+                    hidden,
+                    paused,
+                    dimmed);
             entryHolder.setFocused(_selectedEntries.contains(entry));
             entryHolder.setShowDragHandle(isEntryDraggable(entry));
 
@@ -475,9 +490,10 @@ public class EntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                                 }
                                 break;
                             case DOUBLETAP:
-                                _doubleTapHandler.postDelayed(() -> _clickedEntry = null, ViewConfiguration.getDoubleTapTimeout());
+                                _doubleTapHandler.postDelayed(
+                                        () -> _clickedEntry = null, ViewConfiguration.getDoubleTapTimeout());
 
-                                if(entry == _clickedEntry) {
+                                if (entry == _clickedEntry) {
                                     _view.onEntryCopy(entry);
                                     entryHolder.animateCopyText(_viewMode != ViewMode.TILES);
                                     _clickedEntry = null;
@@ -599,7 +615,7 @@ public class EntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         Map<Integer, Integer> occurrences = new HashMap<>();
         for (TotpInfo info : infos) {
             int period = info.getPeriod();
-            if(occurrences.containsKey(period)) {
+            if (occurrences.containsKey(period)) {
                 occurrences.put(period, occurrences.get(period) + 1);
             } else {
                 occurrences.put(period, 1);
@@ -608,8 +624,8 @@ public class EntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         Integer maxValue = 0;
         Integer maxKey = 0;
-        for (Map.Entry<Integer, Integer> entry : occurrences.entrySet()){
-            if(entry.getValue() > maxValue){
+        for (Map.Entry<Integer, Integer> entry : occurrences.entrySet()) {
+            if (entry.getValue() > maxValue) {
                 maxValue = entry.getValue();
                 maxKey = entry.getKey();
             }
@@ -694,7 +710,7 @@ public class EntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public void deselectAllEntries() {
-        for (VaultEntry entry: _selectedEntries) {
+        for (VaultEntry entry : _selectedEntries) {
             for (EntryHolder holder : _holders) {
                 if (holder.getEntry() == entry) {
                     holder.setFocusedAndAnimate(false);
@@ -756,12 +772,14 @@ public class EntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         public void refresh() {
             int entriesShown = getEntriesCount();
-            SpannableString entriesShownSpannable = new SpannableString(_footerView.getResources().getQuantityString(R.plurals.entries_shown, entriesShown, entriesShown));
+            SpannableString entriesShownSpannable = new SpannableString(
+                    _footerView.getResources().getQuantityString(R.plurals.entries_shown, entriesShown, entriesShown));
 
             String entriesShownString = String.format("%d", entriesShown);
             int spanStart = entriesShownSpannable.toString().indexOf(entriesShownString);
             int spanEnd = spanStart + entriesShownString.length();
-            entriesShownSpannable.setSpan(new StyleSpan(Typeface.BOLD), spanStart, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            entriesShownSpannable.setSpan(
+                    new StyleSpan(Typeface.BOLD), spanStart, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
             TextView textView = _footerView.findViewById(R.id.entries_shown_count);
             textView.setText(entriesShownSpannable);
@@ -770,14 +788,23 @@ public class EntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public interface Listener {
         void onEntryClick(VaultEntry entry);
+
         boolean onLongEntryClick(VaultEntry entry);
+
         void onEntryMove(VaultEntry entry1, VaultEntry entry2);
+
         void onEntryDrop(VaultEntry entry);
+
         void onEntryChange(VaultEntry entry);
+
         void onEntryCopy(VaultEntry entry);
+
         void onPeriodUniformityChanged(boolean uniform, int period);
+
         void onSelect(VaultEntry entry);
+
         void onDeselect(VaultEntry entry);
+
         void onListChange();
     }
 }

@@ -3,12 +3,9 @@ package com.beemdevelopment.aegis.ui.views;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.vault.VaultGroup;
-
 import java.util.ArrayList;
 
 public class GroupAdapter extends RecyclerView.Adapter<GroupHolder> {

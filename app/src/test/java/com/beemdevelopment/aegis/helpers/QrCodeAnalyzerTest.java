@@ -7,27 +7,24 @@ import static org.junit.Assert.assertTrue;
 
 import android.graphics.Rect;
 import android.media.Image;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.camera.core.ImageInfo;
 import androidx.camera.core.ImageProxy;
-
 import com.beemdevelopment.aegis.util.IOUtils;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.GZIPInputStream;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
 public class QrCodeAnalyzerTest {
-    private static final String _expectedUri = "otpauth://totp/neo4j:Charlotte?secret=B33WS2ALPT34K4BNY24AYROE4M&issuer=neo4j&algorithm=SHA1&digits=6&period=30";
+    private static final String _expectedUri =
+            "otpauth://totp/neo4j:Charlotte?secret=B33WS2ALPT34K4BNY24AYROE4M&issuer=neo4j&algorithm=SHA1&digits=6&period=30";
 
     @Test
     public void testScanQrCode() {
@@ -53,7 +50,7 @@ public class QrCodeAnalyzerTest {
 
         FakeImageProxy imgProxy;
         try (InputStream inStream = getClass().getResourceAsStream(fileName);
-             GZIPInputStream zipStream = new GZIPInputStream(inStream)) {
+                GZIPInputStream zipStream = new GZIPInputStream(inStream)) {
             imgProxy = new FakeImageProxy(IOUtils.readAll(zipStream), width, height, rowStride);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -103,9 +100,7 @@ public class QrCodeAnalyzerTest {
         }
 
         @Override
-        public void close() {
-
-        }
+        public void close() {}
 
         @NonNull
         @Override
@@ -114,9 +109,7 @@ public class QrCodeAnalyzerTest {
         }
 
         @Override
-        public void setCropRect(@Nullable @org.jetbrains.annotations.Nullable Rect rect) {
-
-        }
+        public void setCropRect(@Nullable @org.jetbrains.annotations.Nullable Rect rect) {}
 
         @Override
         public int getFormat() {
@@ -136,7 +129,7 @@ public class QrCodeAnalyzerTest {
         @NonNull
         @Override
         public ImageProxy.PlaneProxy[] getPlanes() {
-            return new PlaneProxy[]{new FakePlaneProxy(_y, _rowStride)};
+            return new PlaneProxy[] {new FakePlaneProxy(_y, _rowStride)};
         }
 
         @NonNull

@@ -3,13 +3,10 @@ package com.beemdevelopment.aegis.ui.views;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.ui.models.ImportEntry;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -70,7 +67,7 @@ public class ImportEntriesAdapter extends RecyclerView.Adapter<ImportEntryHolder
 
     public void setCheckboxStates(List<UUID> uuids, boolean state) {
         for (ImportEntry entry : _entries) {
-            if(uuids.contains(entry.getEntry().getUUID())) {
+            if (uuids.contains(entry.getEntry().getUUID())) {
                 entry.setIsChecked(state);
             }
         }
@@ -86,7 +83,7 @@ public class ImportEntriesAdapter extends RecyclerView.Adapter<ImportEntryHolder
     }
 
     private void setCheckboxStates(boolean checked) {
-        for (ImportEntry entry: _entries) {
+        for (ImportEntry entry : _entries) {
             if (entry.isChecked() != checked) {
                 entry.setIsChecked(checked);
             }

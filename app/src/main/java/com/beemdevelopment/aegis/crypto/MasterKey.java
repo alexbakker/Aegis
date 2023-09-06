@@ -5,7 +5,6 @@ import java.io.Serializable;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -15,7 +14,7 @@ import javax.crypto.SecretKey;
 public class MasterKey implements Serializable {
     private SecretKey _key;
 
-    public MasterKey(SecretKey key)  {
+    public MasterKey(SecretKey key) {
         if (key == null) {
             throw new IllegalArgumentException("Key cannot be null");
         }

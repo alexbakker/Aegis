@@ -7,10 +7,8 @@ import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.beemdevelopment.aegis.AccountNamePosition;
 import com.beemdevelopment.aegis.Preferences;
@@ -49,7 +47,7 @@ public class EntryHolder extends RecyclerView.ViewHolder {
     private RelativeLayout _description;
     private ImageView _dragHandle;
     private ViewMode _viewMode;
-  
+
     private final ImageView _selected;
     private final Handler _selectedHandler;
 
@@ -110,7 +108,16 @@ public class EntryHolder extends RecyclerView.ViewHolder {
         });
     }
 
-    public void setData(VaultEntry entry, Preferences.CodeGrouping groupSize, ViewMode viewMode, AccountNamePosition accountNamePosition, boolean showIcon, boolean showProgress, boolean hidden, boolean paused, boolean dimmed) {
+    public void setData(
+            VaultEntry entry,
+            Preferences.CodeGrouping groupSize,
+            ViewMode viewMode,
+            AccountNamePosition accountNamePosition,
+            boolean showIcon,
+            boolean showProgress,
+            boolean hidden,
+            boolean paused,
+            boolean dimmed) {
         _entry = entry;
         _hidden = hidden;
         _paused = paused;
@@ -200,12 +207,12 @@ public class EntryHolder extends RecyclerView.ViewHolder {
         if (_entry.hasIcon()) {
             IconViewHelper.setLayerType(_profileDrawable, _entry.getIconType());
             Glide.with(fragment)
-                .asDrawable()
-                .load(_entry.getIcon())
-                .set(IconLoader.ICON_TYPE, _entry.getIconType())
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .skipMemoryCache(false)
-                .into(_profileDrawable);
+                    .asDrawable()
+                    .load(_entry.getIcon())
+                    .set(IconLoader.ICON_TYPE, _entry.getIconType())
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(false)
+                    .into(_profileDrawable);
         } else {
             TextDrawable drawable = TextDrawableHelper.generate(_entry.getIssuer(), _entry.getName(), _profileDrawable);
             _profileDrawable.setImageDrawable(drawable);
@@ -245,9 +252,11 @@ public class EntryHolder extends RecyclerView.ViewHolder {
     public void setFocused(boolean focused) {
         if (focused) {
             _selected.setVisibility(View.VISIBLE);
-            _view.setBackgroundColor(ThemeHelper.getThemeColor(R.attr.cardBackgroundFocused, _view.getContext().getTheme()));
+            _view.setBackgroundColor(ThemeHelper.getThemeColor(
+                    R.attr.cardBackgroundFocused, _view.getContext().getTheme()));
         } else {
-            _view.setBackgroundColor(ThemeHelper.getThemeColor(R.attr.cardBackground, _view.getContext().getTheme()));
+            _view.setBackgroundColor(ThemeHelper.getThemeColor(
+                    R.attr.cardBackground, _view.getContext().getTheme()));
         }
         _view.setSelected(focused);
     }
@@ -345,7 +354,8 @@ public class EntryHolder extends RecyclerView.ViewHolder {
     }
 
     public void hideCode() {
-        String hiddenText = new String(new char[_entry.getInfo().getDigits()]).replace("\0", Character.toString(HIDDEN_CHAR));
+        String hiddenText =
+                new String(new char[_entry.getInfo().getDigits()]).replace("\0", Character.toString(HIDDEN_CHAR));
         hiddenText = formatCode(hiddenText);
         _profileCode.setText(hiddenText);
         _hidden = true;
@@ -382,29 +392,35 @@ public class EntryHolder extends RecyclerView.ViewHolder {
     public void animateCopyText(boolean includeSlideAnimation) {
         _animationHandler.removeCallbacksAndMessages(null);
 
-        Animation slideDownFadeIn = AnimationsHelper.loadScaledAnimation(itemView.getContext(), R.anim.slide_down_fade_in);
-        Animation slideDownFadeOut = AnimationsHelper.loadScaledAnimation(itemView.getContext(), R.anim.slide_down_fade_out);
+        Animation slideDownFadeIn =
+                AnimationsHelper.loadScaledAnimation(itemView.getContext(), R.anim.slide_down_fade_in);
+        Animation slideDownFadeOut =
+                AnimationsHelper.loadScaledAnimation(itemView.getContext(), R.anim.slide_down_fade_out);
         Animation fadeOut = AnimationsHelper.loadScaledAnimation(itemView.getContext(), R.anim.fade_out);
         Animation fadeIn = AnimationsHelper.loadScaledAnimation(itemView.getContext(), R.anim.fade_in);
 
         if (includeSlideAnimation) {
             _profileCopied.startAnimation(slideDownFadeIn);
-           View fadeOutView = (_accountNamePosition == AccountNamePosition.BELOW) ? _profileName : _description;
+            View fadeOutView = (_accountNamePosition == AccountNamePosition.BELOW) ? _profileName : _description;
 
-        fadeOutView.startAnimation(slideDownFadeOut);
+            fadeOutView.startAnimation(slideDownFadeOut);
 
-            _animationHandler.postDelayed(() -> {
-                _profileCopied.startAnimation(fadeOut);
-                fadeOutView.startAnimation(fadeIn);
-            }, 3000);
+            _animationHandler.postDelayed(
+                    () -> {
+                        _profileCopied.startAnimation(fadeOut);
+                        fadeOutView.startAnimation(fadeIn);
+                    },
+                    3000);
         } else {
             _profileCopied.startAnimation(fadeIn);
             _profileName.startAnimation(fadeOut);
 
-            _animationHandler.postDelayed(() -> {
-                _profileCopied.startAnimation(fadeOut);
-                _profileName.startAnimation(fadeIn);
-            }, 3000);
+            _animationHandler.postDelayed(
+                    () -> {
+                        _profileCopied.startAnimation(fadeOut);
+                        _profileName.startAnimation(fadeIn);
+                    },
+                    3000);
         }
     }
 

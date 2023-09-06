@@ -3,7 +3,6 @@ package com.beemdevelopment.aegis.importers;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-
 import com.beemdevelopment.aegis.encoding.Base64;
 import com.beemdevelopment.aegis.encoding.EncodingException;
 import com.beemdevelopment.aegis.otp.OtpInfoException;
@@ -11,13 +10,11 @@ import com.beemdevelopment.aegis.otp.SteamInfo;
 import com.beemdevelopment.aegis.util.IOUtils;
 import com.beemdevelopment.aegis.vault.VaultEntry;
 import com.topjohnwu.superuser.io.SuFile;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class SteamImporter extends DatabaseImporter {
     private static final String _subDir = "files";

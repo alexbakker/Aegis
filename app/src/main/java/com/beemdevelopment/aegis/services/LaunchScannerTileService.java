@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
-
 import androidx.annotation.RequiresApi;
-
 import com.beemdevelopment.aegis.ui.MainActivity;
 
 @RequiresApi(api = Build.VERSION_CODES.N)

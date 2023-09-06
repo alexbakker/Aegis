@@ -7,11 +7,9 @@ import com.beemdevelopment.aegis.encoding.Base64;
 import com.beemdevelopment.aegis.encoding.EncodingException;
 import com.beemdevelopment.aegis.vault.slots.SlotList;
 import com.beemdevelopment.aegis.vault.slots.SlotListException;
-
+import java.nio.charset.StandardCharsets;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.nio.charset.StandardCharsets;
 
 public class VaultFile {
     public static final byte VERSION = 1;
@@ -19,9 +17,7 @@ public class VaultFile {
     private Object _content;
     private Header _header;
 
-    public VaultFile() {
-
-    }
+    public VaultFile() {}
 
     private VaultFile(Object content, Header header) {
         _content = content;
@@ -126,10 +122,10 @@ public class VaultFile {
             return this;
         }
 
-        return new VaultFile(_content, new VaultFile.Header(
-                getHeader().getSlots().exportable(),
-                getHeader().getParams()
-        ));
+        return new VaultFile(
+                _content,
+                new VaultFile.Header(
+                        getHeader().getSlots().exportable(), getHeader().getParams()));
     }
 
     public static class Header {

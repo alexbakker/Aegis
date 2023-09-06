@@ -1,9 +1,7 @@
 package com.beemdevelopment.aegis.crypto;
 
 import android.os.Build;
-
 import com.beemdevelopment.aegis.crypto.bc.SCrypt;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -15,7 +13,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.Arrays;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -37,7 +34,8 @@ public class CryptoUtils {
     public static final int CRYPTO_SCRYPT_p = 1;
 
     public static SecretKey deriveKey(byte[] input, SCryptParameters params) {
-        byte[] keyBytes = SCrypt.generate(input, params.getSalt(), params.getN(), params.getR(), params.getP(), CRYPTO_AEAD_KEY_SIZE);
+        byte[] keyBytes = SCrypt.generate(
+                input, params.getSalt(), params.getN(), params.getR(), params.getP(), CRYPTO_AEAD_KEY_SIZE);
         return new SecretKeySpec(keyBytes, 0, keyBytes.length, "AES");
     }
 
@@ -47,24 +45,25 @@ public class CryptoUtils {
     }
 
     public static Cipher createEncryptCipher(SecretKey key)
-            throws NoSuchPaddingException, NoSuchAlgorithmException,
-            InvalidAlgorithmParameterException, InvalidKeyException {
+            throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
+                    InvalidKeyException {
         return createCipher(key, Cipher.ENCRYPT_MODE, null);
     }
 
     public static Cipher createDecryptCipher(SecretKey key, byte[] nonce)
-            throws InvalidAlgorithmParameterException, NoSuchAlgorithmException,
-            InvalidKeyException, NoSuchPaddingException {
+            throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, InvalidKeyException,
+                    NoSuchPaddingException {
         return createCipher(key, Cipher.DECRYPT_MODE, nonce);
     }
 
     private static Cipher createCipher(SecretKey key, int opmode, byte[] nonce)
-            throws NoSuchPaddingException, NoSuchAlgorithmException,
-            InvalidAlgorithmParameterException, InvalidKeyException {
+            throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
+                    InvalidKeyException {
         Cipher cipher = Cipher.getInstance(CRYPTO_AEAD);
 
         // generate the nonce if none is given
-        // we are not allowed to do this ourselves as "setRandomizedEncryptionRequired" is set to true
+        // we are not allowed to do this ourselves as "setRandomizedEncryptionRequired" is set to
+        // true
         if (nonce != null) {
             AlgorithmParameterSpec spec;
             // apparently kitkat doesn't support GCMParameterSpec
@@ -96,7 +95,8 @@ public class CryptoUtils {
         return decrypt(encrypted, 0, encrypted.length, cipher, params);
     }
 
-    public static CryptResult decrypt(byte[] encrypted, int encryptedOffset, int encryptedLen, Cipher cipher, CryptParameters params)
+    public static CryptResult decrypt(
+            byte[] encrypted, int encryptedOffset, int encryptedLen, Cipher cipher, CryptParameters params)
             throws IOException, BadPaddingException, IllegalBlockSizeException {
         // append the tag to the ciphertext
         ByteArrayOutputStream stream = new ByteArrayOutputStream();

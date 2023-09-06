@@ -28,16 +28,14 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.widget.SearchView;
-
+import com.beemdevelopment.aegis.AccountNamePosition;
 import com.beemdevelopment.aegis.AssignIconsActivity;
 import com.beemdevelopment.aegis.CopyBehavior;
-import com.beemdevelopment.aegis.AccountNamePosition;
 import com.beemdevelopment.aegis.Preferences;
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.SortCategory;
@@ -57,7 +55,6 @@ import com.beemdevelopment.aegis.vault.VaultEntry;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.common.base.Strings;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -78,7 +75,6 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
     private static final int CODE_PREFERENCES = 5;
     private static final int CODE_SCAN_IMAGE = 6;
     private static final int CODE_ASSIGN_ICONS = 7;
-
 
     // Permission request codes
     private static final int CODE_PERM_CAMERA = 0;
@@ -148,27 +144,27 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
         _entryListView.setCopyBehavior(_prefs.getCopyBehavior());
         _entryListView.setPrefGroupFilter(_prefs.getGroupFilter());
 
-         FloatingActionButton fab = findViewById(R.id.fab);
-         fab.setOnClickListener(v -> {
-             View view = getLayoutInflater().inflate(R.layout.dialog_add_entry, null);
-             BottomSheetDialog dialog = new BottomSheetDialog(this);
-             dialog.setContentView(view);
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(v -> {
+            View view = getLayoutInflater().inflate(R.layout.dialog_add_entry, null);
+            BottomSheetDialog dialog = new BottomSheetDialog(this);
+            dialog.setContentView(view);
 
-             view.findViewById(R.id.fab_enter).setOnClickListener(v1 -> {
-                 dialog.dismiss();
-                 startEditEntryActivityForManual(CODE_ADD_ENTRY);
-             });
-             view.findViewById(R.id.fab_scan_image).setOnClickListener(v2 -> {
-                 dialog.dismiss();
-                 startScanImageActivity();
-             });
-             view.findViewById(R.id.fab_scan).setOnClickListener(v3 -> {
-                 dialog.dismiss();
-                 startScanActivity();
-             });
+            view.findViewById(R.id.fab_enter).setOnClickListener(v1 -> {
+                dialog.dismiss();
+                startEditEntryActivityForManual(CODE_ADD_ENTRY);
+            });
+            view.findViewById(R.id.fab_scan_image).setOnClickListener(v2 -> {
+                dialog.dismiss();
+                startScanImageActivity();
+            });
+            view.findViewById(R.id.fab_scan).setOnClickListener(v3 -> {
+                dialog.dismiss();
+                startScanActivity();
+            });
 
-             Dialogs.showSecureDialog(dialog);
-         });
+            Dialogs.showSecureDialog(dialog);
+        });
 
         _btnErrorBar = findViewById(R.id.btn_error_bar);
         _textErrorBar = findViewById(R.id.text_error_bar);
@@ -247,7 +243,8 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (!PermissionHelper.checkResults(grantResults)) {
-            Toast.makeText(this, getString(R.string.permission_denied), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.permission_denied), Toast.LENGTH_SHORT)
+                    .show();
             return;
         }
 
@@ -265,7 +262,10 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
     }
 
     private static boolean isDPadKey(int keyCode) {
-        return keyCode == KeyEvent.KEYCODE_DPAD_DOWN || keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode == KeyEvent.KEYCODE_DPAD_RIGHT || keyCode == KeyEvent.KEYCODE_DPAD_LEFT;
+        return keyCode == KeyEvent.KEYCODE_DPAD_DOWN
+                || keyCode == KeyEvent.KEYCODE_DPAD_UP
+                || keyCode == KeyEvent.KEYCODE_DPAD_RIGHT
+                || keyCode == KeyEvent.KEYCODE_DPAD_LEFT;
     }
 
     @Override
@@ -375,7 +375,7 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
         if (_loaded) {
             ArrayList<UUID> entryUUIDs = (ArrayList<UUID>) data.getSerializableExtra("entryUUIDs");
 
-            for (UUID entryUUID: entryUUIDs) {
+            for (UUID entryUUID : entryUUIDs) {
                 VaultEntry entry = _vaultManager.getVault().getEntryByUUID(entryUUID);
                 _entryListView.replaceEntry(entryUUID, entry);
             }
@@ -427,13 +427,14 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
                     Uri scanned = Uri.parse(res.getResult().getText());
                     if (Objects.equals(scanned.getScheme(), GoogleAuthInfo.SCHEME_EXPORT)) {
                         GoogleAuthInfo.Export export = GoogleAuthInfo.parseExportUri(scanned);
-                        for (GoogleAuthInfo info: export.getEntries()) {
+                        for (GoogleAuthInfo info : export.getEntries()) {
                             VaultEntry entry = new VaultEntry(info);
                             entries.add(entry);
                         }
                         googleAuthExports.add(export);
                     } else {
-                        GoogleAuthInfo info = GoogleAuthInfo.parseUri(res.getResult().getText());
+                        GoogleAuthInfo info =
+                                GoogleAuthInfo.parseUri(res.getResult().getText());
                         VaultEntry entry = new VaultEntry(info);
                         entries.add(entry);
                     }
@@ -442,29 +443,50 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
                 }
             }
 
-            final DialogInterface.OnClickListener dialogDismissHandler = (dialog, which) -> importScannedEntries(entries);
+            final DialogInterface.OnClickListener dialogDismissHandler =
+                    (dialog, which) -> importScannedEntries(entries);
             if (!googleAuthExports.isEmpty()) {
                 boolean isSingleBatch = GoogleAuthInfo.Export.isSingleBatch(googleAuthExports);
                 if (!isSingleBatch && errors.size() > 0) {
                     errors.add(getString(R.string.unrelated_google_auth_batches_error));
-                    Dialogs.showMultiMessageDialog(this, R.string.import_error_title, getString(R.string.no_tokens_can_be_imported), errors, null);
+                    Dialogs.showMultiMessageDialog(
+                            this,
+                            R.string.import_error_title,
+                            getString(R.string.no_tokens_can_be_imported),
+                            errors,
+                            null);
                     return;
                 } else if (!isSingleBatch) {
-                    Dialogs.showErrorDialog(this, R.string.import_google_auth_failure, getString(R.string.unrelated_google_auth_batches_error));
+                    Dialogs.showErrorDialog(
+                            this,
+                            R.string.import_google_auth_failure,
+                            getString(R.string.unrelated_google_auth_batches_error));
                     return;
                 } else {
                     List<Integer> missingIndices = GoogleAuthInfo.Export.getMissingIndices(googleAuthExports);
                     if (missingIndices.size() != 0) {
-                        Dialogs.showPartialGoogleAuthImportWarningDialog(this, missingIndices, entries.size(), errors, dialogDismissHandler);
+                        Dialogs.showPartialGoogleAuthImportWarningDialog(
+                                this, missingIndices, entries.size(), errors, dialogDismissHandler);
                         return;
                     }
                 }
             }
 
             if ((errors.size() > 0 && results.size() > 1) || errors.size() > 1) {
-                Dialogs.showMultiMessageDialog(this, R.string.import_error_title, getString(R.string.unable_to_read_qrcode_files, uris.size() - errors.size(), uris.size()), errors, dialogDismissHandler);
+                Dialogs.showMultiMessageDialog(
+                        this,
+                        R.string.import_error_title,
+                        getString(R.string.unable_to_read_qrcode_files, uris.size() - errors.size(), uris.size()),
+                        errors,
+                        dialogDismissHandler);
             } else if (errors.size() > 0) {
-                Dialogs.showErrorDialog(this, getString(R.string.unable_to_read_qrcode_file, results.get(0).getFileName()), errors.get(0), dialogDismissHandler);
+                Dialogs.showErrorDialog(
+                        this,
+                        getString(
+                                R.string.unable_to_read_qrcode_file,
+                                results.get(0).getFileName()),
+                        errors.get(0),
+                        dialogDismissHandler);
             } else {
                 importScannedEntries(entries);
             }
@@ -476,13 +498,18 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
         if (entries.size() == 1) {
             startEditEntryActivityForNew(CODE_ADD_ENTRY, entries.get(0));
         } else if (entries.size() > 1) {
-            for (VaultEntry entry: entries) {
+            for (VaultEntry entry : entries) {
                 _vaultManager.getVault().addEntry(entry);
                 _entryListView.addEntry(entry);
             }
 
             if (saveAndBackupVault()) {
-                Toast.makeText(this, getResources().getQuantityString(R.plurals.added_new_entries, entries.size(), entries.size()), Toast.LENGTH_LONG).show();
+                Toast.makeText(
+                                this,
+                                getResources()
+                                        .getQuantityString(R.plurals.added_new_entries, entries.size(), entries.size()),
+                                Toast.LENGTH_LONG)
+                        .show();
             }
         }
     }
@@ -531,7 +558,7 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
         fileIntent.setType("image/*");
 
         Intent chooserIntent = Intent.createChooser(galleryIntent, getString(R.string.select_picture));
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] { fileIntent });
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {fileIntent});
         _vaultManager.startActivityForResult(this, chooserIntent, CODE_SCAN_IMAGE);
     }
 
@@ -629,9 +656,7 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
                     intent.removeExtra(Intent.EXTRA_STREAM);
 
                     if (uris != null) {
-                        uris = uris.stream()
-                                .filter(Objects::nonNull)
-                                .collect(Collectors.toList());
+                        uris = uris.stream().filter(Objects::nonNull).collect(Collectors.toList());
 
                         startDecodeQrCodeImages(uris);
                     }
@@ -646,14 +671,16 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
 
         if (_vaultManager.isVaultInitNeeded()) {
             if (_prefs.isIntroDone()) {
-                Toast.makeText(this, getString(R.string.vault_not_found), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.vault_not_found), Toast.LENGTH_SHORT)
+                        .show();
             }
             startIntroActivity();
             return;
         }
 
         if (!_vaultManager.isVaultLoaded() && !_vaultManager.isVaultFileLoaded()) {
-            Dialogs.showErrorDialog(this, R.string.vault_load_error, _vaultManager.getVaultFileError(), (dialog1, which) -> finish());
+            Dialogs.showErrorDialog(
+                    this, R.string.vault_load_error, _vaultManager.getVaultFileError(), (dialog1, which) -> finish());
             return;
         }
 
@@ -673,9 +700,7 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
             checkTimeSyncSetting();
         }
 
-        _lockBackPressHandler.setEnabled(
-                _vaultManager.isAutoLockEnabled(Preferences.AUTO_LOCK_ON_BACK_BUTTON)
-        );
+        _lockBackPressHandler.setEnabled(_vaultManager.isAutoLockEnabled(Preferences.AUTO_LOCK_ON_BACK_BUTTON));
 
         handleIncomingIntent();
         updateLockIcon();
@@ -684,7 +709,7 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
     }
 
     private void deleteEntries(List<VaultEntry> entries) {
-        for (VaultEntry entry: entries) {
+        for (VaultEntry entry : entries) {
             VaultEntry oldEntry = _vaultManager.getVault().removeEntry(entry);
             _entryListView.removeEntry(oldEntry);
         }
@@ -862,7 +887,8 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
         } else if (_prefs.isBackupsReminderNeeded() && _prefs.isBackupReminderEnabled()) {
             Date date = _prefs.getLatestBackupOrExportTime();
             if (date != null) {
-                _textErrorBar.setText(getString(R.string.backup_reminder_bar_message_with_latest, TimeUtils.getElapsedSince(this, date)));
+                _textErrorBar.setText(getString(
+                        R.string.backup_reminder_bar_message_with_latest, TimeUtils.getElapsedSince(this, date)));
             } else {
                 _textErrorBar.setText(R.string.backup_reminder_bar_message);
             }
@@ -953,7 +979,7 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
     private void setFavoriteMenuItemVisiblity() {
         MenuItem toggleFavoriteMenuItem = _actionMode.getMenu().findItem(R.id.action_toggle_favorite);
 
-        if (_selectedEntries.size() == 1){
+        if (_selectedEntries.size() == 1) {
             if (_selectedEntries.get(0).isFavorite()) {
                 toggleFavoriteMenuItem.setIcon(R.drawable.ic_set_favorite);
                 toggleFavoriteMenuItem.setTitle(R.string.unfavorite);
@@ -963,7 +989,8 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
             }
         } else {
             toggleFavoriteMenuItem.setIcon(R.drawable.ic_unset_favorite);
-            toggleFavoriteMenuItem.setTitle(String.format("%s / %s", getString(R.string.favorite), getString(R.string.unfavorite)));
+            toggleFavoriteMenuItem.setTitle(
+                    String.format("%s / %s", getString(R.string.favorite), getString(R.string.unfavorite)));
         }
     }
 
@@ -1012,7 +1039,9 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
     }
 
     @Override
-    public void onListChange() { _fabScrollHelper.setVisible(true); }
+    public void onListChange() {
+        _fabScrollHelper.setVisible(true);
+    }
 
     @Override
     public void onSaveGroupFilter(Set<UUID> groupFilter) {
@@ -1106,84 +1135,85 @@ public class MainActivity extends AegisActivity implements EntryListView.Listene
     }
 
     private class ActionModeCallbacks implements ActionMode.Callback {
-            @Override
-            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                MenuInflater inflater = getMenuInflater();
-                inflater.inflate(R.menu.menu_action_mode, menu);
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.menu_action_mode, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            if (_selectedEntries.size() == 0) {
+                mode.finish();
                 return true;
             }
-
-            @Override
-            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                return false;
-            }
-
-            @Override
-            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                if (_selectedEntries.size() == 0) {
+            switch (item.getItemId()) {
+                case R.id.action_copy:
+                    copyEntryCode(_selectedEntries.get(0));
                     mode.finish();
                     return true;
-                }
-                switch (item.getItemId()) {
-                    case R.id.action_copy:
-                        copyEntryCode(_selectedEntries.get(0));
+
+                case R.id.action_edit:
+                    startEditEntryActivity(CODE_EDIT_ENTRY, _selectedEntries.get(0));
+                    mode.finish();
+                    return true;
+
+                case R.id.action_toggle_favorite:
+                    for (VaultEntry entry : _selectedEntries) {
+                        entry.setIsFavorite(!entry.isFavorite());
+                        _entryListView.replaceEntry(entry.getUUID(), entry);
+                    }
+                    _entryListView.refresh(true);
+
+                    saveAndBackupVault();
+                    mode.finish();
+                    return true;
+
+                case R.id.action_share_qr:
+                    Intent intent = new Intent(getBaseContext(), TransferEntriesActivity.class);
+                    ArrayList<GoogleAuthInfo> authInfos = new ArrayList<>();
+                    for (VaultEntry entry : _selectedEntries) {
+                        GoogleAuthInfo authInfo =
+                                new GoogleAuthInfo(entry.getInfo(), entry.getName(), entry.getIssuer());
+                        authInfos.add(authInfo);
+                    }
+
+                    intent.putExtra("authInfos", authInfos);
+                    startActivity(intent);
+
+                    mode.finish();
+                    return true;
+
+                case R.id.action_delete:
+                    Dialogs.showDeleteEntriesDialog(MainActivity.this, _selectedEntries, (d, which) -> {
+                        deleteEntries(_selectedEntries);
+                        _entryListView.setGroups(_vaultManager.getVault().getUsedGroups());
                         mode.finish();
-                        return true;
+                    });
+                    return true;
 
-                    case R.id.action_edit:
-                        startEditEntryActivity(CODE_EDIT_ENTRY, _selectedEntries.get(0));
-                        mode.finish();
-                        return true;
+                case R.id.action_assign_icons:
+                    startAssignIconsActivity(CODE_ASSIGN_ICONS, _selectedEntries);
+                    mode.finish();
+                    return true;
 
-                    case R.id.action_toggle_favorite:
-                        for (VaultEntry entry : _selectedEntries) {
-                            entry.setIsFavorite(!entry.isFavorite());
-                            _entryListView.replaceEntry(entry.getUUID(), entry);
-                        }
-                        _entryListView.refresh(true);
-
-                        saveAndBackupVault();
-                        mode.finish();
-                        return true;
-
-                    case R.id.action_share_qr:
-                        Intent intent = new Intent(getBaseContext(), TransferEntriesActivity.class);
-                        ArrayList<GoogleAuthInfo> authInfos = new ArrayList<>();
-                        for (VaultEntry entry : _selectedEntries) {
-                            GoogleAuthInfo authInfo = new GoogleAuthInfo(entry.getInfo(), entry.getName(), entry.getIssuer());
-                            authInfos.add(authInfo);
-                        }
-
-                        intent.putExtra("authInfos", authInfos);
-                        startActivity(intent);
-
-                        mode.finish();
-                        return true;
-
-                    case R.id.action_delete:
-                        Dialogs.showDeleteEntriesDialog(MainActivity.this, _selectedEntries, (d, which) -> {
-                            deleteEntries(_selectedEntries);
-                            _entryListView.setGroups(_vaultManager.getVault().getUsedGroups());
-                            mode.finish();
-                        });
-                        return true;
-
-                    case R.id.action_assign_icons:
-                        startAssignIconsActivity(CODE_ASSIGN_ICONS, _selectedEntries);
-                        mode.finish();
-                        return true;
-
-                    default:
-                        return false;
-                }
+                default:
+                    return false;
             }
+        }
 
-            @Override
-            public void onDestroyActionMode(ActionMode mode) {
-                _entryListView.setActionModeState(false, null);
-                _actionModeBackPressHandler.setEnabled(false);
-                _selectedEntries.clear();
-                _actionMode = null;
-            }
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            _entryListView.setActionModeState(false, null);
+            _actionModeBackPressHandler.setEnabled(false);
+            _selectedEntries.clear();
+            _actionMode = null;
+        }
     }
 }

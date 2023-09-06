@@ -6,19 +6,15 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Intent;
-
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SmallTest;
 import androidx.test.rule.ActivityTestRule;
-
 import com.beemdevelopment.aegis.ui.PanicResponderActivity;
 import com.beemdevelopment.aegis.vault.VaultRepository;
-
+import dagger.hilt.android.testing.HiltAndroidTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import dagger.hilt.android.testing.HiltAndroidTest;
 
 @RunWith(AndroidJUnit4.class)
 @HiltAndroidTest
@@ -54,7 +50,8 @@ public class PanicTriggerTest extends AegisTest {
 
     private void launchPanic() {
         Intent intent = new Intent(PanicResponderActivity.PANIC_TRIGGER_ACTION);
-        // we need to use the deprecated ActivityTestRule class because of https://github.com/android/android-test/issues/143
+        // we need to use the deprecated ActivityTestRule class because of
+        // https://github.com/android/android-test/issues/143
         ActivityTestRule<PanicResponderActivity> rule = new ActivityTestRule<>(PanicResponderActivity.class);
         rule.launchActivity(intent);
     }

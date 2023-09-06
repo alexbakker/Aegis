@@ -7,9 +7,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import android.content.Context;
-
 import androidx.test.core.app.ApplicationProvider;
-
 import com.beemdevelopment.aegis.encoding.Base32;
 import com.beemdevelopment.aegis.otp.HotpInfo;
 import com.beemdevelopment.aegis.otp.OtpInfo;
@@ -20,16 +18,14 @@ import com.beemdevelopment.aegis.util.UUIDMap;
 import com.beemdevelopment.aegis.vault.VaultEntry;
 import com.beemdevelopment.aegis.vectors.VaultEntries;
 import com.google.common.collect.Lists;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
 public class DatabaseImporterTest {
@@ -43,7 +39,6 @@ public class DatabaseImporterTest {
      * 3. Create an export and add the file to the importers resource directory.
      * 4. Add a new test for it here.
      */
-
     @Before
     public void initVectors() {
         _vectors = VaultEntries.get();
@@ -119,7 +114,8 @@ public class DatabaseImporterTest {
         });
 
         for (VaultEntry entry : entries) {
-            // old versions of andOTP have a bug where the issuer/name is not parsed correctly, so account for that here
+            // old versions of andOTP have a bug where the issuer/name is not parsed correctly, so
+            // account for that here
             VaultEntry entryVector = getEntryVectorBySecret(entry.getInfo().getSecret());
             entryVector.setName(String.format("%s:%s", entryVector.getIssuer(), entryVector.getName()));
             checkImportedEntry(entryVector, entry);
@@ -128,17 +124,19 @@ public class DatabaseImporterTest {
 
     @Test
     public void testImportTotpAuthenticator() throws IOException, DatabaseImporterException, OtpInfoException {
-        List<VaultEntry> entries = importEncrypted(TotpAuthenticatorImporter.class, "totp_authenticator.bin", encryptedState -> {
-            final char[] password = "Testtest1".toCharArray();
-            return ((TotpAuthenticatorImporter.EncryptedState) encryptedState).decrypt(password);
-        });
+        List<VaultEntry> entries =
+                importEncrypted(TotpAuthenticatorImporter.class, "totp_authenticator.bin", encryptedState -> {
+                    final char[] password = "Testtest1".toCharArray();
+                    return ((TotpAuthenticatorImporter.EncryptedState) encryptedState).decrypt(password);
+                });
 
         checkImportedTotpAuthenticatorEntries(entries);
     }
 
     @Test
     public void testImportTotpAuthenticatorInternal() throws IOException, DatabaseImporterException, OtpInfoException {
-        List<VaultEntry> entries = importPlain(TotpAuthenticatorImporter.class, "totp_authenticator_internal.xml", true);
+        List<VaultEntry> entries =
+                importPlain(TotpAuthenticatorImporter.class, "totp_authenticator_internal.xml", true);
         checkImportedTotpAuthenticatorEntries(entries);
     }
 
@@ -153,10 +151,11 @@ public class DatabaseImporterTest {
 
     @Test
     public void testImportAuthProEncryptedLegacy() throws DatabaseImporterException, IOException, OtpInfoException {
-        List<VaultEntry> entries = importEncrypted(AuthenticatorProImporter.class, "authpro_encrypted_legacy.bin", state -> {
-            char[] password = "test".toCharArray();
-            return ((AuthenticatorProImporter.LegacyEncryptedState) state).decrypt(password);
-        });
+        List<VaultEntry> entries =
+                importEncrypted(AuthenticatorProImporter.class, "authpro_encrypted_legacy.bin", state -> {
+                    char[] password = "test".toCharArray();
+                    return ((AuthenticatorProImporter.LegacyEncryptedState) state).decrypt(password);
+                });
         checkImportedEntries(entries);
     }
 
@@ -231,7 +230,8 @@ public class DatabaseImporterTest {
     public void testImportGoogleAuthenticator() throws IOException, DatabaseImporterException, OtpInfoException {
         List<VaultEntry> entries = importPlain(GoogleAuthImporter.class, "google_authenticator.sqlite");
         for (VaultEntry entry : entries) {
-            // Google Authenticator doesn't support different hash algorithms, periods or digits, so fix those up here
+            // Google Authenticator doesn't support different hash algorithms, periods or digits, so
+            // fix those up here
             VaultEntry entryVector = getEntryVectorBySecret(entry.getInfo().getSecret());
             entryVector.getInfo().setDigits(OtpInfo.DEFAULT_DIGITS);
             if (entryVector.getInfo() instanceof TotpInfo) {
@@ -246,7 +246,9 @@ public class DatabaseImporterTest {
     public void testImportMicrosoftAuthenticator() throws IOException, DatabaseImporterException, OtpInfoException {
         List<VaultEntry> entries = importPlain(MicrosoftAuthImporter.class, "microsoft_authenticator.sqlite");
         for (VaultEntry entry : entries) {
-            // Microsoft Authenticator doesn't support HOTP, different hash algorithms, periods or digits, so fix those up here
+            // Microsoft Authenticator doesn't support HOTP, different hash algorithms, periods or
+            // digits, so fix those
+            // up here
             VaultEntry entryVector = getEntryVectorBySecret(entry.getInfo().getSecret());
             entryVector.setInfo(new TotpInfo(entryVector.getInfo().getSecret()));
             checkImportedEntry(entryVector, entry);
@@ -265,10 +267,11 @@ public class DatabaseImporterTest {
 
     @Test
     public void testImportAuthenticatorPlus() throws IOException, DatabaseImporterException, OtpInfoException {
-        List<VaultEntry> entries = importEncrypted(AuthenticatorPlusImporter.class, "authenticator_plus.zip", encryptedState -> {
-            final char[] password = "testtesttest".toCharArray();
-            return ((AuthenticatorPlusImporter.EncryptedState) encryptedState).decrypt(password);
-        });
+        List<VaultEntry> entries =
+                importEncrypted(AuthenticatorPlusImporter.class, "authenticator_plus.zip", encryptedState -> {
+                    final char[] password = "testtesttest".toCharArray();
+                    return ((AuthenticatorPlusImporter.EncryptedState) encryptedState).decrypt(password);
+                });
 
         checkImportedEntries(entries);
     }
@@ -277,7 +280,9 @@ public class DatabaseImporterTest {
     public void testImportTwoFASAuthenticatorSchema1() throws DatabaseImporterException, IOException, OtpInfoException {
         List<VaultEntry> entries = importPlain(TwoFASImporter.class, "2fas_authenticator.json");
         for (VaultEntry entry : entries) {
-            // 2FAS Authenticator schema v1 doesn't support HOTP, different hash algorithms, periods or digits, so fix those up here
+            // 2FAS Authenticator schema v1 doesn't support HOTP, different hash algorithms, periods
+            // or digits, so fix
+            // those up here
             VaultEntry entryVector = getEntryVectorBySecret(entry.getInfo().getSecret());
             entryVector.setInfo(new TotpInfo(entryVector.getInfo().getSecret()));
             checkImportedEntry(entryVector, entry);
@@ -285,32 +290,38 @@ public class DatabaseImporterTest {
     }
 
     @Test
-    public void testImportTwoFASAuthenticatorSchema2Plain() throws DatabaseImporterException, IOException, OtpInfoException {
+    public void testImportTwoFASAuthenticatorSchema2Plain()
+            throws DatabaseImporterException, IOException, OtpInfoException {
         List<VaultEntry> entries = importPlain(TwoFASImporter.class, "2fas_authenticator_plain.2fas");
         checkImportedTwoFASSchema2Entries(entries);
     }
 
     @Test
-    public void testImportTwoFASAuthenticatorSchema2Encrypted() throws DatabaseImporterException, IOException, OtpInfoException {
-        List<VaultEntry> entries = importEncrypted(TwoFASImporter.class, "2fas_authenticator_encrypted.2fas", encryptedState -> {
-            final char[] password = "test".toCharArray();
-            return ((TwoFASImporter.EncryptedState) encryptedState).decrypt(password);
-        });
+    public void testImportTwoFASAuthenticatorSchema2Encrypted()
+            throws DatabaseImporterException, IOException, OtpInfoException {
+        List<VaultEntry> entries =
+                importEncrypted(TwoFASImporter.class, "2fas_authenticator_encrypted.2fas", encryptedState -> {
+                    final char[] password = "test".toCharArray();
+                    return ((TwoFASImporter.EncryptedState) encryptedState).decrypt(password);
+                });
         checkImportedTwoFASSchema2Entries(entries);
     }
 
     @Test
-    public void testImportTwoFASAuthenticatorSchema3Plain() throws DatabaseImporterException, IOException, OtpInfoException {
+    public void testImportTwoFASAuthenticatorSchema3Plain()
+            throws DatabaseImporterException, IOException, OtpInfoException {
         List<VaultEntry> entries = importPlain(TwoFASImporter.class, "2fas_authenticator_plain_v3.2fas");
         checkImportedEntries(entries);
     }
 
     @Test
-    public void testImportTwoFASAuthenticatorSchema3Encrypted() throws DatabaseImporterException, IOException, OtpInfoException {
-        List<VaultEntry> entries = importEncrypted(TwoFASImporter.class, "2fas_authenticator_encrypted_v3.2fas", encryptedState -> {
-            final char[] password = "test".toCharArray();
-            return ((TwoFASImporter.EncryptedState) encryptedState).decrypt(password);
-        });
+    public void testImportTwoFASAuthenticatorSchema3Encrypted()
+            throws DatabaseImporterException, IOException, OtpInfoException {
+        List<VaultEntry> entries =
+                importEncrypted(TwoFASImporter.class, "2fas_authenticator_encrypted_v3.2fas", encryptedState -> {
+                    final char[] password = "test".toCharArray();
+                    return ((TwoFASImporter.EncryptedState) encryptedState).decrypt(password);
+                });
         checkImportedEntries(entries);
     }
 
@@ -331,12 +342,14 @@ public class DatabaseImporterTest {
         }
     }
 
-    private List<VaultEntry> importEncrypted(Class<? extends DatabaseImporter> type, String resName, Decryptor decryptor)
+    private List<VaultEntry> importEncrypted(
+            Class<? extends DatabaseImporter> type, String resName, Decryptor decryptor)
             throws IOException, DatabaseImporterException {
         return importEncrypted(type, resName, false, decryptor);
     }
 
-    private List<VaultEntry> importEncrypted(Class<? extends DatabaseImporter> type, String resName, boolean isInternal, Decryptor decryptor)
+    private List<VaultEntry> importEncrypted(
+            Class<? extends DatabaseImporter> type, String resName, boolean isInternal, Decryptor decryptor)
             throws IOException, DatabaseImporterException {
         Context context = ApplicationProvider.getApplicationContext();
         DatabaseImporter importer = DatabaseImporter.create(context, type);
@@ -382,7 +395,8 @@ public class DatabaseImporterTest {
 
     private void checkImportedTotpAuthenticatorEntries(List<VaultEntry> entries) throws OtpInfoException {
         for (VaultEntry entry : entries) {
-            // TOTP Authenticator doesn't support different hash algorithms, periods or digits, so fix those up here
+            // TOTP Authenticator doesn't support different hash algorithms, periods or digits, so
+            // fix those up here
             VaultEntry entryVector = getEntryVectorBySecret(entry.getInfo().getSecret());
             entryVector.getInfo().setDigits(OtpInfo.DEFAULT_DIGITS);
             ((TotpInfo) entryVector.getInfo()).setPeriod(TotpInfo.DEFAULT_PERIOD);
@@ -406,7 +420,7 @@ public class DatabaseImporterTest {
     private void checkImportedBitwardenEntries(List<VaultEntry> entries) throws OtpInfoException {
         byte[] secret, vectorSecret;
         for (VaultEntry entry : entries) {
-            if(entry.getInfo().getTypeId().equals(SteamInfo.ID)) {
+            if (entry.getInfo().getTypeId().equals(SteamInfo.ID)) {
                 secret = entry.getInfo().getSecret();
                 vectorSecret = getEntryVectorBySecret(secret).getInfo().getSecret();
                 assertNotNull(String.format("Steam secret has not been found (%s)", vectorSecret));
@@ -428,7 +442,9 @@ public class DatabaseImporterTest {
     }
 
     private void checkImportedEntry(VaultEntry entryVector, VaultEntry entry) throws OtpInfoException {
-        String message = String.format("Entries are not equivalent: (%s) (%s)", entryVector.toJson().toString(), entry.toJson().toString());
+        String message = String.format(
+                "Entries are not equivalent: (%s) (%s)",
+                entryVector.toJson().toString(), entry.toJson().toString());
         assertTrue(message, entryVector.equivalates(entry));
         assertEquals(message, entryVector.getInfo().getOtp(), entry.getInfo().getOtp());
     }
