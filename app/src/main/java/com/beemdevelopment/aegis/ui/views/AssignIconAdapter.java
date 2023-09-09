@@ -28,7 +28,10 @@ public class AssignIconAdapter extends RecyclerView.Adapter<AssignIconHolder> {
     @Override
     public AssignIconHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_assign_icon_entry, parent, false);
-        return new AssignIconHolder(view);
+        AssignIconHolder holder = new AssignIconHolder(view);
+        // NOTE: This assumes that the old and new icon views are the same size
+        _listener.onSetPreloadView(holder.getOldIconView());
+        return holder;
     }
 
     @Override
@@ -47,5 +50,6 @@ public class AssignIconAdapter extends RecyclerView.Adapter<AssignIconHolder> {
 
     public interface Listener {
         void onAssignIconEntryClick(AssignIconEntry entry);
+        void onSetPreloadView(View view);
     }
 }

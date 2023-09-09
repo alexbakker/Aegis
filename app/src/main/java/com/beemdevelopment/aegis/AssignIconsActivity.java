@@ -8,18 +8,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.beemdevelopment.aegis.helpers.MetricsHelper;
 import com.beemdevelopment.aegis.icons.IconPack;
 import com.beemdevelopment.aegis.ui.AegisActivity;
 import com.beemdevelopment.aegis.ui.dialogs.Dialogs;
 import com.beemdevelopment.aegis.ui.dialogs.IconPickerDialog;
+import com.beemdevelopment.aegis.ui.glide.IconLoader;
 import com.beemdevelopment.aegis.ui.models.AssignIconEntry;
 import com.beemdevelopment.aegis.ui.views.AssignIconAdapter;
 import com.beemdevelopment.aegis.ui.views.IconAdapter;
@@ -32,7 +31,6 @@ import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.util.ViewPreloadSizeProvider;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -73,9 +71,11 @@ public class AssignIconsActivity extends AegisActivity implements AssignIconAdap
         _backPressHandler = new AssignIconsActivity.BackPressHandler();
         getOnBackPressedDispatcher().addCallback(this, _backPressHandler);
 
-        AssignIconsActivity.IconPreloadProvider modelProvider = new AssignIconsActivity.IconPreloadProvider();
+        IconPreloadProvider modelProvider1 = new IconPreloadProvider();
+        EntryIconPreloadProvider modelProvider2 = new EntryIconPreloadProvider();
         _preloadSizeProvider = new ViewPreloadSizeProvider<>();
-        RecyclerViewPreloader<AssignIconEntry> preloader = new RecyclerViewPreloader<>(Glide.with(this), modelProvider, _preloadSizeProvider, 10);
+        RecyclerViewPreloader<IconPack.Icon> preloader1 = new RecyclerViewPreloader(this, modelProvider1, _preloadSizeProvider, 10);
+        RecyclerViewPreloader<VaultEntry> preloader2 = new RecyclerViewPreloader(this, modelProvider2, _preloadSizeProvider, 10);
 
         _adapter = new AssignIconAdapter(this);
         _entriesView = findViewById(R.id.list_assign_icons);
@@ -84,7 +84,8 @@ public class AssignIconsActivity extends AegisActivity implements AssignIconAdap
         _entriesView.setAdapter(_adapter);
         _entriesView.setNestedScrollingEnabled(false);
         _entriesView.addItemDecoration(new SpacesItemDecoration(8));
-        _entriesView.addOnScrollListener(preloader);
+        _entriesView.addOnScrollListener(preloader1);
+        _entriesView.addOnScrollListener(preloader2);
 
         Optional<IconPack> favoriteIconPack = _iconPackManager.getIconPacks().stream()
                 .sorted(Comparator.comparing(IconPack::getName))
@@ -193,6 +194,11 @@ public class AssignIconsActivity extends AegisActivity implements AssignIconAdap
         Dialogs.showSecureDialog(dialog);
     }
 
+    @Override
+    public void onSetPreloadView(View view) {
+        _preloadSizeProvider.setView(view);
+    }
+
     private class BackPressHandler extends OnBackPressedCallback {
         public BackPressHandler() {
             super(false);
@@ -204,23 +210,49 @@ public class AssignIconsActivity extends AegisActivity implements AssignIconAdap
         }
     }
 
-    private class IconPreloadProvider implements ListPreloader.PreloadModelProvider<AssignIconEntry> {
+    private class EntryIconPreloadProvider implements ListPreloader.PreloadModelProvider<VaultEntry> {
         @NonNull
         @Override
-        public List<AssignIconEntry> getPreloadItems(int position) {
-            AssignIconEntry entry = _entries.get(position);
-
-            return Collections.singletonList(entry);
+        public List<VaultEntry> getPreloadItems(int position) {
+            VaultEntry entry = _entries.get(position).getEntry();
+            if (entry.hasIcon()) {
+                return Collections.singletonList(entry);
+            }
+            return Collections.emptyList();
         }
 
         @Nullable
         @Override
-        public RequestBuilder<Drawable> getPreloadRequestBuilder(@NonNull AssignIconEntry entry) {
+        public RequestBuilder<Drawable> getPreloadRequestBuilder(@NonNull VaultEntry entry) {
             return Glide.with(AssignIconsActivity.this)
                     .asDrawable()
                     .load(entry)
+                    .set(IconLoader.ICON_TYPE, entry.getIconType())
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .skipMemoryCache(false);
+        }
+    }
+
+    private class IconPreloadProvider implements ListPreloader.PreloadModelProvider<IconPack.Icon> {
+        @NonNull
+        @Override
+        public List<IconPack.Icon> getPreloadItems(int position) {
+            AssignIconEntry entry = _entries.get(position);
+            if (entry.getNewIcon() != null) {
+                return Collections.singletonList(entry.getNewIcon());
+            }
+            return Collections.emptyList();
+        }
+
+        @Nullable
+        @Override
+        public RequestBuilder<Drawable> getPreloadRequestBuilder(@NonNull IconPack.Icon icon) {
+            return Glide.with(AssignIconsActivity.this)
+                .asDrawable()
+                .load(icon.getFile())
+                .set(IconLoader.ICON_TYPE, icon.getIconType())
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(false);
         }
     }
 

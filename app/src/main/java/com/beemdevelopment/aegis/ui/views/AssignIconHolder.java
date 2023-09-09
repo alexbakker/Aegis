@@ -3,16 +3,12 @@ package com.beemdevelopment.aegis.ui.views;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.beemdevelopment.aegis.R;
 import com.beemdevelopment.aegis.helpers.TextDrawableHelper;
-import com.beemdevelopment.aegis.icons.IconType;
 import com.beemdevelopment.aegis.ui.glide.IconLoader;
 import com.beemdevelopment.aegis.ui.models.AssignIconEntry;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
@@ -50,7 +46,7 @@ public class AssignIconHolder extends RecyclerView.ViewHolder implements AssignI
         } else {
             Glide.with(_view.getContext())
                     .asDrawable()
-                    .load(entry.getEntry().getIcon())
+                    .load(entry.getEntry())
                     .set(IconLoader.ICON_TYPE, entry.getEntry().getIconType())
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(_oldIcon);
@@ -78,6 +74,10 @@ public class AssignIconHolder extends RecyclerView.ViewHolder implements AssignI
         }
 
         _btnReset.setVisibility(_entry.getNewIcon() != null ? View.VISIBLE : View.INVISIBLE);
+    }
+
+    public View getOldIconView() {
+        return _oldIcon;
     }
 
     @Override
