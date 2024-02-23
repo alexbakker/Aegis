@@ -12,12 +12,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.camera.core.ImageInfo;
 import androidx.camera.core.ImageProxy;
+import androidx.camera.core.impl.TagBundle;
+import androidx.camera.core.impl.utils.ExifData;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.filters.SmallTest;
 
+import com.beemdevelopment.aegis.AegisTest;
 import com.beemdevelopment.aegis.util.IOUtils;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,29 +29,45 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.GZIPInputStream;
 
-@RunWith(RobolectricTestRunner.class)
-public class QrCodeAnalyzerTest {
-    private static final String _expectedUri = "otpauth://totp/neo4j:Charlotte?secret=B33WS2ALPT34K4BNY24AYROE4M&issuer=neo4j&algorithm=SHA1&digits=6&period=30";
+import dagger.hilt.android.testing.HiltAndroidTest;
 
+@RunWith(AndroidJUnit4.class)
+@HiltAndroidTest
+@SmallTest
+public class QrCodeAnalyzerTest extends AegisTest {
     @Test
     public void testScanQrCode() {
-        boolean found = scan("qr.y.gz", 1600, 1200, 1600);
+        final String expectedUri = "otpauth://totp/neo4j:Charlotte?secret=B33WS2ALPT34K4BNY24AYROE4M&issuer=neo4j&algorithm=SHA1&digits=6&period=30";
+
+        boolean found = scan("qr.y.gz", 1600, 1200, 1600, expectedUri);
+        assertTrue("QR code not found", found);
+    }
+
+    @Test
+    public void testScanIssue802Code() {
+
+        final String expectedUri = "otpauth://totp/Alice?secret=E54722XDV6I4C7PF5WGUZEM7IHEYCOB6&issuer=Google";
+        boolean found = scan("qr.issue-802.y.gz", 4608, 3456, 4608, expectedUri);
         assertTrue("QR code not found", found);
     }
 
     @Test
     public void testScanStridedQrCode() {
-        boolean found = scan("qr.strided.y.gz", 1840, 1380, 1840);
+        final String expectedUri = "otpauth://totp/neo4j:Charlotte?secret=B33WS2ALPT34K4BNY24AYROE4M&issuer=neo4j&algorithm=SHA1&digits=6&period=30";
+
+        boolean found = scan("qr.strided.y.gz", 1840, 1380, 1840, expectedUri);
         assertFalse("QR code found", found);
 
-        found = scan("qr.strided.y.gz", 1840, 1380, 1856);
+        found = scan("qr.strided.y.gz", 1840, 1380, 1856, expectedUri);
         assertTrue("QR code not found", found);
     }
 
-    private boolean scan(String fileName, int width, int height, int rowStride) {
+    private boolean scan(String fileName, int width, int height, int rowStride, String expectedUri) {
         AtomicBoolean found = new AtomicBoolean();
-        QrCodeAnalyzer analyzer = new QrCodeAnalyzer(result -> {
-            assertEquals(_expectedUri, result.getText());
+        QrCodeAnalyzer analyzer = new QrCodeAnalyzer(qrText -> {
+            if (expectedUri != null) {
+                assertEquals(expectedUri, qrText);
+            }
             found.set(true);
         });
 
@@ -85,7 +105,7 @@ public class QrCodeAnalyzerTest {
         @NonNull
         @Override
         public ByteBuffer getBuffer() {
-            return ByteBuffer.wrap(_y);
+            return ByteBuffer.allocateDirect(_y.length).put(_y);
         }
     }
 
@@ -110,7 +130,7 @@ public class QrCodeAnalyzerTest {
         @NonNull
         @Override
         public Rect getCropRect() {
-            return null;
+            return new Rect(0, 0, _width, _height);
         }
 
         @Override
@@ -142,7 +162,28 @@ public class QrCodeAnalyzerTest {
         @NonNull
         @Override
         public ImageInfo getImageInfo() {
-            return null;
+            return new ImageInfo() {
+                @NonNull
+                @Override
+                public TagBundle getTagBundle() {
+                    return TagBundle.emptyBundle();
+                }
+
+                @Override
+                public long getTimestamp() {
+                    return 0;
+                }
+
+                @Override
+                public int getRotationDegrees() {
+                    return 90;
+                }
+
+                @Override
+                public void populateExifData(@NonNull ExifData.Builder exifBuilder) {
+
+                }
+            };
         }
 
         @Nullable

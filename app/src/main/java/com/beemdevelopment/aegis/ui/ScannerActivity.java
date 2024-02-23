@@ -25,7 +25,6 @@ import com.beemdevelopment.aegis.otp.GoogleAuthInfoException;
 import com.beemdevelopment.aegis.ui.dialogs.Dialogs;
 import com.beemdevelopment.aegis.vault.VaultEntry;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.zxing.Result;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -176,7 +175,7 @@ public class ScannerActivity extends AegisActivity implements QrCodeAnalyzer.Lis
     }
 
     @Override
-    public void onQrCodeDetected(Result result) {
+    public void onQrCodeDetected(String qrText) {
         new Handler(getMainLooper()).post(() -> {
             if (isFinishing()) {
                 return;
@@ -184,7 +183,7 @@ public class ScannerActivity extends AegisActivity implements QrCodeAnalyzer.Lis
 
             if (_analysis != null) {
                 try {
-                    Uri uri = Uri.parse(result.getText().trim());
+                    Uri uri = Uri.parse(qrText.trim());
                     if (uri.getScheme() != null && uri.getScheme().equals(GoogleAuthInfo.SCHEME_EXPORT)) {
                         handleExportUri(uri);
                     } else {
