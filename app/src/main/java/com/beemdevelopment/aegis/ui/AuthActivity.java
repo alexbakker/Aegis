@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.View;
@@ -205,7 +206,9 @@ public class AuthActivity extends AegisActivity {
         }
 
         if (_bioKey != null && _bioPrompt == null && !_inhibitBioPrompt && !remindPassword) {
-            _bioPrompt = showBiometricPrompt();
+            new Handler().postDelayed((Runnable) () -> {
+                _bioPrompt = showBiometricPrompt();
+            }, 2000);
         }
 
         _inhibitBioPrompt = false;
