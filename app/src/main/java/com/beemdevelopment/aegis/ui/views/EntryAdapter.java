@@ -60,6 +60,7 @@ public class EntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private Preferences.CodeGrouping _codeGroupSize;
     private AccountNamePosition _accountNamePosition;
     private boolean _showIcon;
+    private boolean _showExpirationState;
     private boolean _onlyShowNecessaryAccountNames;
     private boolean _highlightEntry;
     private boolean _tempHighlightEntry;
@@ -113,6 +114,10 @@ public class EntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public void setShowIcon(boolean showIcon) {
         _showIcon = showIcon;
+    }
+
+    public void setShowExpirationState(boolean showExpirationState) {
+        _showExpirationState = showExpirationState;
     }
 
     public void setTapToReveal(boolean tapToReveal) {
@@ -348,6 +353,15 @@ public class EntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             for (EntryHolder holder : _holders) {
                 holder.refresh();
                 holder.showIcon(_showIcon);
+                holder.setShowExpirationState(_showExpirationState);
+            }
+        }
+    }
+
+    public void startExpiringAnimation() {
+        for (EntryHolder holder : _holders) {
+            if(holder.getEntry().getInfo() instanceof TotpInfo) {
+                holder.updateExpirationState();
             }
         }
     }
@@ -539,7 +553,7 @@ public class EntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             }
 
             AccountNamePosition accountNamePosition = showAccountName ? _accountNamePosition : AccountNamePosition.HIDDEN;
-            entryHolder.setData(entry, _codeGroupSize, _viewMode, accountNamePosition, _showIcon, showProgress, hidden, paused, dimmed);
+            entryHolder.setData(entry, _codeGroupSize, _viewMode, accountNamePosition, _showIcon, showProgress, hidden, paused, dimmed, _showExpirationState);
             entryHolder.setFocused(_selectedEntries.contains(entry));
             entryHolder.setShowDragHandle(isEntryDraggable(entry));
 

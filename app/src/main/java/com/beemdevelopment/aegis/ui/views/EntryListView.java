@@ -71,10 +71,12 @@ public class EntryListView extends Fragment implements EntryAdapter.Listener {
     private ViewPreloadSizeProvider<VaultEntry> _preloadSizeProvider;
     private TotpProgressBar _progressBar;
     private boolean _showProgress;
+    private boolean _showExpirationState;
     private ViewMode _viewMode;
     private LinearLayout _emptyStateView;
 
     private UiRefresher _refresher;
+    private UiRefresher _expiringRefresher;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -150,6 +152,23 @@ public class EntryListView extends Fragment implements EntryAdapter.Listener {
             }
         });
 
+        _expiringRefresher = new UiRefresher(new UiRefresher.Listener() {
+            @Override
+            public void onRefresh() {
+                _adapter.startExpiringAnimation();
+            }
+
+            @Override
+            public long getMillisTillNextRefresh() {
+                long millisTillNextRotation = TotpInfo.getMillisTillNextRotation(_adapter.getMostFrequentPeriod());
+                if (millisTillNextRotation > 7000) {
+                    return millisTillNextRotation - 7000;
+                } else {
+                    return 1000;
+                }
+            }
+        });
+
         _emptyStateView = view.findViewById(R.id.vEmptyList);
         return view;
     }
@@ -161,6 +180,7 @@ public class EntryListView extends Fragment implements EntryAdapter.Listener {
     @Override
     public void onDestroyView() {
         _refresher.destroy();
+        _expiringRefresher.destroy();
         super.onDestroyView();
     }
 
@@ -335,10 +355,18 @@ public class EntryListView extends Fragment implements EntryAdapter.Listener {
             _progressBar.setPeriod(period);
             _progressBar.start();
             _refresher.start();
+
+            if(_showExpirationState) {
+                _expiringRefresher.start();
+            }
         } else {
             _progressBar.setVisibility(View.GONE);
             _progressBar.stop();
             _refresher.stop();
+
+            if(_showExpirationState) {
+                _expiringRefresher.stop();
+            }
         }
     }
 
@@ -363,6 +391,11 @@ public class EntryListView extends Fragment implements EntryAdapter.Listener {
 
     public void setShowIcon(boolean showIcon) {
         _adapter.setShowIcon(showIcon);
+    }
+
+    public void setShowExpirationState(boolean showExpirationState) {
+        _showExpirationState = showExpirationState;
+        _adapter.setShowExpirationState(showExpirationState);
     }
 
     public void setHighlightEntry(boolean highlightEntry) {

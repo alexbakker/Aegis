@@ -1,5 +1,7 @@
 package com.beemdevelopment.aegis.ui.views;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Handler;
@@ -35,6 +37,7 @@ import com.beemdevelopment.aegis.ui.glide.GlideHelper;
 import com.beemdevelopment.aegis.vault.VaultEntry;
 import com.bumptech.glide.Glide;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.color.MaterialColors;
 
 public class EntryHolder extends RecyclerView.ViewHolder {
     private static final float DEFAULT_ALPHA = 1.0f;
@@ -66,6 +69,7 @@ public class EntryHolder extends RecyclerView.ViewHolder {
     private MaterialCardView _view;
 
     private UiRefresher _refresher;
+    private UiRefresher _expiringRefresher;
     private Handler _animationHandler;
 
     private Animation _scaleIn;
@@ -107,14 +111,72 @@ public class EntryHolder extends RecyclerView.ViewHolder {
                 return ((TotpInfo) _entry.getInfo()).getMillisTillNextRotation();
             }
         });
+
+        _expiringRefresher = new UiRefresher(new UiRefresher.Listener() {
+            @Override
+            public void onRefresh() {
+                updateExpirationState();
+            }
+
+            public long getMillisTillNextRefresh() {
+                long millisTillNextRotation = ((TotpInfo) _entry.getInfo()).getMillisTillNextRotation();
+                if (millisTillNextRotation > 7000) {
+                    stopExpirationAnimation();
+                    return millisTillNextRotation - 7000;
+                } else {
+                    return 1000;
+                }
+            }
+        });
     }
 
-    public void setData(VaultEntry entry, Preferences.CodeGrouping groupSize, ViewMode viewMode, AccountNamePosition accountNamePosition, boolean showIcon, boolean showProgress, boolean hidden, boolean paused, boolean dimmed) {
+    public void updateExpirationState() {
+        long millisTillNextRotation = ((TotpInfo) _entry.getInfo()).getMillisTillNextRotation();
+        if (!_hidden && !_paused) {
+            if (millisTillNextRotation <= 7000) {
+                setExpirationColor();
+            }
+
+            if (millisTillNextRotation <= 3000) {
+                startExpirationAnimation();
+            }
+        }
+    }
+
+    private void setExpirationColor() {
+        int colorFrom = _profileCode.getCurrentTextColor();
+        int colorTo = MaterialColors.getColor(_profileCode, com.google.android.material.R.attr.colorError);
+
+        ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+        colorAnimation.setDuration(300);
+        colorAnimation.addUpdateListener(animator -> _profileCode.setTextColor((int) animator.getAnimatedValue()));
+        colorAnimation.start();
+    }
+
+
+    private void startExpirationAnimation() {
+        _profileCode.setAlpha(1f);
+
+        _profileCode.animate().alpha(0.5f).setDuration(500).withEndAction(() -> {
+            long animationDuration = Math.min(((TotpInfo) _entry.getInfo()).getMillisTillNextRotation(), 500);
+            _profileCode.animate().alpha(1f).setDuration(animationDuration).start();
+        }).start();
+    }
+
+    private void stopExpirationAnimation() {
+        int colorTo = MaterialColors.getColor(_profileCode, R.attr.colorCode);
+        _profileCode.setTextColor(colorTo);
+        _profileCode.clearAnimation();
+        _profileCode.setAlpha(1f);
+    }
+
+    public void setData(VaultEntry entry, Preferences.CodeGrouping groupSize, ViewMode viewMode, AccountNamePosition accountNamePosition, boolean showIcon, boolean showProgress, boolean hidden, boolean paused, boolean dimmed, boolean showExpirationState) {
         _entry = entry;
         _hidden = hidden;
         _paused = paused;
         _codeGrouping = groupSize;
         _viewMode = viewMode;
+
         _accountNamePosition = accountNamePosition;
         if (viewMode.equals(ViewMode.TILES) && _accountNamePosition == AccountNamePosition.END) {
             _accountNamePosition = AccountNamePosition.BELOW;
@@ -129,6 +191,7 @@ public class EntryHolder extends RecyclerView.ViewHolder {
 
         // only show the progress bar if there is no uniform period and the entry type is TotpInfo
         setShowProgress(showProgress);
+        setShowExpirationState(showExpirationState);
 
         // only show the button if this entry is of type HotpInfo
         _buttonRefresh.setVisibility(entry.getInfo() instanceof HotpInfo ? View.VISIBLE : View.GONE);
@@ -258,6 +321,7 @@ public class EntryHolder extends RecyclerView.ViewHolder {
 
     public void destroy() {
         _refresher.destroy();
+        _expiringRefresher.destroy();
     }
 
     public void startRefreshLoop() {
@@ -270,6 +334,14 @@ public class EntryHolder extends RecyclerView.ViewHolder {
         _progressBar.stop();
     }
 
+    public void startExpirationStateLoop() {
+        _expiringRefresher.start();
+    }
+
+    public void stopExpirationStateLoop() {
+        _expiringRefresher.stop();
+    }
+
     public void refresh() {
         _progressBar.restart();
         refreshCode();
@@ -278,6 +350,8 @@ public class EntryHolder extends RecyclerView.ViewHolder {
     public void refreshCode() {
         if (!_hidden && !_paused) {
             updateCode();
+
+            stopExpirationAnimation();
         }
     }
 
@@ -392,6 +466,18 @@ public class EntryHolder extends RecyclerView.ViewHolder {
             _profileDrawable.setVisibility(View.VISIBLE);
         } else {
             _profileDrawable.setVisibility(View.GONE);
+        }
+    }
+
+    public void setShowExpirationState(boolean showExpirationState) {
+        if (_entry.getInfo() instanceof HotpInfo) {
+            showExpirationState = false;
+        }
+
+        if (showExpirationState) {
+            startExpirationStateLoop();
+        } else {
+            stopExpirationStateLoop();
         }
     }
 
