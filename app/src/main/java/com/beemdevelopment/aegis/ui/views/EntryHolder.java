@@ -1,9 +1,12 @@
 package com.beemdevelopment.aegis.ui.views;
 
+import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Handler;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -55,7 +58,7 @@ public class EntryHolder extends RecyclerView.ViewHolder {
     private RelativeLayout _description;
     private ImageView _dragHandle;
     private ViewMode _viewMode;
-  
+
     private final ImageView _selected;
     private final Handler _selectedHandler;
 
@@ -69,8 +72,9 @@ public class EntryHolder extends RecyclerView.ViewHolder {
     private MaterialCardView _view;
 
     private UiRefresher _refresher;
-    private UiRefresher _expiringRefresher;
     private Handler _animationHandler;
+    private AnimatorSet _expirationAnimSet;
+    private boolean _showExpirationState;
 
     private Animation _scaleIn;
     private Animation _scaleOut;
@@ -101,9 +105,7 @@ public class EntryHolder extends RecyclerView.ViewHolder {
         _refresher = new UiRefresher(new UiRefresher.Listener() {
             @Override
             public void onRefresh() {
-                if (!_hidden && !_paused) {
-                    refreshCode();
-                }
+                refreshCode();
             }
 
             @Override
@@ -111,63 +113,6 @@ public class EntryHolder extends RecyclerView.ViewHolder {
                 return ((TotpInfo) _entry.getInfo()).getMillisTillNextRotation();
             }
         });
-
-        _expiringRefresher = new UiRefresher(new UiRefresher.Listener() {
-            @Override
-            public void onRefresh() {
-                updateExpirationState();
-            }
-
-            public long getMillisTillNextRefresh() {
-                long millisTillNextRotation = ((TotpInfo) _entry.getInfo()).getMillisTillNextRotation();
-                if (millisTillNextRotation > 7000) {
-                    stopExpirationAnimation();
-                    return millisTillNextRotation - 7000;
-                } else {
-                    return 1000;
-                }
-            }
-        });
-    }
-
-    public void updateExpirationState() {
-        long millisTillNextRotation = ((TotpInfo) _entry.getInfo()).getMillisTillNextRotation();
-        if (!_hidden && !_paused) {
-            if (millisTillNextRotation <= 7000) {
-                setExpirationColor();
-            }
-
-            if (millisTillNextRotation <= 3000) {
-                startExpirationAnimation();
-            }
-        }
-    }
-
-    private void setExpirationColor() {
-        int colorFrom = _profileCode.getCurrentTextColor();
-        int colorTo = MaterialColors.getColor(_profileCode, com.google.android.material.R.attr.colorError);
-
-        ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-        colorAnimation.setDuration(300);
-        colorAnimation.addUpdateListener(animator -> _profileCode.setTextColor((int) animator.getAnimatedValue()));
-        colorAnimation.start();
-    }
-
-
-    private void startExpirationAnimation() {
-        _profileCode.setAlpha(1f);
-
-        _profileCode.animate().alpha(0.5f).setDuration(500).withEndAction(() -> {
-            long animationDuration = Math.min(((TotpInfo) _entry.getInfo()).getMillisTillNextRotation(), 500);
-            _profileCode.animate().alpha(1f).setDuration(animationDuration).start();
-        }).start();
-    }
-
-    private void stopExpirationAnimation() {
-        int colorTo = MaterialColors.getColor(_profileCode, R.attr.colorCode);
-        _profileCode.setTextColor(colorTo);
-        _profileCode.clearAnimation();
-        _profileCode.setAlpha(1f);
     }
 
     public void setData(VaultEntry entry, Preferences.CodeGrouping groupSize, ViewMode viewMode, AccountNamePosition accountNamePosition, boolean showIcon, boolean showProgress, boolean hidden, boolean paused, boolean dimmed, boolean showExpirationState) {
@@ -186,12 +131,12 @@ public class EntryHolder extends RecyclerView.ViewHolder {
         _selected.setVisibility(View.GONE);
         _selectedHandler.removeCallbacksAndMessages(null);
         _animationHandler.removeCallbacksAndMessages(null);
+        _showExpirationState = _entry.getInfo() instanceof TotpInfo;
 
         _favoriteIndicator.setVisibility(_entry.isFavorite() ? View.VISIBLE : View.INVISIBLE);
 
         // only show the progress bar if there is no uniform period and the entry type is TotpInfo
         setShowProgress(showProgress);
-        setShowExpirationState(showExpirationState);
 
         // only show the button if this entry is of type HotpInfo
         _buttonRefresh.setVisibility(entry.getInfo() instanceof HotpInfo ? View.VISIBLE : View.GONE);
@@ -212,7 +157,6 @@ public class EntryHolder extends RecyclerView.ViewHolder {
         }
 
         showIcon(showIcon);
-
         itemView.setAlpha(dimmed ? DIMMED_ALPHA : DEFAULT_ALPHA);
     }
 
@@ -321,7 +265,6 @@ public class EntryHolder extends RecyclerView.ViewHolder {
 
     public void destroy() {
         _refresher.destroy();
-        _expiringRefresher.destroy();
     }
 
     public void startRefreshLoop() {
@@ -334,14 +277,6 @@ public class EntryHolder extends RecyclerView.ViewHolder {
         _progressBar.stop();
     }
 
-    public void startExpirationStateLoop() {
-        _expiringRefresher.start();
-    }
-
-    public void stopExpirationStateLoop() {
-        _expiringRefresher.stop();
-    }
-
     public void refresh() {
         _progressBar.restart();
         refreshCode();
@@ -350,8 +285,7 @@ public class EntryHolder extends RecyclerView.ViewHolder {
     public void refreshCode() {
         if (!_hidden && !_paused) {
             updateCode();
-
-            stopExpirationAnimation();
+            startExpirationAnimation();
         }
     }
 
@@ -410,6 +344,7 @@ public class EntryHolder extends RecyclerView.ViewHolder {
 
     public void revealCode() {
         updateCode();
+        startExpirationAnimation();
         _hidden = false;
     }
 
@@ -417,7 +352,7 @@ public class EntryHolder extends RecyclerView.ViewHolder {
         String code = getOtp();
         String hiddenText = code.replaceAll("\\S", Character.toString(HIDDEN_CHAR));
         updateTextViewWithDots(_profileCode,  hiddenText, code);
-
+        stopExpirationAnimation();
         _hidden = true;
     }
 
@@ -461,23 +396,66 @@ public class EntryHolder extends RecyclerView.ViewHolder {
         textView.setText(dotsString);
     }
 
+    public void startExpirationAnimation() {
+        stopExpirationAnimation();
+        if (!_showExpirationState) {
+            return;
+        }
+
+        final int totalStateDuration = 7000;
+        TotpInfo info = (TotpInfo) _entry.getInfo();
+        float durationScale = AnimationsHelper.Scale.ANIMATOR.getValue(itemView.getContext());
+
+        final int colorShiftDuration = 300;
+        long delayAnimDuration = info.getPeriod() * 1000L - totalStateDuration - colorShiftDuration;
+        ValueAnimator delayAnim = ValueAnimator.ofFloat(0f, 0f);
+        delayAnim.setDuration((long) (delayAnimDuration / durationScale));
+
+        int colorFrom = _profileCode.getCurrentTextColor();
+        int colorTo = MaterialColors.getColor(_profileCode, com.google.android.material.R.attr.colorError);
+        ValueAnimator colorAnim = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+        colorAnim.setDuration((long) (colorShiftDuration / durationScale));
+        colorAnim.addUpdateListener(a -> _profileCode.setTextColor((int) a.getAnimatedValue()));
+
+        final int blinkDuration = 3000;
+        ValueAnimator delayAnim2 = ValueAnimator.ofFloat(0f, 0f);
+        delayAnim2.setDuration((long) ((totalStateDuration - blinkDuration) / durationScale));
+
+        float alphaTo = durationScale > 0 ? .5f : 1f;
+        ObjectAnimator alphaAnim = ObjectAnimator.ofFloat(_profileCode, "alpha", 1f, alphaTo);
+        alphaAnim.setDuration((long) (500 / durationScale));
+        alphaAnim.setRepeatCount(blinkDuration / 500 - 1);
+        alphaAnim.setRepeatMode(ValueAnimator.REVERSE);
+
+        _expirationAnimSet = new AnimatorSet();
+        _expirationAnimSet.playSequentially(delayAnim, colorAnim, delayAnim2, alphaAnim);
+        _expirationAnimSet.start();
+        // TODO: Make setting conditionally available depending on Android version
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            long currentPlayTime = (info.getPeriod() * 1000L) - info.getMillisTillNextRotation();
+            _expirationAnimSet.setCurrentPlayTime((long) (currentPlayTime / durationScale));
+        }
+    }
+
+    private void stopExpirationAnimation() {
+        if (_expirationAnimSet == null) {
+            return;
+        }
+
+        _expirationAnimSet.cancel();
+        _expirationAnimSet = null;
+
+        int colorTo = MaterialColors.getColor(_profileCode, R.attr.colorCode);
+        _profileCode.setTextColor(colorTo);
+        _profileCode.clearAnimation();
+        _profileCode.setAlpha(1f);
+    }
+
     public void showIcon(boolean show) {
         if (show) {
             _profileDrawable.setVisibility(View.VISIBLE);
         } else {
             _profileDrawable.setVisibility(View.GONE);
-        }
-    }
-
-    public void setShowExpirationState(boolean showExpirationState) {
-        if (_entry.getInfo() instanceof HotpInfo) {
-            showExpirationState = false;
-        }
-
-        if (showExpirationState) {
-            startExpirationStateLoop();
-        } else {
-            stopExpirationStateLoop();
         }
     }
 

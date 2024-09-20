@@ -353,15 +353,6 @@ public class EntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             for (EntryHolder holder : _holders) {
                 holder.refresh();
                 holder.showIcon(_showIcon);
-                holder.setShowExpirationState(_showExpirationState);
-            }
-        }
-    }
-
-    public void startExpiringAnimation() {
-        for (EntryHolder holder : _holders) {
-            if(holder.getEntry().getInfo() instanceof TotpInfo) {
-                holder.updateExpirationState();
             }
         }
     }

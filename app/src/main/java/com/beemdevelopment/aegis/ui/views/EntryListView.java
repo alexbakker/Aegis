@@ -38,7 +38,6 @@ import com.beemdevelopment.aegis.helpers.UiRefresher;
 import com.beemdevelopment.aegis.otp.TotpInfo;
 import com.beemdevelopment.aegis.ui.glide.GlideHelper;
 import com.beemdevelopment.aegis.ui.models.ErrorCardInfo;
-import com.beemdevelopment.aegis.util.UUIDMap;
 import com.beemdevelopment.aegis.vault.VaultEntry;
 import com.beemdevelopment.aegis.vault.VaultGroup;
 import com.bumptech.glide.Glide;
@@ -53,12 +52,10 @@ import com.google.common.base.Strings;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class EntryListView extends Fragment implements EntryAdapter.Listener {
     private EntryAdapter _adapter;
@@ -76,7 +73,6 @@ public class EntryListView extends Fragment implements EntryAdapter.Listener {
     private LinearLayout _emptyStateView;
 
     private UiRefresher _refresher;
-    private UiRefresher _expiringRefresher;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -152,23 +148,6 @@ public class EntryListView extends Fragment implements EntryAdapter.Listener {
             }
         });
 
-        _expiringRefresher = new UiRefresher(new UiRefresher.Listener() {
-            @Override
-            public void onRefresh() {
-                _adapter.startExpiringAnimation();
-            }
-
-            @Override
-            public long getMillisTillNextRefresh() {
-                long millisTillNextRotation = TotpInfo.getMillisTillNextRotation(_adapter.getMostFrequentPeriod());
-                if (millisTillNextRotation > 7000) {
-                    return millisTillNextRotation - 7000;
-                } else {
-                    return 1000;
-                }
-            }
-        });
-
         _emptyStateView = view.findViewById(R.id.vEmptyList);
         return view;
     }
@@ -180,7 +159,6 @@ public class EntryListView extends Fragment implements EntryAdapter.Listener {
     @Override
     public void onDestroyView() {
         _refresher.destroy();
-        _expiringRefresher.destroy();
         super.onDestroyView();
     }
 
@@ -355,18 +333,10 @@ public class EntryListView extends Fragment implements EntryAdapter.Listener {
             _progressBar.setPeriod(period);
             _progressBar.start();
             _refresher.start();
-
-            if(_showExpirationState) {
-                _expiringRefresher.start();
-            }
         } else {
             _progressBar.setVisibility(View.GONE);
             _progressBar.stop();
             _refresher.stop();
-
-            if(_showExpirationState) {
-                _expiringRefresher.stop();
-            }
         }
     }
 
