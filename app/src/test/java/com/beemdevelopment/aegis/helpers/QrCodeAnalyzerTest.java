@@ -1,7 +1,6 @@
 package com.beemdevelopment.aegis.helpers;
 
 import static android.graphics.ImageFormat.YUV_420_888;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -14,6 +13,7 @@ import androidx.camera.core.ImageInfo;
 import androidx.camera.core.ImageProxy;
 
 import com.beemdevelopment.aegis.util.IOUtils;
+import com.google.common.collect.Lists;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,12 +22,16 @@ import org.robolectric.RobolectricTestRunner;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.GZIPInputStream;
 
 @RunWith(RobolectricTestRunner.class)
 public class QrCodeAnalyzerTest {
-    private static final String _expectedUri = "otpauth://totp/neo4j:Charlotte?secret=B33WS2ALPT34K4BNY24AYROE4M&issuer=neo4j&algorithm=SHA1&digits=6&period=30";
+    private static final List<String> _expectedUris = Lists.newArrayList(
+            "otpauth://totp/neo4j:Charlotte?secret=B33WS2ALPT34K4BNY24AYROE4M&issuer=neo4j&algorithm=SHA1&digits=6&period=30",
+            "otpauth://totp/Alice?secret=E54722XDV6I4C7PF5WGUZEM7IHEYCOB6&issuer=Google"
+    );
 
     @Test
     public void testScanQrCode() {
@@ -44,10 +48,28 @@ public class QrCodeAnalyzerTest {
         assertTrue("QR code not found", found);
     }
 
+    @Test
+    public void testScanIssue802QrCode() {
+        boolean found = scan("qr.issue-802.y.gz", 3456, 4608 - 600, 3456);
+        assertTrue("QR code not found", found);
+    }
+
+    @Test
+    public void testScanIssue802ShrunkQrCode() {
+        boolean found = scan("qr.issue-802-shrunk.y.gz", 3456 / 2, (4608 - 600) / 2, 3456 / 2);
+        assertTrue("QR code not found", found);
+    }
+
+    @Test
+    public void testScanIssue802DoubleShrunkQrCode() {
+        boolean found = scan("qr.issue-802-shrunk2.y.gz", 3456 / 4, (4608 - 600) / 4, 3456 / 4);
+        assertTrue("QR code not found", found);
+    }
+
     private boolean scan(String fileName, int width, int height, int rowStride) {
         AtomicBoolean found = new AtomicBoolean();
         QrCodeAnalyzer analyzer = new QrCodeAnalyzer(result -> {
-            assertEquals(_expectedUri, result.getText());
+            assertTrue("Unexpected URI", _expectedUris.contains(result.getText()));
             found.set(true);
         });
 
